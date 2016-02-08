@@ -27,4 +27,14 @@ abstract class CellObj {
     public void print(){
         System.out.print(getType() + "(" + id + ", " + image + ")");
     }
+
+    boolean compareTypeAndVal(CellObj cell_other) {
+        boolean eq = false;
+        if( getType().contentEquals(cell_other.getType()) == true) {
+            if(image.contentEquals(cell_other.image) == true) {
+                eq = true; 
+            }
+        }
+        return eq;
+    }
 }

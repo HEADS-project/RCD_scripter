@@ -40,6 +40,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 {
   <CR_TAB :("CREATE_TAB")>
 |
+  <CR_TAB_JOIN :("CREATE_TAB_JOIN")>
+|
   <CR_COL :("CREATE_COL")>
 |
   <CR_ROW :("CREATE_ROW")>
@@ -102,6 +104,8 @@ TableList  init():
     (
         Create_table(tableList)
         |
+        Create_table_join(tableList)
+        |
         Create_columns(tableList)
         |
         Create_row(tableList)
@@ -121,6 +125,30 @@ void Create_table(TableList tableList):
     TId = <ID_LITERAL>
     <CBRA>
     {tableList.createTable(TId.image);}
+}
+
+void Create_table_join(TableList tableList):
+{
+    Token TId_newtab;
+    Token TId_orgtab1;
+    Token TId_orgcol1;
+    Token TId_orgtab2;
+    Token TId_orgcol2;
+}
+{
+    <CR_TAB_JOIN>
+    <OBRA>
+    TId_newtab = <ID_LITERAL>
+    <COMMA>
+    TId_orgtab1 = <ID_LITERAL>
+    <COMMA>
+    TId_orgcol1 = <ID_LITERAL>
+    <COMMA>
+    TId_orgtab2 = <ID_LITERAL>
+    <COMMA>
+    TId_orgcol2 = <ID_LITERAL>
+    <CBRA>
+    {tableList.createTableJoin(TId_newtab.image, TId_orgtab1.image, TId_orgcol1.image, TId_orgtab2.image, TId_orgcol2.image);}
 }
 
 void Create_columns(TableList tableList):

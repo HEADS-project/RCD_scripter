@@ -24,6 +24,16 @@ public class TableList {
         tableList.put(name, new TableObj());
     }  
 
+    public void createTableJoin(String newtab_name, String orgtab1_name, String orgcol1_name, String orgtab2_name, String orgcol2_name) {
+        TableObj newtab = new TableObj();
+        tableList.put(newtab_name, newtab);
+
+        TableObj orgtab1 = tableList.get(orgtab1_name);
+        TableObj orgtab2 = tableList.get(orgtab2_name);
+        
+        newtab.join(orgtab1, orgcol1_name, orgtab2, orgcol2_name);
+    }
+    
     public RowObj getDefaultRowObj(String name){
         TableObj tableObj = tableList.get(name);
         RowObj rowObj = tableObj.getDefaultRowObj();

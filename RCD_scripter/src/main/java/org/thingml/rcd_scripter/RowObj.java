@@ -43,4 +43,12 @@ class RowObj {
         System.out.println(">");
         
     }
+
+    CellObj getCell(String col_name) {
+        return cellList.get(col_name);
+    }
+
+    void addRow(RowObj row) {
+        cellList.putAll(row.cellList);
+    }
 }

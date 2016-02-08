@@ -15,33 +15,35 @@ public interface RcdScriptParserConstants {
   /** RegularExpression Id. */
   int CR_TAB = 11;
   /** RegularExpression Id. */
-  int CR_COL = 12;
+  int CR_TAB_JOIN = 12;
   /** RegularExpression Id. */
-  int CR_ROW = 13;
+  int CR_COL = 13;
   /** RegularExpression Id. */
-  int ID_LITERAL = 14;
+  int CR_ROW = 14;
   /** RegularExpression Id. */
-  int DEC_LITERAL = 15;
+  int ID_LITERAL = 15;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 16;
+  int DEC_LITERAL = 16;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 17;
+  int HEX_LITERAL = 17;
   /** RegularExpression Id. */
-  int LETTER = 18;
+  int STRING_LITERAL = 18;
   /** RegularExpression Id. */
-  int DIGIT = 19;
+  int LETTER = 19;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 20;
+  int DIGIT = 20;
   /** RegularExpression Id. */
-  int OBRA = 21;
+  int HEX_DIGIT = 21;
   /** RegularExpression Id. */
-  int CBRA = 22;
+  int OBRA = 22;
   /** RegularExpression Id. */
-  int OCBRA = 23;
+  int CBRA = 23;
   /** RegularExpression Id. */
-  int CCBRA = 24;
+  int OCBRA = 24;
   /** RegularExpression Id. */
-  int COMMA = 25;
+  int CCBRA = 25;
+  /** RegularExpression Id. */
+  int COMMA = 26;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -62,6 +64,7 @@ public interface RcdScriptParserConstants {
     "<SINGLE_LINE_COMMENT>",
     "<token of kind 10>",
     "\"CREATE_TAB\"",
+    "\"CREATE_TAB_JOIN\"",
     "\"CREATE_COL\"",
     "\"CREATE_ROW\"",
     "<ID_LITERAL>",

@@ -16,6 +16,7 @@ TableList init() throws ParseException {Token T;
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case CR_TAB:
+      case CR_TAB_JOIN:
       case CR_COL:
       case CR_ROW:{
         ;
@@ -28,6 +29,10 @@ TableList init() throws ParseException {Token T;
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case CR_TAB:{
         Create_table(tableList);
+        break;
+        }
+      case CR_TAB_JOIN:{
+        Create_table_join(tableList);
         break;
         }
       case CR_COL:{
@@ -55,6 +60,26 @@ TableList init() throws ParseException {Token T;
     TId = jj_consume_token(ID_LITERAL);
     jj_consume_token(CBRA);
 tableList.createTable(TId.image);
+  }
+
+  final public void Create_table_join(TableList tableList) throws ParseException {Token TId_newtab;
+    Token TId_orgtab1;
+    Token TId_orgcol1;
+    Token TId_orgtab2;
+    Token TId_orgcol2;
+    jj_consume_token(CR_TAB_JOIN);
+    jj_consume_token(OBRA);
+    TId_newtab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgtab1 = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgcol1 = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgtab2 = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgcol2 = jj_consume_token(ID_LITERAL);
+    jj_consume_token(CBRA);
+tableList.createTableJoin(TId_newtab.image, TId_orgtab1.image, TId_orgcol1.image, TId_orgtab2.image, TId_orgcol2.image);
   }
 
   final public void Create_columns(TableList tableList) throws ParseException {RowObj row;
@@ -189,7 +214,7 @@ cell.setImage(TId.image);
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x3800,0x3800,0x2000000,0x2000000,0x3c000,0x18000,};
+      jj_la1_0 = new int[] {0x7800,0x7800,0x4000000,0x4000000,0x78000,0x30000,};
    }
 
   /** Constructor with InputStream. */
@@ -314,7 +339,7 @@ cell.setImage(TId.image);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[26];
+    boolean[] la1tokens = new boolean[27];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -328,7 +353,7 @@ cell.setImage(TId.image);
         }
       }
     }
-    for (int i = 0; i < 26; i++) {
+    for (int i = 0; i < 27; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

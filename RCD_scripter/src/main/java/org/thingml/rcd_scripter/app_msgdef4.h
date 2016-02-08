@@ -32,7 +32,7 @@
 
 //# Definition of messages with attributes separated by whitespace and terminated by #
 //CREATE_TAB(MSG_DEF)
-//CREATE_COL(MSG_DEF, {ENUM_PREFIX, MSGID_}, 
+//CREATE_COL(MSG_DEF, {ENUM_PREFIX, MSGID_}, {MSGC, MSGC_U16},
 //                    {MSG_NAME, NONE},              {VALUE, 0},    {TRACE, yes},        {COMMENT, ""})
 //CREATE_ROW(MSG_DEF, {MSG_NAME, TMR_SIGNAL},        {VALUE, 0x01},                      {COMMENT, "Time signal                                  "})
 //CREATE_ROW(MSG_DEF, {MSG_NAME, TIME_TICK},         {VALUE, 0x02}, {TRACE, no},         {COMMENT, "Time tick from OS                            "})
@@ -63,6 +63,8 @@
 //CREATE_ROW(MSG_DEF, {MSG_NAME, PONG1},             {VALUE, 0x5e},                      {COMMENT, "ThingMl test message  "})
 //CREATE_ROW(MSG_DEF, {MSG_NAME, PONG2},             {VALUE, 0x5f}, {MSGC, MSGC_U16U16}, {COMMENT, "ThingMl test message  "})
 
+//## Joining the two tables and make entry if both have the matching cell
+//CREATE_TAB_JOIN(MSG_JOIN, MSG_DEF, MSGC, CODER_DEF,  MSGC)
 
 
 
