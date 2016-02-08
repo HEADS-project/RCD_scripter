@@ -1,0 +1,234 @@
+/* RCD scriptgrammar.jj*/
+options
+{
+    STATIC = false ;
+}
+PARSER_BEGIN (RcdScriptParser)
+   package org.thingml.rcd_scripter;
+   import java.util.ArrayList;
+   import java.util.HashMap;
+   class RcdScriptParser {
+         TableList executeScript()throws ParseException, TokenMgrError
+   { return(init()) ; }
+   }
+PARSER_END (RcdScriptParser)
+
+SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "| "/"}
+
+/* COMMENTS */
+
+MORE :
+{
+  "##" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
+
+TOKEN [IGNORE_CASE]: /* Commands */
+{
+  <CR_TAB :("CREATE_TAB")>
+|
+  <CR_COL :("CREATE_COL")>
+|
+  <CR_ROW :("CREATE_ROW")>
+}
+
+
+TOKEN :  /* Literals */
+{
+  < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < DEC_LITERAL: <DIGIT> (<DIGIT>)* >
+|
+  < HEX_LITERAL: "0" ["x","X"] (<HEX_DIGIT>)+ >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+TOKEN :  /* Character groups */
+{
+  < LETTER: [ "a"-"z", "A"-"Z", "_" ] >
+|
+  < DIGIT: [ "0"-"9"] >
+|
+  < HEX_DIGIT: [ "0"-"9", "a"-"f", "A"-"F"] >
+}
+
+TOKEN:  /* Separators */
+{
+    <OBRA:("(")+>
+|
+    <CBRA:(")")+>
+|
+    <OCBRA:("{")+>
+|
+    <CCBRA:("}")+>
+|
+    <COMMA:(",")>
+}
+
+//SPECIAL_TOKEN : {<COMMENT:("#")+ ((~[])+)+ ("\n")>}
+//SPECIAL_TOKEN : {<COMMENT:("#")+(<DIGIT> | <LETTER>)+("+n")>}
+
+TableList  init():
+{
+  Token T;
+  TableList tableList = new TableList();
+}
+{
+    (
+        Create_table(tableList)
+        |
+        Create_columns(tableList)
+        |
+        Create_row(tableList)
+    )*
+    <EOF>
+    {return tableList;}
+}
+
+
+void Create_table(TableList tableList):
+{
+    Token TId;
+}
+{
+    <CR_TAB>
+    <OBRA>
+    TId = <ID_LITERAL>
+    <CBRA>
+    {tableList.createTable(TId.image);}
+}
+
+void Create_columns(TableList tableList):
+{
+    RowObj row;
+    CellObj cell;
+    Token TId;
+}
+{
+    (
+        <CR_COL>
+        <OBRA>
+        TId = <ID_LITERAL>
+        {row = tableList.getDefaultRowObj(TId.image);}
+            (
+                <COMMA>
+                cell = Cell_entry()        
+                {row.addCell(cell);}
+            )*
+        <CBRA>
+    )
+}
+
+
+void Create_row(TableList tableList):
+{
+    RowObj row;
+    CellObj cell;
+    Token TId;
+}
+{
+    (
+        <CR_ROW>
+        <OBRA>
+        TId = <ID_LITERAL>
+        {row = tableList.getNewRowObj(TId.image);}
+        (
+            <COMMA>
+            cell = Cell_entry()        
+            {row.addCell(cell);}
+        )*
+        <CBRA>
+    )
+}
+
+CellObj Cell_entry():
+{
+    CellObj cell; 
+    Token   TId;
+}
+{
+    <OCBRA>
+    TId = <ID_LITERAL>
+    <COMMA>
+    (
+        cell = Cell_int()
+        |
+        cell = Cell_id()
+        |
+        cell = Cell_string()
+    )
+    <CCBRA>
+    {
+        cell.setId(TId.image);
+        return cell;
+    }
+}
+
+CellObj Cell_int():
+{
+    IntCellObj cell = new IntCellObj();
+    Token   TId;
+}
+{
+    (
+        TId = <DEC_LITERAL>
+        |
+        TId = <HEX_LITERAL>
+    )
+    {
+        cell.setImage(TId.image);
+        return cell;
+    }
+}
+
+CellObj Cell_id():
+{
+    IdCellObj cell = new IdCellObj();
+    Token   TId;
+}
+{
+    (
+        TId = <ID_LITERAL>
+        {cell.setImage(TId.image);}
+    )
+    {return cell;}
+}
+
+CellObj Cell_string():
+{
+    StringCellObj cell = new StringCellObj();
+    Token   TId;
+}
+{
+    (
+        TId = <STRING_LITERAL>
+        {cell.setImage(TId.image);}
+    )
+    {return cell;}
+}
+
