@@ -73,4 +73,53 @@ class TableObj {
             n1++;
         }
     }
+
+    void copyRowsIfEq(TableObj orgtab, CellObj match_cell) {
+        Iterator i1 = orgtab.rowList.iterator();
+        int n1 = 0;
+        while(i1.hasNext()) {
+            RowObj  row1  = (RowObj)i1.next();
+            CellObj cell  = row1.getCell(match_cell.getId());
+
+            if( cell != null) {
+                if( cell.compareTypeAndVal(match_cell) == true) {
+                    RowObj newRow = new RowObj();
+                    rowList.add(newRow);
+                    newRow.addRow(row1.makeCopy());
+                }
+            }
+            n1++;
+        }
+    }
+
+    void createColumnsConcat(String newcol_name, String col1_name, String col2_name) {
+        Iterator i1 = rowList.iterator();
+        int n1 = 0;
+        while(i1.hasNext()) {
+            RowObj  row1  = (RowObj)i1.next();
+            CellObj cell1 = row1.getCell(col1_name);
+            CellObj cell2 = row1.getCell(col2_name);
+            String  new_image = "";
+            CellObj new_cell = new IdCellObj();
+            
+            if( cell1 != null) {
+                if( cell1 instanceof StringCellObj) {
+                    new_cell = new StringCellObj();
+                }
+                new_image += cell1.getImage();
+            }
+            if( cell2 != null) {
+                if( cell2 instanceof StringCellObj) {
+                    new_cell = new StringCellObj();
+                }
+                new_image += cell2.getImage();
+            }
+
+            new_cell.setId(newcol_name);
+            new_cell.setImage(new_image);
+            row1.addCell(new_cell);
+            
+            n1++;
+        }
+    }
 }

@@ -21,7 +21,7 @@ class RowObj {
     }
     
     public void addCell(CellObj cell){
-        cellList.put(cell.id, cell);
+        cellList.put(cell.getId(), cell);
     }    
     
     public RowObj makeCopy(){

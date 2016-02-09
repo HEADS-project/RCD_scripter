@@ -40,9 +40,13 @@ TOKEN [IGNORE_CASE]: /* Commands */
 {
   <CR_TAB :("CREATE_TAB")>
 |
+  <CR_TAB_IF_EQ :("CREATE_TAB_IF_EQ")>
+|
   <CR_TAB_JOIN :("CREATE_TAB_JOIN")>
 |
-  <CR_COL :("CREATE_COL")>
+  <CR_COL_DEF :("CREATE_COL_DEF")>
+|
+  <CR_COL_CAT :("CREATE_COL_CAT")>
 |
   <CR_ROW :("CREATE_ROW")>
 }
@@ -92,9 +96,6 @@ TOKEN:  /* Separators */
     <COMMA:(",")>
 }
 
-//SPECIAL_TOKEN : {<COMMENT:("#")+ ((~[])+)+ ("\n")>}
-//SPECIAL_TOKEN : {<COMMENT:("#")+(<DIGIT> | <LETTER>)+("+n")>}
-
 TableList  init():
 {
   Token T;
@@ -104,9 +105,13 @@ TableList  init():
     (
         Create_table(tableList)
         |
+        Create_table_if_eq(tableList)
+        |
         Create_table_join(tableList)
         |
-        Create_columns(tableList)
+        Create_columns_concat(tableList)
+        |
+        Create_columns_default(tableList)
         |
         Create_row(tableList)
     )*
@@ -127,31 +132,70 @@ void Create_table(TableList tableList):
     {tableList.createTable(TId.image);}
 }
 
+void Create_table_if_eq(TableList tableList):
+{
+    Token TId_newtab;
+    Token TId_orgtab;
+    CellObj cell;
+}
+{
+    <CR_TAB_IF_EQ>
+    <OBRA>
+    TId_newtab = <ID_LITERAL>
+    <COMMA>
+    TId_orgtab = <ID_LITERAL>
+    <COMMA>
+    cell = Cell_entry()        
+    <CBRA>
+    {tableList.createTableIfEq(TId_newtab.image, TId_orgtab.image, cell);}
+}
+
 void Create_table_join(TableList tableList):
 {
     Token TId_newtab;
-    Token TId_orgtab1;
-    Token TId_orgcol1;
-    Token TId_orgtab2;
-    Token TId_orgcol2;
+    Token TId_orgtab;
+    Token TId_orgcol;
+    Token TId_jointab;
+    Token TId_joincol;
 }
 {
     <CR_TAB_JOIN>
     <OBRA>
     TId_newtab = <ID_LITERAL>
     <COMMA>
-    TId_orgtab1 = <ID_LITERAL>
+    TId_orgtab = <ID_LITERAL>
+    <COMMA>
+    TId_orgcol = <ID_LITERAL>
+    <COMMA>
+    TId_jointab = <ID_LITERAL>
+    <COMMA>
+    TId_joincol = <ID_LITERAL>
+    <CBRA>
+    {tableList.createTableJoin(TId_newtab.image, TId_orgtab.image, TId_orgcol.image, TId_jointab.image, TId_joincol.image);}
+}
+
+void Create_columns_concat(TableList tableList):
+{
+    Token TId_tab;
+    Token TId_newcol;
+    Token TId_orgcol1;
+    Token TId_orgcol2;
+}
+{
+    <CR_COL_CAT>
+    <OBRA>
+    TId_tab = <ID_LITERAL>
+    <COMMA>
+    TId_newcol = <ID_LITERAL>
     <COMMA>
     TId_orgcol1 = <ID_LITERAL>
     <COMMA>
-    TId_orgtab2 = <ID_LITERAL>
-    <COMMA>
     TId_orgcol2 = <ID_LITERAL>
     <CBRA>
-    {tableList.createTableJoin(TId_newtab.image, TId_orgtab1.image, TId_orgcol1.image, TId_orgtab2.image, TId_orgcol2.image);}
+    {tableList.tableCreateColumnsConcat(TId_tab.image, TId_newcol.image, TId_orgcol1.image, TId_orgcol2.image);}
 }
 
-void Create_columns(TableList tableList):
+void Create_columns_default(TableList tableList):
 {
     RowObj row;
     CellObj cell;
@@ -159,7 +203,7 @@ void Create_columns(TableList tableList):
 }
 {
     (
-        <CR_COL>
+        <CR_COL_DEF>
         <OBRA>
         TId = <ID_LITERAL>
         {row = tableList.getDefaultRowObj(TId.image);}

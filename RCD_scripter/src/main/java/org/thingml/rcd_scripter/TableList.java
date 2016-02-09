@@ -24,14 +24,14 @@ public class TableList {
         tableList.put(name, new TableObj());
     }  
 
-    public void createTableJoin(String newtab_name, String orgtab1_name, String orgcol1_name, String orgtab2_name, String orgcol2_name) {
+    public void createTableJoin(String newtab_name, String orgtab_name, String orgcol_name, String jointab_name, String joincol_name) {
         TableObj newtab = new TableObj();
         tableList.put(newtab_name, newtab);
 
-        TableObj orgtab1 = tableList.get(orgtab1_name);
-        TableObj orgtab2 = tableList.get(orgtab2_name);
+        TableObj orgtab = tableList.get(orgtab_name);
+        TableObj jointab = tableList.get(jointab_name);
         
-        newtab.join(orgtab1, orgcol1_name, orgtab2, orgcol2_name);
+        newtab.join(orgtab, orgcol_name, jointab, joincol_name);
     }
     
     public RowObj getDefaultRowObj(String name){
@@ -58,5 +58,20 @@ public class TableList {
         }
         System.out.println("Content of TableList() End");
     }  
+
+    void createTableIfEq(String newtab_name, String orgtab_name, CellObj match_cell) {
+        TableObj newtab = new TableObj();
+        tableList.put(newtab_name, newtab);
+
+        TableObj orgtab = tableList.get(orgtab_name);
+        
+        newtab.copyRowsIfEq(orgtab, match_cell);
+    }
+
+    void tableCreateColumnsConcat(String tab_name, String newcol_name, String col1_name, String col2_name) {
+        TableObj tab = tableList.get(tab_name);
+        
+        tab.createColumnsConcat(newcol_name, col1_name, col2_name);
+    }
 
 }

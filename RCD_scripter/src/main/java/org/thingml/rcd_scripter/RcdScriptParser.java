@@ -7,17 +7,16 @@
          TableList executeScript()throws ParseException, TokenMgrError
    { return(init()) ; }
 
-//SPECIAL_TOKEN : {<COMMENT:("#")+ ((~[])+)+ ("\n")>}
-//SPECIAL_TOKEN : {<COMMENT:("#")+(<DIGIT> | <LETTER>)+("+n")>}
-  final public 
-TableList init() throws ParseException {Token T;
+  final public TableList init() throws ParseException {Token T;
   TableList tableList = new TableList();
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case CR_TAB:
+      case CR_TAB_IF_EQ:
       case CR_TAB_JOIN:
-      case CR_COL:
+      case CR_COL_DEF:
+      case CR_COL_CAT:
       case CR_ROW:{
         ;
         break;
@@ -31,12 +30,20 @@ TableList init() throws ParseException {Token T;
         Create_table(tableList);
         break;
         }
+      case CR_TAB_IF_EQ:{
+        Create_table_if_eq(tableList);
+        break;
+        }
       case CR_TAB_JOIN:{
         Create_table_join(tableList);
         break;
         }
-      case CR_COL:{
-        Create_columns(tableList);
+      case CR_COL_CAT:{
+        Create_columns_concat(tableList);
+        break;
+        }
+      case CR_COL_DEF:{
+        Create_columns_default(tableList);
         break;
         }
       case CR_ROW:{
@@ -62,30 +69,61 @@ TableList init() throws ParseException {Token T;
 tableList.createTable(TId.image);
   }
 
+  final public void Create_table_if_eq(TableList tableList) throws ParseException {Token TId_newtab;
+    Token TId_orgtab;
+    CellObj cell;
+    jj_consume_token(CR_TAB_IF_EQ);
+    jj_consume_token(OBRA);
+    TId_newtab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgtab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    cell = Cell_entry();
+    jj_consume_token(CBRA);
+tableList.createTableIfEq(TId_newtab.image, TId_orgtab.image, cell);
+  }
+
   final public void Create_table_join(TableList tableList) throws ParseException {Token TId_newtab;
-    Token TId_orgtab1;
-    Token TId_orgcol1;
-    Token TId_orgtab2;
-    Token TId_orgcol2;
+    Token TId_orgtab;
+    Token TId_orgcol;
+    Token TId_jointab;
+    Token TId_joincol;
     jj_consume_token(CR_TAB_JOIN);
     jj_consume_token(OBRA);
     TId_newtab = jj_consume_token(ID_LITERAL);
     jj_consume_token(COMMA);
-    TId_orgtab1 = jj_consume_token(ID_LITERAL);
+    TId_orgtab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_orgcol = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_jointab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_joincol = jj_consume_token(ID_LITERAL);
+    jj_consume_token(CBRA);
+tableList.createTableJoin(TId_newtab.image, TId_orgtab.image, TId_orgcol.image, TId_jointab.image, TId_joincol.image);
+  }
+
+  final public void Create_columns_concat(TableList tableList) throws ParseException {Token TId_tab;
+    Token TId_newcol;
+    Token TId_orgcol1;
+    Token TId_orgcol2;
+    jj_consume_token(CR_COL_CAT);
+    jj_consume_token(OBRA);
+    TId_tab = jj_consume_token(ID_LITERAL);
+    jj_consume_token(COMMA);
+    TId_newcol = jj_consume_token(ID_LITERAL);
     jj_consume_token(COMMA);
     TId_orgcol1 = jj_consume_token(ID_LITERAL);
     jj_consume_token(COMMA);
-    TId_orgtab2 = jj_consume_token(ID_LITERAL);
-    jj_consume_token(COMMA);
     TId_orgcol2 = jj_consume_token(ID_LITERAL);
     jj_consume_token(CBRA);
-tableList.createTableJoin(TId_newtab.image, TId_orgtab1.image, TId_orgcol1.image, TId_orgtab2.image, TId_orgcol2.image);
+tableList.tableCreateColumnsConcat(TId_tab.image, TId_newcol.image, TId_orgcol1.image, TId_orgcol2.image);
   }
 
-  final public void Create_columns(TableList tableList) throws ParseException {RowObj row;
+  final public void Create_columns_default(TableList tableList) throws ParseException {RowObj row;
     CellObj cell;
     Token TId;
-    jj_consume_token(CR_COL);
+    jj_consume_token(CR_COL_DEF);
     jj_consume_token(OBRA);
     TId = jj_consume_token(ID_LITERAL);
 row = tableList.getDefaultRowObj(TId.image);
@@ -214,7 +252,7 @@ cell.setImage(TId.image);
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x7800,0x7800,0x4000000,0x4000000,0x78000,0x30000,};
+      jj_la1_0 = new int[] {0x1f800,0x1f800,0x10000000,0x10000000,0x1e0000,0xc0000,};
    }
 
   /** Constructor with InputStream. */
@@ -339,7 +377,7 @@ cell.setImage(TId.image);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[27];
+    boolean[] la1tokens = new boolean[29];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -353,7 +391,7 @@ cell.setImage(TId.image);
         }
       }
     }
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 29; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
