@@ -9,18 +9,16 @@ package org.thingml.rcd_scripter;
  *
  * @author steffend
  */
-public class StringCellObj extends CellObj {
+public class PrintIdJobObj extends JobObj {
     
     @Override
     public String getType() {
-        return "String";
+        return "Id";
     }
     
     @Override
-    public void setImage(String image) {
-        int len = image.length();
-        this.image = image.substring(0, len-1).substring(1);
+    public void execute(RowObj row) {
+        CellObj cell = row.getCell(image);
+        System.out.print(cell.getImage());
     }
-    
-    
 }

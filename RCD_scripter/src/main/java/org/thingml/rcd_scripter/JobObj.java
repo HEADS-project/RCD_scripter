@@ -9,18 +9,23 @@ package org.thingml.rcd_scripter;
  *
  * @author steffend
  */
-public class StringCellObj extends CellObj {
+abstract class JobObj {
+ 
+    protected String image;
     
-    @Override
-    public String getType() {
-        return "String";
-    }
-    
-    @Override
     public void setImage(String image) {
-        int len = image.length();
-        this.image = image.substring(0, len-1).substring(1);
+        this.image = image;
     }
     
+    public String getImage() {
+        return image;
+    }
     
+    abstract public String getType();
+    abstract public void execute(RowObj row);
+
+    public void print(){
+        System.out.print(getType() + "(" + image + ")");
+    }
+
 }

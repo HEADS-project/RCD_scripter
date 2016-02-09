@@ -76,6 +76,7 @@
 //##              New_table, Org_table, Org_col, Join_table, Join_col
 //CREATE_TAB_JOIN(MSG_JOIN,  MSG_DEF,   MSGC,    CODER_DEF,  MSGC)
 
+//PRINT_EACH_ROW(MSG_TRACE, "Start print:"+ENUM_NAME+", "+TRACE_NAME+" End")
 
 
 

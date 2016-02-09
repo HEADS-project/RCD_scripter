@@ -11,8 +11,8 @@ package org.thingml.rcd_scripter;
  */
 abstract class CellObj {
  
-    private String id;
-    private String image;
+    protected String id;
+    protected String image;
     
     public void setId(String id) {
         this.id = id;

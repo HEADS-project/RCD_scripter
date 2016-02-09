@@ -49,6 +49,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <CR_COL_CAT :("CREATE_COL_CAT")>
 |
   <CR_ROW :("CREATE_ROW")>
+|
+  <PR_EACH_ROW :("PRINT_EACH_ROW")>
 }
 
 
@@ -94,6 +96,8 @@ TOKEN:  /* Separators */
     <CCBRA:("}")+>
 |
     <COMMA:(",")>
+|
+    <PLUS:("+")>
 }
 
 TableList  init():
@@ -114,6 +118,8 @@ TableList  init():
         Create_columns_default(tableList)
         |
         Create_row(tableList)
+        |
+        Print_each_row(tableList)
     )*
     <EOF>
     {return tableList;}
@@ -302,5 +308,58 @@ CellObj Cell_string():
         {cell.setImage(TId.image);}
     )
     {return cell;}
+}
+
+void Print_each_row(TableList tableList):
+{
+    Token TId_table;
+    JobList jobList = new JobList();
+    JobObj jobObj;
+}
+{
+    <PR_EACH_ROW>
+    <OBRA>
+    TId_table = <ID_LITERAL>
+    (
+        (
+            <COMMA>
+            |
+            <PLUS>
+        )
+        (
+            jobObj = Print_id_element()
+            |
+            jobObj = Print_string_element()        
+        )
+        {jobList.addJobObj(jobObj);}
+    )*
+    <CBRA>
+    {tableList.printEachRow(TId_table.image, jobList);}
+}
+
+JobObj Print_id_element():
+{
+    JobObj element = new PrintIdJobObj();
+    Token   TId;
+}
+{
+    (
+        TId = <ID_LITERAL>
+        {element.setImage(TId.image);}
+    )
+    {return element;}
+}
+
+JobObj Print_string_element():
+{
+    JobObj element = new PrintStringJobObj();
+    Token   TId;
+}
+{
+    (
+        TId = <STRING_LITERAL>
+        {element.setImage(TId.image);}
+    )
+    {return element;}
 }
 

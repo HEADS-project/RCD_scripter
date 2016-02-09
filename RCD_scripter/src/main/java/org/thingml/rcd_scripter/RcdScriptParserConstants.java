@@ -25,29 +25,33 @@ public interface RcdScriptParserConstants {
   /** RegularExpression Id. */
   int CR_ROW = 16;
   /** RegularExpression Id. */
-  int ID_LITERAL = 17;
+  int PR_EACH_ROW = 17;
   /** RegularExpression Id. */
-  int DEC_LITERAL = 18;
+  int ID_LITERAL = 18;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 19;
+  int DEC_LITERAL = 19;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 20;
+  int HEX_LITERAL = 20;
   /** RegularExpression Id. */
-  int LETTER = 21;
+  int STRING_LITERAL = 21;
   /** RegularExpression Id. */
-  int DIGIT = 22;
+  int LETTER = 22;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 23;
+  int DIGIT = 23;
   /** RegularExpression Id. */
-  int OBRA = 24;
+  int HEX_DIGIT = 24;
   /** RegularExpression Id. */
-  int CBRA = 25;
+  int OBRA = 25;
   /** RegularExpression Id. */
-  int OCBRA = 26;
+  int CBRA = 26;
   /** RegularExpression Id. */
-  int CCBRA = 27;
+  int OCBRA = 27;
   /** RegularExpression Id. */
-  int COMMA = 28;
+  int CCBRA = 28;
+  /** RegularExpression Id. */
+  int COMMA = 29;
+  /** RegularExpression Id. */
+  int PLUS = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -73,6 +77,7 @@ public interface RcdScriptParserConstants {
     "\"CREATE_COL_DEF\"",
     "\"CREATE_COL_CAT\"",
     "\"CREATE_ROW\"",
+    "\"PRINT_EACH_ROW\"",
     "<ID_LITERAL>",
     "<DEC_LITERAL>",
     "<HEX_LITERAL>",
@@ -85,6 +90,7 @@ public interface RcdScriptParserConstants {
     "<OCBRA>",
     "<CCBRA>",
     "\",\"",
+    "\"+\"",
   };
 
 }

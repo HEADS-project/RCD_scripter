@@ -122,4 +122,17 @@ class TableObj {
             n1++;
         }
     }
+
+    void printEachRow(JobList printList) {
+        Iterator i1 = rowList.iterator();
+        int n1 = 0;
+        while(i1.hasNext()) {
+            RowObj  row1  = (RowObj)i1.next();
+
+            System.out.print("#" + n1 + "[[");
+            printList.executeList(row1);
+            System.out.println("]]");
+            n1++;
+        }
+    }
 }

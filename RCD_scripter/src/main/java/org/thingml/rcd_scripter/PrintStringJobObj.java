@@ -9,7 +9,7 @@ package org.thingml.rcd_scripter;
  *
  * @author steffend
  */
-public class StringCellObj extends CellObj {
+public class PrintStringJobObj extends JobObj {
     
     @Override
     public String getType() {
@@ -22,5 +22,9 @@ public class StringCellObj extends CellObj {
         this.image = image.substring(0, len-1).substring(1);
     }
     
+    @Override
+    public void execute(RowObj row) {
+        System.out.print(image);
+    }
     
 }

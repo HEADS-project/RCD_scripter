@@ -74,4 +74,11 @@ public class TableList {
         tab.createColumnsConcat(newcol_name, col1_name, col2_name);
     }
 
+    void printEachRow(String tab_name, JobList printList) {
+        TableObj tab = tableList.get(tab_name);
+        
+        tab.printEachRow(printList);
+        
+    }
+
 }

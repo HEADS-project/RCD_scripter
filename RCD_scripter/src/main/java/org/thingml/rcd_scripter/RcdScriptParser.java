@@ -17,7 +17,8 @@
       case CR_TAB_JOIN:
       case CR_COL_DEF:
       case CR_COL_CAT:
-      case CR_ROW:{
+      case CR_ROW:
+      case PR_EACH_ROW:{
         ;
         break;
         }
@@ -48,6 +49,10 @@
         }
       case CR_ROW:{
         Create_row(tableList);
+        break;
+        }
+      case PR_EACH_ROW:{
+        Print_each_row(tableList);
         break;
         }
       default:
@@ -237,6 +242,74 @@ cell.setImage(TId.image);
     throw new Error("Missing return statement in function");
   }
 
+  final public void Print_each_row(TableList tableList) throws ParseException {Token TId_table;
+    JobList jobList = new JobList();
+    JobObj jobObj;
+    jj_consume_token(PR_EACH_ROW);
+    jj_consume_token(OBRA);
+    TId_table = jj_consume_token(ID_LITERAL);
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:
+      case PLUS:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[6] = jj_gen;
+        break label_4;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:{
+        jj_consume_token(COMMA);
+        break;
+        }
+      case PLUS:{
+        jj_consume_token(PLUS);
+        break;
+        }
+      default:
+        jj_la1[7] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ID_LITERAL:{
+        jobObj = Print_id_element();
+        break;
+        }
+      case STRING_LITERAL:{
+        jobObj = Print_string_element();
+        break;
+        }
+      default:
+        jj_la1[8] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+jobList.addJobObj(jobObj);
+    }
+    jj_consume_token(CBRA);
+tableList.printEachRow(TId_table.image, jobList);
+  }
+
+  final public JobObj Print_id_element() throws ParseException {JobObj element = new PrintIdJobObj();
+    Token   TId;
+    TId = jj_consume_token(ID_LITERAL);
+element.setImage(TId.image);
+{if ("" != null) return element;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public JobObj Print_string_element() throws ParseException {JobObj element = new PrintStringJobObj();
+    Token   TId;
+    TId = jj_consume_token(STRING_LITERAL);
+element.setImage(TId.image);
+{if ("" != null) return element;}
+    throw new Error("Missing return statement in function");
+  }
+
   /** Generated Token Manager. */
   public RcdScriptParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -246,13 +319,13 @@ cell.setImage(TId.image);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[6];
+  final private int[] jj_la1 = new int[9];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1f800,0x1f800,0x10000000,0x10000000,0x1e0000,0xc0000,};
+      jj_la1_0 = new int[] {0x3f800,0x3f800,0x20000000,0x20000000,0x3c0000,0x180000,0x60000000,0x60000000,0x240000,};
    }
 
   /** Constructor with InputStream. */
@@ -266,7 +339,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -280,7 +353,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -290,7 +363,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -308,7 +381,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -317,7 +390,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -326,7 +399,7 @@ cell.setImage(TId.image);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -377,12 +450,12 @@ cell.setImage(TId.image);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[29];
+    boolean[] la1tokens = new boolean[31];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 9; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -391,7 +464,7 @@ cell.setImage(TId.image);
         }
       }
     }
-    for (int i = 0; i < 29; i++) {
+    for (int i = 0; i < 31; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

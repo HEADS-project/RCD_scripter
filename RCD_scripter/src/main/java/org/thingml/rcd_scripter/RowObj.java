@@ -24,6 +24,10 @@ class RowObj {
         cellList.put(cell.getId(), cell);
     }    
     
+    public CellObj getCell(String name){
+        return cellList.get(name);
+    }    
+    
     public RowObj makeCopy(){
         RowObj newRow = new RowObj();
         newRow.cellList.putAll(cellList);
@@ -42,10 +46,6 @@ class RowObj {
         }
         System.out.println(">");
         
-    }
-
-    CellObj getCell(String col_name) {
-        return cellList.get(col_name);
     }
 
     void addRow(RowObj row) {
