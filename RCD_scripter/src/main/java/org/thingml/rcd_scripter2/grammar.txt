@@ -1,0 +1,38 @@
+
+Script -> (Def | Statement)*
+
+Def -> DefTable | DefRow | DefCell | DefFile
+DefTable -> <TABLE>   Var <=>  <TABLE> <(> (Var | ) <)> 
+DefRow   -> <ROW>     Var <=> <ROW> <(> CellList | Var <)>
+DefCell  -> <CELL> Var <=> <CELL> <(> Cell <)>
+DefFile  -> <FILE>    Var <=> <OPENFILE> <(> String <,> String <)>
+
+Statement -> ForBlock | IfBlock | VarMethod | Print 
+ForBlock -> <FOR_EACH> <(> ForType Var <IN> Var <)> <{> Statement <}>
+ForType -> <ROW> | <INDEX>
+
+IfBlock -> <IF> <(> IfTest <)> <{> Statement <}>
+IfTest -> TestHas
+TestHas -> Var <.> <HAS> <(> Cell <)> 
+
+Statement -> VarMethod | Print | FPrint
+VarMethod -> Var <.> (M_Add | M_Setdef | Print )
+M_Add -> <ADD> <(> CellList | Var <)>
+M_Setdef -> <SETDEF> <(> CellList | Var <)> 
+
+Print -> <PRINT><(> Pele <,> Pele* <)> 
+Pele -> String | VarVal
+VarVal -> Var <.> <VAL> <(> (Var | Num | Id) <)> 
+
+CellList -> Cell (<,> Cell)*
+Cell -> Tupl | VarCell
+Tupl -> <{>Id, Value <}>
+VarCell -> Var <.> Id
+
+Value -> Num | Var | Id | String
+Num -> Dec | Hex
+Dec -> Digit+
+Hex -> "0" ["x","X"] (HexDigit)+ 
+Var -> <$>Id
+Id -> Letter+
+String -> "...."
