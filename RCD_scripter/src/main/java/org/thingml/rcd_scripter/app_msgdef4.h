@@ -58,7 +58,7 @@
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, GET_CH},            {VALUE, 0x59}, {TRACE, no},         {COMMENT, "Character from console in PC-app "})
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, SENDER_TEST},       {VALUE, 0x5a},                      {COMMENT, "Test output from task_sender_class "})
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, RESET_TEST},        {VALUE, 0x5b},                      {COMMENT, "Generic reset to processes  "})
-//CREATE_ROW(MSG_DEF, {TRACE_NAME, PING0},             {VALUE, 0x5c}, {MSGC, MSGC},        {COMMENT, "ThingMl test message  "})
+//CREATE_ROW(MSG_DEF, {TRACE_NAME, PING0},             {VALUE, 0x5c}, {MSGC, MSGC_NONE},   {COMMENT, "ThingMl test message  "})
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, PING1},             {VALUE, 0x5d},                      {COMMENT, "ThingMl test message  "})
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, PONG1},             {VALUE, 0x5e},                      {COMMENT, "ThingMl test message  "})
 //CREATE_ROW(MSG_DEF, {TRACE_NAME, PONG2},             {VALUE, 0x5f}, {MSGC, MSGC_U16U16}, {COMMENT, "ThingMl test message  "})
