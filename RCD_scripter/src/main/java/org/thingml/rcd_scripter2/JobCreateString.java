@@ -5,16 +5,26 @@
  */
 package org.thingml.rcd_scripter2;
 
-
 /**
  *
  * @author steffend
  */
-public class VarCellInt extends VarCellBase {
+public class JobCreateString extends JobBase {
+    private final String image;
+    
+
+    public JobCreateString(Token t, String image) {
+        super(t);
+        this.image = image;
+    }
     
     @Override
     public String getType() {
-        return "Int";
+        return "JobCreateString";
     }
     
+    @Override
+    public String execute(ExecuteContext ctx) {
+        return image;
+    }
 }

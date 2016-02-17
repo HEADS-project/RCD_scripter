@@ -9,6 +9,19 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-abstract class JobCreateCellBase {
-    abstract public VarCellBase execute(ExecuteContext ctx);
+class JobDummy extends JobBase {
+
+    
+    public JobDummy() {
+        super(new Token());
+    }
+    
+    public String getType() {
+        return "JobDummy";
+    }
+    
+    public Object execute(ExecuteContext ctx) {
+        return this;
+    }
+
 }

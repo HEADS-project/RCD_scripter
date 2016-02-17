@@ -14,23 +14,37 @@ import java.util.Iterator;
  */
 class JobList {
 
-    private ArrayList<JobBase> jobList = null;
+    private JobBase jobStart = null;
+    private JobBase jobLast = null;
 
     public JobList() {
-        jobList = new ArrayList<JobBase>();
     }
 
-    public void addJobObj(JobBase jobObj) {
-        jobList.add(jobObj);
+    public JobBase getJobStart() {
+        return jobStart;
+    }
+    
+    public void addJob(JobBase newJob) {
+        if (newJob != null) {
+            if (jobStart != null) {
+                jobLast.setNext(newJob);
+                jobLast = newJob;
+                
+            } else {
+                jobStart = newJob;
+                jobLast = newJob;
+            }
+            
+        }
     }
     
     public void execute(ExecuteContext ctx) {
-        Iterator i1 = jobList.iterator();
+        JobBase currJob = jobStart;
         int n1 = 0;
-        while(i1.hasNext()) {
-            JobBase  job  = (JobBase)i1.next();
+        while(currJob != null) {
+            currJob.execute(ctx);
             
-            job.execute(ctx);
+            currJob = currJob.getNext();
             n1++;
         }
     }

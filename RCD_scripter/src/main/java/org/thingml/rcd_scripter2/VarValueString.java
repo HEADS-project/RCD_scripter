@@ -9,10 +9,14 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-class JobCreateCellList {
-    public VarRow execute(ExecuteContext ctx) {
-        VarRow varRow = null;
-        
-        return varRow;
+public class VarValueString extends VarValueBase {
+    
+    public VarValueString(String image) {
+        super(image.substring(0, image.length()-1).substring(1));
+    }
+    
+    @Override
+    public String getType() {
+        return "VarValueString";
     }
 }

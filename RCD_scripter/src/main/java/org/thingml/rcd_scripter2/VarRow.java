@@ -14,42 +14,47 @@ import java.util.Iterator;
  */
 class VarRow extends VarBase {
 
-    private HashMap<String, VarCellBase> cellList = null;
+    private HashMap<String, VarCell> cellList = null;
 
     public VarRow() {
-        cellList = new HashMap<String, VarCellBase>();
+        cellList = new HashMap<String, VarCell>();
     }
 
     public VarRow(VarRow copyFromRow) {
-        cellList = new HashMap<String, VarCellBase>();
+        cellList = new HashMap<String, VarCell>();
         cellList.putAll(copyFromRow.cellList);
     }
 
-    public void addCell(VarCellBase cell){
+    public void addCell(VarCell cell){
         cellList.put(cell.getId(), cell);
     }    
     
-    public VarCellBase getCell(String name){
+    public VarCell getCell(String name){
         return cellList.get(name);
     }    
     
     void addRow(VarRow row) {
         cellList.putAll(row.cellList);
     }
-    
-    public void print(){
+
+    @Override
+    public String printString(){
+        String ret = "<"+getType();
         Iterator i = cellList.entrySet().iterator();
-        System.out.print("<");
         while(i.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarCellBase cell = (VarCellBase)pair.getValue();
-            System.out.print("<");
-            cell.print();
-            System.out.print("> ");
+            VarCell cell = (VarCell)pair.getValue();
+            ret += cell.printString();
         }
-        System.out.println(">");
-        
+
+        ret += ">";
+        return ret;
     }
 
+    @Override
+    public String getType() {
+        return "VarRow";
+    }
+    
 
 }

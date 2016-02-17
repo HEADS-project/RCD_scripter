@@ -9,19 +9,12 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-class JobDefRow extends JobBase {
+class JobTableAdd extends JobBase {
 
     private String varName;
-    private String copyFromName = null;
-    private JobBase jobCreateCellList = null;
+    private JobList jobCreateCellList = null;
     
-    public JobDefRow(Token t, String varName, String copyFromName) {
-        super(t);
-        this.varName = varName;
-        this.copyFromName = copyFromName;
-    }
-    
-    public JobDefRow(Token t, String varName, JobBase jobCreateCellList ) {
+    public JobTableAdd(Token t, String varName, JobList jobCreateCellList ) {
         super(t);
         this.varName = varName;
         this.jobCreateCellList = jobCreateCellList;
@@ -29,21 +22,20 @@ class JobDefRow extends JobBase {
     
     @Override
     public String getType() {
-        return "JobDefRow";
+        return "JobTableAdd";
     }
     
     @Override
     public Object execute(ExecuteContext ctx) {
-        VarRow newRow = ctx.copyRowVar(copyFromName);
-        JobBase nextJob = jobCreateCellList;
+        VarRow newRow = ctx.getTableVar(varName).getNewRowObj();
+        JobBase nextJob = jobCreateCellList.getJobStart();
         
         while (nextJob != null) {
             VarCell cell = (VarCell)nextJob.execute(ctx);
             newRow.addCell(cell);
             nextJob = nextJob.next;
         }
-        ctx.addVar(varName, newRow);
-        
+
         return newRow;
     }
 

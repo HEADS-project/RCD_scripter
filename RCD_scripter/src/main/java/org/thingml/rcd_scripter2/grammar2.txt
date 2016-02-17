@@ -2,13 +2,13 @@
 Script -> (Def | Statement)*
 
 Def -> DefTable | DefRow | DefCell | DefFile | DefArray
-DefTable -> <TABLE>   Var <=>  <TABLE> <(> (Var)? <)> 
-DefRow   -> <ROW>     Var <=> <ROW> <(> (CellList | Var)? <)>
-DefCell  -> <CELL> Var <=> <CELL> <(> Cell | Var <)>
-DefFile  -> <FILE>    Var <=> <OPENFILE> <(> ConcatString <,> String <)>
-DefString -> <STRING>    Var <=> <STRING> <(> ConcatString | Var <)>
-DefInt -> <INT>    Var <=> <INT> <(> Num | Var | VarInt <)>
-DefArray -> <ARRAY>   Var <=>  <ARRAY> <(> (Var)? <)> 
+
+DefTable  -> <TABLE>   VarTable <=>  <TABLE> <(> (VarTable)? <)> 
+DefRow    -> <ROW>     VarRow <=> <ROW> <(> (CellList | VarRow)? <)>
+DefCell   -> <CELL> VarCell <=> <CELL> <(> Cell | VarCell <)>
+DefFile   -> <FILE>    VarFile <=> <OPENFILE> <(> ConcatString <,> String <)>
+DefValue  -> <VALUE>    VarValue <=> <VALUE> <(> Value | VarValue <)>
+DefArray  -> <ARRAY>   VarArray <=>  <ARRAY> <(> Value | VarArray <)> 
 
 Statement -> ForBlock | IfBlock | VarMethod | Print | Fprint 
 ForBlock -> <FOR_EACH> <(> ForType Var <IN> Var <)> <{> Statement <}>
@@ -26,23 +26,29 @@ Print -> <PRINT><(> ConcatString <)>
 Fprint -> <FPRINT><(> Var <,> ConcatString <)> 
 
 CellList -> Cell (<,> Cell)*
-Cell -> Tupl | VarCell 
+Cell -> Tupl | VarCell | VarIdCell 
 Tupl -> <{>Id, Value <}>
-VarCell -> Var <.> <CELL><(> Id <)>
+VarIdCell -> Var <.> <CELL><(> Id <)>
 
 Var = Var (Table)
 Var = Var (Row)
 Var = Var (Cell)
 
 
-Value -> Num | Var | Id | ConcatString
-ConcatString -> CSele (<+> CSele)*
-CSele -> String | VarTxt | Var
-VarTxt -> Var <.> <TXT> <(> (Id) <)> 
-VarInt -> Var <.> <INT> <(> (Id) <)> 
+Value -> Num | Id | ConcatString | VarIdValue 
+ConcatString -> String (<+> CSelement)*
+CSelement -> String | VarIdValue | VarValue
+VarIdValue -> Var <.> <VALUE> <(> (Id) <)>    // Return VALUE
 Num -> Dec | Hex
 Dec -> Digit+
 Hex -> "0" ["x","X"] (HexDigit)+ 
+
+VarTable -> Var
+VarRow -> Var
+VarCell -> Var
+VarFile -> Var
+VarValue -> Var
+VarArray -> Var
 Var -> <$>Id
 Id -> Letter+
 String -> "...."

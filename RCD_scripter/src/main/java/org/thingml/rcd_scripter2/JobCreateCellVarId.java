@@ -9,18 +9,24 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-public class JobCreateVarCell extends JobCreateCellBase {
+public class JobCreateCellVarId extends JobBase {
     private String var;
     private String id;
     
 
-    public JobCreateVarCell(String var, String id) {
+    public JobCreateCellVarId(Token t, String var, String id) {
+        super(t);
         this.var = var;
         this.id = id;
     }
     
-    public VarCellBase execute(ExecuteContext ctx) {
-        VarCellBase newCell = ctx.getVarId(var, id);
-        return newCell;
+    @Override
+    public String getType() {
+        return "JobCreateCellVarId";
+    }
+    
+    @Override
+    public VarCell execute(ExecuteContext ctx) {
+        return ctx.getCellVarId(var, id);
     }
 }

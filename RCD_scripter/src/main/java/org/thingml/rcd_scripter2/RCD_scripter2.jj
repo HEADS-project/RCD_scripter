@@ -5,7 +5,7 @@ options
 }
 PARSER_BEGIN (RcdScript2Parser)
    package org.thingml.rcd_scripter2;
-   class RcdScriptParser2 {
+   class RcdScript2Parser {
          JobList makeJobs()throws ParseException, TokenMgrError
    { return(init()) ; }
    }
@@ -60,7 +60,7 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <TABLE :("TABLE")>
 |
-  <VAL :("VAL")>
+  <VALUE :("VALUE")>
 }
 
 
@@ -138,14 +138,8 @@ void Def(JobList jobList):
 {
     (
         DefTable(jobList)
-        |
-        DefRow(jobList)
-        |
-        DefCell(jobList)
-        |
-        DefFile(jobList)
     )
-    {return jobList;}
+    {}
 }
 
 void DefTable(JobList jobList):
@@ -156,45 +150,17 @@ void DefTable(JobList jobList):
 }
 {
     <TABLE>
-    TId_tabName = <VAR>
+    TId_tabName = <VAR_LITERAL>
     <ASSIGN>
     <TABLE>
     <OBRA>
     (
-        TId_tabInitName = <VAR>
+        TId_tabInitName = <VAR_LITERAL>
         {tabInitName = TId_tabInitName.image;}
     )?
     <CBRA>
-    {jobList.add( new JobDefTable(TId_tabName.image, tabInitName));}
+    {jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));}
 }
-
-void DefRow(JobList jobList):
-{
-    Token TId_rowName;
-    Token TId_rowInitName;
-    JobDefRow job = null;
-}
-{
-    <ROW>
-    TId_rowname = <VAR>
-    <ASSIGN>
-    <ROW>
-    <OBRA>
-    (
-        CellList()
-        { job = new JobDefRow(TId_rowName.image, JobMakeTId_rowInitName.image)}
-        |
-        TId_rowInitName = <VAR>
-        { job = new JobDefRow(TId_rowName.image, TId_rowInitName.image)}
-    )
-    <CBRA>
-    {jobList.add(job));}
-}
-
-
-
-
-
 
 
 
@@ -203,127 +169,121 @@ void Statement(JobList jobList):
 }
 {
     (
-        ForBlock(jobList)
-        |
-        IfBlock(jobList)
-        |
         VarMethod(jobList)
-        |
-        Print(jobList)
+    )
+    {}
+}
+
+void VarMethod(JobList jobList):
+{
+    Token TId_tabVarName;
+}
+{
+    (
+        TId_tabVarName = <VAR_LITERAL>
+        <PERIOD>
+        (
+            SetDefault(jobList, TId_tabVarName)
+            |
+            Add(jobList, TId_tabVarName)
+        )
+    )
+    {}
+}
+
+void SetDefault(JobList jobList, Token TId_tabVarName):
+{
+    JobList jobCellList = null;
+}
+{
+    (
+        <SETDEF>
+        <OBRA>
+        jobCellList = CellList()
+        <CBRA>
+    )
+    {jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+}
+
+void Add(JobList jobList, Token TId_tabVarName):
+{
+    JobList jobCellList = null;
+}
+{
+    (
+        <ADD>
+        <OBRA>
+        jobCellList = CellList()
+        <CBRA>
+    )
+    {jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+}
+
+JobList CellList():
+{
+    JobBase cellJob = null;
+    JobList jobList = new JobList();
+
+}
+{
+    (
+        cellJob = CellEntry()
+        {jobList.addJob(cellJob);}
+        (
+            <COMMA>
+            cellJob = CellEntry()        
+            {jobList.addJob(cellJob);}
+        )*
     )
     {return jobList;}
 }
 
 
-void Create_table_if_eq(TableList tableList):
+JobBase CellEntry():
 {
-    Token TId_newtab;
-    Token TId_orgtab;
-    CellObj cell;
+    JobBase cellJob;
 }
 {
-    <CR_TAB_IF_EQ>
-    <OBRA>
-    TId_newtab = <ID_LITERAL>
-    <COMMA>
-    TId_orgtab = <ID_LITERAL>
-    <COMMA>
-    cell = Cell_entry()        
-    <CBRA>
-    {tableList.createTableIfEq(TId_newtab.image, TId_orgtab.image, cell);}
+    cellJob = CellVar_VarId()
+    |
+    cellJob = CellTupl()
+    {
+        return cellJob;
+    }
 }
 
-void Create_table_join(TableList tableList):
-{
-    Token TId_newtab;
-    Token TId_orgtab;
-    Token TId_orgcol;
-    Token TId_jointab;
-    Token TId_joincol;
-}
-{
-    <CR_TAB_JOIN>
-    <OBRA>
-    TId_newtab = <ID_LITERAL>
-    <COMMA>
-    TId_orgtab = <ID_LITERAL>
-    <COMMA>
-    TId_orgcol = <ID_LITERAL>
-    <COMMA>
-    TId_jointab = <ID_LITERAL>
-    <COMMA>
-    TId_joincol = <ID_LITERAL>
-    <CBRA>
-    {tableList.createTableJoin(TId_newtab.image, TId_orgtab.image, TId_orgcol.image, TId_jointab.image, TId_joincol.image);}
-}
 
-void Create_columns_concat(TableList tableList):
+JobBase CellVar_VarId():
 {
-    Token TId_tab;
-    Token TId_newcol;
-    Token TId_orgcol1;
-    Token TId_orgcol2;
-}
-{
-    <CR_COL_CAT>
-    <OBRA>
-    TId_tab = <ID_LITERAL>
-    <COMMA>
-    TId_newcol = <ID_LITERAL>
-    <COMMA>
-    TId_orgcol1 = <ID_LITERAL>
-    <COMMA>
-    TId_orgcol2 = <ID_LITERAL>
-    <CBRA>
-    {tableList.tableCreateColumnsConcat(TId_tab.image, TId_newcol.image, TId_orgcol1.image, TId_orgcol2.image);}
-}
-
-void Create_columns_default(TableList tableList):
-{
-    RowObj row;
-    CellObj cell;
-    Token TId;
+    JobBase cellJob; 
+    Token   TId_var;
+    Token   TId_id = null;
 }
 {
     (
-        <CR_COL_DEF>
-        <OBRA>
-        TId = <ID_LITERAL>
-        {row = tableList.getDefaultRowObj(TId.image);}
-            (
-                <COMMA>
-                cell = Cell_entry()        
-                {row.addCell(cell);}
-            )*
-        <CBRA>
-    )
-}
-
-
-void Create_row(TableList tableList):
-{
-    RowObj row;
-    CellObj cell;
-    Token TId;
-}
-{
-    (
-        <CR_ROW>
-        <OBRA>
-        TId = <ID_LITERAL>
-        {row = tableList.getNewRowObj(TId.image);}
+        TId_var = <VAR_LITERAL>
         (
-            <COMMA>
-            cell = Cell_entry()        
-            {row.addCell(cell);}
-        )*
-        <CBRA>
+            <PERIOD>
+            <CELL>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
     )
+    {
+        if (TId_id != null) {
+            cellJob = new JobCreateCellVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            cellJob = new JobCreateCellVar(TId_var, TId_var.image);
+        }
+        return cellJob;
+    }
 }
 
-CellObj Cell_entry():
+JobBase CellTupl():
 {
-    CellObj cell; 
+    JobBase cellJob; 
+    JobBase valueJob; 
     Token   TId;
 }
 {
@@ -331,22 +291,51 @@ CellObj Cell_entry():
     TId = <ID_LITERAL>
     <COMMA>
     (
-        cell = Cell_int()
+        valueJob = ValueVar_VarId()
         |
-        cell = Cell_id()
+        valueJob = ValueInt()
         |
-        cell = Cell_string()
+        valueJob = ValueId()
+        |
+        valueJob = ValueConcatString()
     )
     <CCBRA>
     {
-        cell.setId(TId.image);
-        return cell;
+        cellJob = new JobCreateCell(TId, TId.image, valueJob);
+        return cellJob;
     }
 }
 
-CellObj Cell_int():
+JobBase ValueVar_VarId():
 {
-    IntCellObj cell = new IntCellObj();
+    JobBase valueJob; 
+    Token   TId_var;
+    Token   TId_id = null;
+}
+{
+    (
+        TId_var = <VAR_LITERAL>
+        (
+            <PERIOD>
+            <VALUE>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
+    )
+    {
+        if (TId_id != null) {
+            valueJob = new JobCreateValueVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            valueJob = new JobCreateValueVar(TId_var, TId_var.image);
+        }
+        return valueJob;
+    }
+}
+
+JobBase ValueInt():
+{
+    JobBase valueJob; 
     Token   TId;
 }
 {
@@ -356,87 +345,110 @@ CellObj Cell_int():
         TId = <HEX_LITERAL>
     )
     {
-        cell.setImage(TId.image);
-        return cell;
+        valueJob = new JobCreateValueInt(TId, TId.image);
+        return valueJob;
     }
 }
 
-CellObj Cell_id():
+JobBase ValueId():
 {
-    IdCellObj cell = new IdCellObj();
+    JobBase valueJob; 
     Token   TId;
 }
 {
     (
         TId = <ID_LITERAL>
-        {cell.setImage(TId.image);}
     )
-    {return cell;}
+    {
+        valueJob = new JobCreateValueId(TId, TId.image);
+        return valueJob;
+    }
 }
 
-CellObj Cell_string():
+JobBase ValueConcatString():
 {
-    StringCellObj cell = new StringCellObj();
-    Token   TId;
-}
-{
-    (
-        TId = <STRING_LITERAL>
-        {cell.setImage(TId.image);}
-    )
-    {return cell;}
-}
-
-void Print_each_row(TableList tableList):
-{
-    Token TId_table;
+    JobBase stringJob = null;
     JobList jobList = new JobList();
-    JobObj jobObj;
-}
-{
-    <PR_EACH_ROW>
-    <OBRA>
-    TId_table = <ID_LITERAL>
-    (
-        (
-            <COMMA>
-            |
-            <PLUS>
-        )
-        (
-            jobObj = Print_id_element()
-            |
-            jobObj = Print_string_element()        
-        )
-        {jobList.addJobObj(jobObj);}
-    )*
-    <CBRA>
-    {tableList.printEachRow(TId_table.image, jobList);}
-}
 
-JobObj Print_id_element():
-{
-    JobObj element = new PrintIdJobObj();
-    Token   TId;
-}
-{
-    (
-        TId = <ID_LITERAL>
-        {element.setImage(TId.image);}
-    )
-    {return element;}
-}
-
-JobObj Print_string_element():
-{
-    JobObj element = new PrintStringJobObj();
+    JobBase valueJob; 
     Token   TId;
 }
 {
     (
         TId = <STRING_LITERAL>
-        {element.setImage(TId.image);}
+        {
+            stringJob = new JobCreateString(TId, TId.image);
+            jobList.addJob(stringJob);
+        }
+
+        {jobList.addJob(stringJob);}
+        (
+            <PLUS>
+            stringJob = CSelement()
+            {jobList.addJob(stringJob);}
+        )*
     )
-    {return element;}
+    {return new JobCreateValueConcatString(TId, jobList);}
 }
+
+
+JobBase CSelement():
+{
+    JobBase stringJob; 
+}
+{
+    (
+        stringJob = CString()
+        |
+        stringJob = CStringVar_VarId()
+    )
+    {return stringJob;}
+}
+
+JobBase CString():
+{
+    JobBase stringJob; 
+    Token   TId;
+}
+{
+    (
+        TId = <STRING_LITERAL>
+    )
+    {
+        stringJob = new JobCreateString(TId, TId.image);
+        return stringJob;
+    }
+}
+
+JobBase CStringVar_VarId():
+{
+    JobBase stringJob; 
+    Token   TId_var;
+    Token   TId_id = null;
+}
+{
+    (
+        TId_var = <VAR_LITERAL>
+        (
+            <PERIOD>
+            <VALUE>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
+    )
+    {
+        if (TId_id != null) {
+            stringJob = new JobCreateStringVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            stringJob = new JobCreateStringVar(TId_var, TId_var.image);
+        }
+        return stringJob;
+    }
+}
+
+
+
+
+
 

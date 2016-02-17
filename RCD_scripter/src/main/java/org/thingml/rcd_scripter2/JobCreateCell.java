@@ -9,38 +9,27 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-public class JobCreateCell extends JobCreateCellBase {
-    private String id;
-    private String image;
-    private CellType cellType;
-    public enum CellType {ID, INT, STRING};
+public class JobCreateCell extends JobBase {
+    private final String id;
+    private final JobBase jobCreateValue;
     
 
-    public JobCreateCell(CellType cellType, String id, String image) {
-        this.cellType = cellType;
+    public JobCreateCell(Token t, String id, JobBase jobCreateValue) {
+        super(t);
         this.id = id;
-        this.image = image;
+        this.jobCreateValue = jobCreateValue;
     }
     
-    public VarCellBase execute(ExecuteContext ctx) {
-        VarCellBase newCell = null;
-        switch(cellType) {
-            case ID:
-                newCell = new VarCellId();
-                newCell.setId(id);
-                newCell.setImage(image);
-                break;
-            case INT:
-                newCell = new VarCellInt();
-                newCell.setId(id);
-                newCell.setImage(image);
-                break;
-            case STRING:
-                newCell = new VarCellString();
-                newCell.setId(id);
-                newCell.setImage(image);
-                break;
-        }
+    @Override
+    public String getType() {
+        return "JobCreateCell";
+    }
+    
+    @Override
+    public VarCell execute(ExecuteContext ctx) {
+        VarValueBase newValue = (VarValueBase)jobCreateValue.execute(ctx);
+        VarCell newCell = new VarCell(id, newValue);
+
         return newCell;
     }
 }

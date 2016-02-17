@@ -9,11 +9,15 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-public class VarCellId extends VarCellBase {
+public class VarValueId extends VarValueBase {
+    
+    public VarValueId(String image) {
+        super(image);
+    }
     
     @Override
     public String getType() {
-        return "Id";
+        return "VarValueId";
     }
     
 }

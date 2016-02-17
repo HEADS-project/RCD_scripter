@@ -43,10 +43,13 @@ class VarTable extends VarBase {
             }
         }
     }
-
     
     public VarRow getDefaultRowObj() {
         return defaultRow;
+    }
+    
+    public void setDefaultRowObj(VarRow row) {
+        defaultRow = row;
     }
     
     public VarRow getNewRowObj() {
@@ -54,18 +57,24 @@ class VarTable extends VarBase {
         rowList.add(newRow);
         return newRow;
     }
-    
-    public void print(){
-        System.out.print("Default row entries : ");
-        defaultRow.print();
+
+    @Override
+    public String printString(){
+        String ret = "<"+getType()+" Default row:"+defaultRow.printString()+"\n";
         Iterator i = rowList.iterator();
         int n = 0;
         while(i.hasNext()) {
-            System.out.print("Row #" + n + " entries :");
-            ((VarRow)(i.next())).print();
+            ret += "Row #" + n + ":"+((VarRow)(i.next())).printString()+"\n";
             n++;
         }
 
+        ret += ">\n";
+        return ret;
+    }
+
+    @Override
+    public String getType() {
+        return "VarTable";
     }
 
 }

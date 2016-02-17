@@ -9,6 +9,8 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-public class VarBase {
+abstract public class VarBase {
+    abstract public String printString();
+    abstract public String getType();
     
 }

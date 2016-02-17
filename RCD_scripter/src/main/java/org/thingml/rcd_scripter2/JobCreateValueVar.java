@@ -9,18 +9,22 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-public class VarCellString extends VarCellBase {
+public class JobCreateValueVar extends JobBase {
+    private String var;
+    
+
+    public JobCreateValueVar(Token t, String var) {
+        super(t);
+        this.var = var;
+    }
     
     @Override
     public String getType() {
-        return "String";
+        return "JobCreateValueVar";
     }
     
     @Override
-    public void setImage(String image) {
-        int len = image.length();
-        this.image = image.substring(0, len-1).substring(1);
+    public VarValueBase execute(ExecuteContext ctx) {
+        return ctx.getValueVar(var);
     }
-    
-    
 }

@@ -9,23 +9,23 @@ package org.thingml.rcd_scripter2;
  *
  * @author steffend
  */
-class JobDefTable extends JobBase {
+class JobDefArray extends JobBase {
 
     private String varName;
     private String copyFromName;
     
-    public JobDefTable(Token t, String varName, String copyFromName) {
+    public JobDefArray(Token t, String varName, String copyFromName) {
         super(t);
         this.varName = varName;
         this.copyFromName = copyFromName;
     }
     
     public String getType() {
-        return "JobDefTable";
+        return "JobDefArray";
     }
     
     public Object execute(ExecuteContext ctx) {
-        VarTable newTable = ctx.copyTableVar(copyFromName);
+        VarArray newTable = ctx.copyArrayVar(copyFromName);
         ctx.addVar(varName, newTable);
         
         return newTable;

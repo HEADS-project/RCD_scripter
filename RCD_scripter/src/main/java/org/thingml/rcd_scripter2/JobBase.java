@@ -11,21 +11,30 @@ package org.thingml.rcd_scripter2;
  */
 abstract class JobBase {
  
-    protected String image;
+    protected Token t;
+    protected JobBase next = null;
     
-    public void setImage(String image) {
-        this.image = image;
+    public JobBase(Token t) {
+        this.t = t;
     }
     
-    public String getImage() {
-        return image;
+    public void setNext(JobBase next) {
+        this.next = next;
+    }
+    
+    public JobBase getNext() {
+        return next;
+    }
+    
+    public Token getToken() {
+        return t;
     }
     
     abstract public String getType();
-    abstract public void execute(ExecuteContext ctx);
+    abstract public Object execute(ExecuteContext ctx);
 
     public void print(){
-        System.out.print(getType() + "(" + image + ")");
+        System.out.println(getType()+"Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);
     }
 
 }
