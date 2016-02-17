@@ -120,7 +120,7 @@ TOKEN:  /* Separators */
 
 JobList  init():
 {
-  JobList jobList = new JobList();
+  JobList jobList = new JobList("Main");
 }
 {
     (
@@ -222,7 +222,7 @@ void Add(JobList jobList, Token TId_tabVarName):
 JobList CellList():
 {
     JobBase cellJob = null;
-    JobList jobList = new JobList();
+    JobList jobList = new JobList("CellList");
 
 }
 {
@@ -368,7 +368,7 @@ JobBase ValueId():
 JobBase ValueConcatString():
 {
     JobBase stringJob = null;
-    JobList jobList = new JobList();
+    JobList jobList = new JobList("ValueConcatString");
 
     JobBase valueJob; 
     Token   TId;
@@ -381,7 +381,6 @@ JobBase ValueConcatString():
             jobList.addJob(stringJob);
         }
 
-        {jobList.addJob(stringJob);}
         (
             <PLUS>
             stringJob = CSelement()

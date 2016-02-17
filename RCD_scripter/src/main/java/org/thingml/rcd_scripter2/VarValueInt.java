@@ -16,7 +16,7 @@ public class VarValueInt extends VarValueBase {
     
     public VarValueInt(String image) {
         super(image);
-        intValue = Integer.getInteger(image);
+        intValue = Integer.decode(image);
     }
     
     @Override
@@ -33,4 +33,10 @@ public class VarValueInt extends VarValueBase {
         return intValue == ((VarValueInt)value_other).intValue;
     }
     
+    @Override
+    public String printString() {
+        String ret = "<"+getType()+":"+getString()+":"+intValue+">";
+        return ret;
+    }
+
 }

@@ -5,7 +5,7 @@
          JobList makeJobs()throws ParseException, TokenMgrError
    { return(init()) ; }
 
-  final public JobList init() throws ParseException {JobList jobList = new JobList();
+  final public JobList init() throws ParseException {JobList jobList = new JobList("Main");
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -107,7 +107,7 @@ jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellLis
   }
 
   final public JobList CellList() throws ParseException {JobBase cellJob = null;
-    JobList jobList = new JobList();
+    JobList jobList = new JobList("CellList");
     cellJob = CellEntry();
 jobList.addJob(cellJob);
     label_2:
@@ -265,14 +265,13 @@ valueJob = new JobCreateValueId(TId, TId.image);
   }
 
   final public JobBase ValueConcatString() throws ParseException {JobBase stringJob = null;
-    JobList jobList = new JobList();
+    JobList jobList = new JobList("ValueConcatString");
 
     JobBase valueJob;
     Token   TId;
     TId = jj_consume_token(STRING_LITERAL);
 stringJob = new JobCreateString(TId, TId.image);
             jobList.addJob(stringJob);
-jobList.addJob(stringJob);
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {

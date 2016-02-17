@@ -1,7 +1,7 @@
 //## Definition of coders with attributes separated by whitespace and terminated by 
 
 //TABLE $CoderDef = TABLE()
-//$CoderDef.SetDef({MSGC, MSGC_NONE}, 
+//$CoderDef.SetDef({MSGC, MSGC_NONE}, {TEST, TESTID}, 
 //                 {PARAMS, ""},
 //                 {COMP_SIGN, ""}, 
 //                 {DECOMP_SIGN, ""}) 

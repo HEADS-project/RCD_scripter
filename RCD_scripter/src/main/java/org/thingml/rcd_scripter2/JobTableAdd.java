@@ -28,12 +28,12 @@ class JobTableAdd extends JobBase {
     @Override
     public Object execute(ExecuteContext ctx) {
         VarRow newRow = ctx.getTableVar(varName).getNewRowObj();
-        JobBase nextJob = jobCreateCellList.getJobStart();
+        JobBase nextJob = jobCreateCellList.getJobStart(ctx);
         
         while (nextJob != null) {
             VarCell cell = (VarCell)nextJob.execute(ctx);
             newRow.addCell(cell);
-            nextJob = nextJob.next;
+            nextJob = nextJob.getNext(ctx);
         }
 
         return newRow;

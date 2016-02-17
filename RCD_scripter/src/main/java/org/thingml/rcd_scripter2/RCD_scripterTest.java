@@ -19,6 +19,8 @@ public class RCD_scripterTest {
         JobList jobList;
         ExecuteContext jobContext = new ExecuteContext();
         
+        jobContext.setTrace(true);
+        
         //String inputfile = "C:\\javasrc\\javacc_examples\\src\\main\\java\\no\\sintef\\instrumentation\\javacc_example\\sql_script.txt";
         //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter/app_msgdef4_red.h";
         String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-1.h";
@@ -27,7 +29,8 @@ public class RCD_scripterTest {
             parser = new RcdScript2Parser(new FileReader(inputfile)); 
 
             jobList = parser.makeJobs(); 
-            jobList.execute(jobContext);
+            jobList.executeList(jobContext);
+            System.out.println(jobContext.printStringAll());
         } 
         catch (Exception ex) 
         {

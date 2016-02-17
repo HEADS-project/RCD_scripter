@@ -27,11 +27,11 @@ public class JobCreateValueConcatString extends JobBase {
     public VarValueBase execute(ExecuteContext ctx) {
         String concatString = "";
         
-        JobBase nextJob = jobCreateStringList.getJobStart();
+        JobBase nextJob = jobCreateStringList.getJobStart(ctx);
         
         while (nextJob != null) {
             concatString += (String)nextJob.execute(ctx);
-            nextJob = nextJob.next;
+            nextJob = nextJob.getNext(ctx);
         }
         
         VarValueBase ret = new VarValueString(concatString);

@@ -6,6 +6,7 @@
 package org.thingml.rcd_scripter2;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *
@@ -13,6 +14,15 @@ import java.util.HashMap;
  */
 public class ExecuteContext {
     private HashMap<String, VarBase> varList = new HashMap<String, VarBase>();
+    private boolean trace = false;
+    
+    public boolean getTrace() {
+        return trace;
+    }
+    
+    public void setTrace(boolean trace) {
+        this.trace = trace;
+    }
     
     public void addVar(String name, VarBase var) {
         VarBase oldVar = varList.get(name);
@@ -158,4 +168,16 @@ public class ExecuteContext {
         return ret;
     }
     
+    public String printStringAll() {
+        String ret = "<ExecuteContext() \n";
+        Iterator i = varList.entrySet().iterator();
+        while(i.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)i.next();
+            VarBase base = (VarBase)pair.getValue();
+            ret += "<Content of id("+pair.getKey()+")\n";
+            ret += base.printString();
+            ret += ">\n";
+        }
+        return ret;
+    }
 }

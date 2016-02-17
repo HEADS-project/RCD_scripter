@@ -12,7 +12,9 @@ package org.thingml.rcd_scripter2;
 abstract class JobBase {
  
     protected Token t;
-    protected JobBase next = null;
+    private JobBase next = null;
+    private int sequence  = 0;
+    private String listName = "";
     
     public JobBase(Token t) {
         this.t = t;
@@ -22,7 +24,16 @@ abstract class JobBase {
         this.next = next;
     }
     
-    public JobBase getNext() {
+    public void setTraceInfo(String listName, int seq) {
+        this.listName = listName;
+        this.sequence = seq;
+    }
+    
+    public JobBase getNext(ExecuteContext ctx) {
+        if (ctx.getTrace()) {
+            if (next != null) next.print();
+        }
+        
         return next;
     }
     
@@ -34,7 +45,7 @@ abstract class JobBase {
     abstract public Object execute(ExecuteContext ctx);
 
     public void print(){
-        System.out.println(getType()+"Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);
+        System.out.println("List("+listName+":"+sequence+") "+getType()+" Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);
     }
 
 }

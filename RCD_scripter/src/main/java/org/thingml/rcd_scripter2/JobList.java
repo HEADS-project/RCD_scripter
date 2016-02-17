@@ -16,16 +16,23 @@ class JobList {
 
     private JobBase jobStart = null;
     private JobBase jobLast = null;
+    private int sequence = 0;
+    private String listName = "";
 
-    public JobList() {
+    public JobList(String listName) {
+        this.listName = listName;
     }
 
-    public JobBase getJobStart() {
+    public JobBase getJobStart(ExecuteContext ctx) {
+        if (ctx.getTrace()) {
+            if (jobStart != null) jobStart.print();
+        }
         return jobStart;
     }
     
     public void addJob(JobBase newJob) {
         if (newJob != null) {
+            newJob.setTraceInfo(listName, sequence++);
             if (jobStart != null) {
                 jobLast.setNext(newJob);
                 jobLast = newJob;
@@ -34,17 +41,16 @@ class JobList {
                 jobStart = newJob;
                 jobLast = newJob;
             }
-            
         }
     }
     
-    public void execute(ExecuteContext ctx) {
-        JobBase currJob = jobStart;
+    public void executeList(ExecuteContext ctx) {
+        JobBase currJob = getJobStart(ctx);
         int n1 = 0;
         while(currJob != null) {
             currJob.execute(ctx);
             
-            currJob = currJob.getNext();
+            currJob = currJob.getNext(ctx);
             n1++;
         }
     }
