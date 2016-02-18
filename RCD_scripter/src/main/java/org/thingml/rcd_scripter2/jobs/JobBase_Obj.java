@@ -12,18 +12,18 @@ import org.thingml.rcd_scripter2.parser.Token;
  *
  * @author steffend
  */
-abstract public class JobBase {
+abstract public class JobBase_Obj {
  
     protected Token t;
-    private JobBase next = null;
+    private JobBase_Obj next = null;
     private int sequence  = 0;
     private String listName = "";
     
-    public JobBase(Token t) {
+    public JobBase_Obj(Token t) {
         this.t = t;
     }
     
-    public void setNext(JobBase next) {
+    public void setNext(JobBase_Obj next) {
         this.next = next;
     }
     
@@ -32,7 +32,7 @@ abstract public class JobBase {
         this.sequence = seq;
     }
     
-    public JobBase getNext(ExecuteContext ctx) {
+    public JobBase_Obj getNext(ExecuteContext ctx) {
         if (ctx.getTrace()) {
             if (next != null) next.print();
         }
@@ -44,11 +44,11 @@ abstract public class JobBase {
         return t;
     }
     
-    abstract public String getType();
+    abstract public String getTypeString();
     abstract public Object execute(ExecuteContext ctx);
 
     public void print(){
-        System.out.println("List("+listName+":"+sequence+") "+getType()+" Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);
+        System.out.println("List("+listName+":"+sequence+") "+getTypeString()+" Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);
     }
 
 }

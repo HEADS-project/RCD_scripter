@@ -12,11 +12,16 @@ package org.thingml.rcd_scripter2.variables;
 public class VarValueString extends VarValueBase {
     
     public VarValueString(String image) {
-        super(image.substring(0, image.length()-1).substring(1));
+        super(image);
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "VarValueString";
+    }
+
+    @Override
+    public VarType getType() {
+        return VarType.STRING;
     }
 }

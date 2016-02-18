@@ -14,25 +14,25 @@ import org.thingml.rcd_scripter2.variables.VarValueBase;
  *
  * @author steffend
  */
-public class JobCreateCell extends JobBase {
+public class JobCreateCell extends JobBase_VarCell {
     private final String id;
-    private final JobBase jobCreateValue;
+    private final JobList_VarValueBase jobListCreateValue;
     
 
-    public JobCreateCell(Token t, String id, JobBase jobCreateValue) {
+    public JobCreateCell(Token t, String id, JobList_VarValueBase jobListCreateValue) {
         super(t);
         this.id = id;
-        this.jobCreateValue = jobCreateValue;
+        this.jobListCreateValue = jobListCreateValue;
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateCell";
     }
     
     @Override
     public VarCell execute(ExecuteContext ctx) {
-        VarValueBase newValue = (VarValueBase)jobCreateValue.execute(ctx);
+        VarValueBase newValue = jobListCreateValue.executeOneValue(ctx);
         VarCell newCell = new VarCell(id, newValue);
 
         return newCell;

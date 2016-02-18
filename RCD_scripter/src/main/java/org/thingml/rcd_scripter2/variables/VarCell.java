@@ -32,13 +32,13 @@ public class VarCell extends VarBase {
     }
     
     @Override
-    public String getType() {
-        return "Cell:"+value.getType();
+    public String getTypeString() {
+        return "Cell:"+value.getTypeString();
     }
 
     @Override
     public String printString(){
-        String ret = "<"+getType()+" Id:"+id+" "+value.printString()+">\n";
+        String ret = "<"+getTypeString()+" Id:"+id+" "+value.printString()+">\n";
         return ret;
     }
 

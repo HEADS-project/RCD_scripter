@@ -6,9 +6,9 @@ Def -> DefTable | DefRow | DefCell | DefFile | DefArray
 DefTable  -> <TABLE>   VarTable <=>  <TABLE> <(> (VarTable)? <)> 
 DefRow    -> <ROW>     VarRow <=> <ROW> <(> (CellList | VarRow)? <)>
 DefCell   -> <CELL> VarCell <=> <CELL> <(> Cell | VarCell <)>
-DefFile   -> <FILE>    VarFile <=> <OPENFILE> <(> ConcatString <,> String <)>
-DefValue  -> <VALUE>    VarValue <=> <VALUE> <(> Value | VarValue <)>
-DefArray  -> <ARRAY>   VarArray <=>  <ARRAY> <(> Value | VarArray <)> 
+DefFile   -> <FILE>    VarFile <=> <OPENFILE> <(> String <,> String <)>
+DefValue  -> <VALUE>    VarValue <=> <VALUE> <(> Expr | VarValue <)>
+DefArray  -> <ARRAY>   VarArray <=>  <ARRAY> <(> Expr <)> 
 
 Statement -> ForBlock | IfBlock | VarMethod | Print | Fprint 
 ForBlock -> <FOR_EACH> <(> ForType Var <IN> Var <)> <{> Statement <}>
@@ -27,17 +27,27 @@ Fprint -> <FPRINT><(> Var <,> ConcatString <)>
 
 CellList -> Cell (<,> Cell)*
 Cell -> Tupl | VarCell | VarIdCell 
-Tupl -> <{>Id, Value <}>
+Tupl -> <{>Id, Expr <}>
 VarIdCell -> Var <.> <CELL><(> Id <)>
 
 Var = Var (Table)
 Var = Var (Row)
 Var = Var (Cell)
 
+Var <=> Expr
+Var <=> Var
 
-Value -> Num | Id | ConcatString | VarIdValue 
-ConcatString -> String (<+> CSelement)*
-CSelement -> String | VarIdValue | VarValue
+Expr -> NumExpr | TxtExpr
+
+NumExpr -> Term ( AddOp Term )*
+AddOp -> ["+","-"]
+Term -> Factor (MulOp Factor)*
+MulOp -> ["*","/"]
+Factor -> Num |  VarValue | VarIdValue 
+
+TxtExpr -> (String | Id)  (<+> TxtElement)*
+TxtElement -> String | Num | Id | VarValue | VarIdValue
+
 VarIdValue -> Var <.> <VALUE> <(> (Id) <)>    // Return VALUE
 Num -> Dec | Hex
 Dec -> Digit+

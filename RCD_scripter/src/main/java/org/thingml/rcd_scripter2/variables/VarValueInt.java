@@ -20,8 +20,13 @@ public class VarValueInt extends VarValueBase {
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "VarValueInt";
+    }
+    
+    @Override
+    public VarType getType() {
+        return VarType.INT;
     }
     
     public int getInt() {
@@ -35,7 +40,7 @@ public class VarValueInt extends VarValueBase {
     
     @Override
     public String printString() {
-        String ret = "<"+getType()+":"+getString()+":"+intValue+">";
+        String ret = "<"+getTypeString()+":"+getString()+":"+intValue+">";
         return ret;
     }
 

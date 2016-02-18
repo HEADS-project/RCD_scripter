@@ -11,6 +11,8 @@ package org.thingml.rcd_scripter2.variables;
  */
 abstract public class VarValueBase extends VarBase {
  
+    public enum Operation { STRPLUS, PLUS, MINUS, MUL, DIV };
+    public enum VarType { INT, STRING };
     protected String image;
     
     public VarValueBase(String image) {
@@ -21,16 +23,17 @@ abstract public class VarValueBase extends VarBase {
         return image;
     }
     
-    abstract public String getType();
+    abstract public String getTypeString();
+    abstract public VarType getType();
 
     public String printString() {
-        String ret = "<"+getType()+":"+getString()+">";
+        String ret = "<"+getTypeString()+":"+getString()+">";
         return ret;
     }
 
     public boolean compareTypeAndVal(VarValueBase value_other) {
         boolean eq = false;
-        if( getType().contentEquals(value_other.getType()) == true) {
+        if( getType() == value_other.getType() ) {
             if(compareVal(value_other) == true) {
                 eq = true; 
             }
@@ -40,5 +43,116 @@ abstract public class VarValueBase extends VarBase {
     
     protected boolean compareVal(VarValueBase value_other) {
         return image.contentEquals(value_other.image);
+    }
+
+    public static VarValueBase doOperation(VarValueBase valueLeft, Operation op, VarValueBase valueRight) {
+        
+        VarValueBase newValue = null;
+
+        switch (op) {
+            case STRPLUS:
+                newValue = doOperationStringPlus(valueLeft, valueRight);
+                break;
+            case PLUS:
+                newValue = doOperationPlus(valueLeft, valueRight);
+                break;
+            case MINUS:
+                newValue = doOperationMinus(valueLeft, valueRight);
+                break;
+            case MUL:
+                newValue = doOperationMul(valueLeft, valueRight);
+                break;
+            case DIV:
+                newValue = doOperationDiv(valueLeft, valueRight);
+                break;
+        }
+        return newValue;
+    }
+
+    private static VarValueBase doOperationStringPlus(VarValueBase valueLeft, VarValueBase valueRight) {
+
+        //Any + Any -> String
+        String result = valueLeft.getString() + valueRight.getString();
+        VarValueBase newValue = new VarValueString(result);
+        
+        return newValue;
+    }
+
+    private static VarValueBase doOperationPlus(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                //INT + INT -> INT
+                int result = ((VarValueInt) valueLeft).getInt() + ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueInt(""+result);
+            }
+            if (valueLeft.getType() == VarType.STRING) {
+                //String + String -> String
+                String result = valueLeft.getString() + valueRight.getString();
+                newValue = new VarValueString(result);
+            }
+        } else {
+            //Any + Any -> String
+            String result = valueLeft.getString() + valueRight.getString();
+            newValue = new VarValueString(result);
+        }
+        
+        if (newValue == null) {
+            newValue = new VarValueString("ERROR in operation PLUSS");
+        }
+        return newValue;
+    }
+
+    private static VarValueBase doOperationMinus(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                int result = ((VarValueInt) valueLeft).getInt() - ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueInt(""+result);
+            }
+        }
+        
+        if (newValue == null) {
+            newValue = new VarValueString("ERROR in operation MINUS");
+        }
+        return newValue;
+    }
+
+    private static VarValueBase doOperationMul(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                int result = ((VarValueInt) valueLeft).getInt() * ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueInt(""+result);
+            }
+        }
+        
+        if (newValue == null) {
+            newValue = new VarValueString("ERROR in operation MUL");
+        }
+        return newValue;
+    }
+
+    private static VarValueBase doOperationDiv(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                int result = ((VarValueInt) valueLeft).getInt() / ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueInt(""+result);
+            }
+        }
+        
+        if (newValue == null) {
+            newValue = new VarValueString("ERROR in operation Div");
+        }
+        return newValue;
     }
 }

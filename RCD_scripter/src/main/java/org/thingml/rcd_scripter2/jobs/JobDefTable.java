@@ -13,7 +13,7 @@ import org.thingml.rcd_scripter2.variables.VarTable;
  *
  * @author steffend
  */
-public class JobDefTable extends JobBase {
+public class JobDefTable extends JobBase_Obj {
 
     private String varName;
     private String copyFromName;
@@ -24,7 +24,7 @@ public class JobDefTable extends JobBase {
         this.copyFromName = copyFromName;
     }
     
-    public String getType() {
+    public String getTypeString() {
         return "JobDefTable";
     }
     

@@ -61,7 +61,7 @@ public class VarArray extends VarBase {
     
     @Override
     public String printString(){
-        String ret = "<"+getType()+" Default value:"+getDefaultValue().printString()+"\n";
+        String ret = "<"+getTypeString()+" Default value:"+getDefaultValue().printString()+"\n";
         for (int i = 0; i < maxIndex; i++) {
             ret += "Row #" + i + ":"+getValue(i).printString();
         }
@@ -70,7 +70,7 @@ public class VarArray extends VarBase {
     }
 
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "VarArray";
     }
 

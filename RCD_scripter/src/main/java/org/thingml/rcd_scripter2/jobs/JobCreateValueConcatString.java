@@ -14,30 +14,23 @@ import org.thingml.rcd_scripter2.variables.VarValueString;
  *
  * @author steffend
  */
-public class JobCreateValueConcatString extends JobBase {
-    private final JobList jobCreateStringList;
+public class JobCreateValueConcatString extends JobBase_VarValueBase {
+    private final JobList_String jobCreateStringList;
     
 
-    public JobCreateValueConcatString(Token t, JobList jobCreateStringList) {
+    public JobCreateValueConcatString(Token t, JobList_String jobCreateStringList) {
         super(t);
         this.jobCreateStringList = jobCreateStringList;
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateValueConcatString";
     }
     
     @Override
     public VarValueBase execute(ExecuteContext ctx) {
-        String concatString = "";
-        
-        JobBase nextJob = jobCreateStringList.getJobStart(ctx);
-        
-        while (nextJob != null) {
-            concatString += (String)nextJob.execute(ctx);
-            nextJob = nextJob.getNext(ctx);
-        }
+        String concatString = jobCreateStringList.executeToString(ctx);
         
         VarValueBase ret = new VarValueString(concatString);
         return ret;

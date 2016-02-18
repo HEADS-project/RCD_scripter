@@ -11,6 +11,6 @@ package org.thingml.rcd_scripter2.variables;
  */
 abstract public class VarBase {
     abstract public String printString();
-    abstract public String getType();
+    abstract public String getTypeString();
     
 }

@@ -13,22 +13,13 @@ import org.thingml.rcd_scripter2.variables.VarValueBase;
  *
  * @author steffend
  */
-public class JobCreateValueVar extends JobBase_VarValueBase {
-    private String var;
-    
-
-    public JobCreateValueVar(Token t, String var) {
+abstract public class JobBase_VarValueBase extends JobBase_Obj {
+ 
+    public JobBase_VarValueBase(Token t) {
         super(t);
-        this.var = var;
     }
     
-    @Override
-    public String getTypeString() {
-        return "JobCreateValueVar";
-    }
-    
-    @Override
-    public VarValueBase execute(ExecuteContext ctx) {
-        return ctx.getValueVar(var);
-    }
+    abstract public String getTypeString();
+    abstract public VarValueBase execute(ExecuteContext ctx);
+
 }

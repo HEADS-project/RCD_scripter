@@ -39,7 +39,7 @@ public class VarRow extends VarBase {
 
     @Override
     public String printString(){
-        String ret = "<"+getType();
+        String ret = "<"+getTypeString();
         Iterator i = cellList.entrySet().iterator();
         while(i.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry)i.next();
@@ -52,7 +52,7 @@ public class VarRow extends VarBase {
     }
 
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "VarRow";
     }
     

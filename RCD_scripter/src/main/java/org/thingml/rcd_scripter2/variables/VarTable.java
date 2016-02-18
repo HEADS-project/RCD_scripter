@@ -60,7 +60,7 @@ public class VarTable extends VarBase {
 
     @Override
     public String printString(){
-        String ret = "<"+getType()+" Default row:"+defaultRow.printString()+"\n";
+        String ret = "<"+getTypeString()+" Default row:"+defaultRow.printString()+"\n";
         Iterator i = rowList.iterator();
         int n = 0;
         while(i.hasNext()) {
@@ -73,7 +73,7 @@ public class VarTable extends VarBase {
     }
 
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "VarTable";
     }
 

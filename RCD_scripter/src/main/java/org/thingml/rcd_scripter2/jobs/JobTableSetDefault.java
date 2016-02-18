@@ -14,32 +14,26 @@ import org.thingml.rcd_scripter2.variables.VarRow;
  *
  * @author steffend
  */
-public class JobTableSetDefault extends JobBase {
+public class JobTableSetDefault extends JobBase_Obj {
 
     private String varName;
-    private JobList jobCreateCellList = null;
+    private JobList_VarCell jobCreateCellList = null;
     
-    public JobTableSetDefault(Token t, String varName, JobList jobCreateCellList ) {
+    public JobTableSetDefault(Token t, String varName, JobList_VarCell jobCreateCellList ) {
         super(t);
         this.varName = varName;
         this.jobCreateCellList = jobCreateCellList;
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobTableSetDefault";
     }
     
     @Override
     public Object execute(ExecuteContext ctx) {
         VarRow newRow = new VarRow();
-        JobBase nextJob = jobCreateCellList.getJobStart(ctx);
-        
-        while (nextJob != null) {
-            VarCell cell = (VarCell)nextJob.execute(ctx);
-            newRow.addCell(cell);
-            nextJob = nextJob.getNext(ctx);
-        }
+        jobCreateCellList.executeCellsToRow(ctx, newRow);
         
         ctx.getTableVar(varName).setDefaultRowObj(newRow);
         

@@ -3,13 +3,14 @@
    package org.thingml.rcd_scripter2.parser;
    import org.thingml.rcd_scripter2.jobs.*;
    public class RcdScript2Parser implements RcdScript2ParserConstants {
-         public JobList makeJobs()throws ParseException, TokenMgrError
+         public JobList_Obj makeJobs()throws ParseException, TokenMgrError
    { return(init()) ; }
 
-  final public JobList init() throws ParseException {JobList jobList = new JobList("Main");
+  final public JobList_Obj init() throws ParseException {JobList_Obj jobList = new JobList_Obj("Main");
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ARRAY:
       case TABLE:
       case VAR_LITERAL:{
         ;
@@ -20,6 +21,7 @@
         break label_1;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ARRAY:
       case TABLE:{
         Def(jobList);
         break;
@@ -39,12 +41,25 @@
     throw new Error("Missing return statement in function");
   }
 
-  final public void Def(JobList jobList) throws ParseException {
-    DefTable(jobList);
+  final public void Def(JobList_Obj jobList) throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case TABLE:{
+      DefTable(jobList);
+      break;
+      }
+    case ARRAY:{
+      DefArray(jobList);
+      break;
+      }
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
 
   }
 
-  final public void DefTable(JobList jobList) throws ParseException {Token TId_tabName;
+  final public void DefTable(JobList_Obj jobList) throws ParseException {Token TId_tabName;
     Token TId_tabInitName;
     String tabInitName = null;
     jj_consume_token(TABLE);
@@ -59,19 +74,31 @@ tabInitName = TId_tabInitName.image;
       break;
       }
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[3] = jj_gen;
       ;
     }
     jj_consume_token(CBRA);
 jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));
   }
 
-  final public void Statement(JobList jobList) throws ParseException {
+  final public void DefArray(JobList_Obj jobList) throws ParseException {Token TId_arrName;
+    JobList_VarValueBase valueJobList;
+    jj_consume_token(ARRAY);
+    TId_arrName = jj_consume_token(VAR_LITERAL);
+    jj_consume_token(ASSIGN);
+    jj_consume_token(ARRAY);
+    jj_consume_token(OBRA);
+    valueJobList = Expr();
+    jj_consume_token(CBRA);
+jobList.addJob( new JobDefArray(TId_arrName, TId_arrName.image, valueJobList));
+  }
+
+  final public void Statement(JobList_Obj jobList) throws ParseException {
     VarMethod(jobList);
 
   }
 
-  final public void VarMethod(JobList jobList) throws ParseException {Token TId_tabVarName;
+  final public void VarMethod(JobList_Obj jobList) throws ParseException {Token TId_tabVarName;
     TId_tabVarName = jj_consume_token(VAR_LITERAL);
     jj_consume_token(PERIOD);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -84,14 +111,14 @@ jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));
       break;
       }
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
 
   }
 
-  final public void SetDefault(JobList jobList, Token TId_tabVarName) throws ParseException {JobList jobCellList = null;
+  final public void SetDefault(JobList_Obj jobList, Token TId_tabVarName) throws ParseException {JobList_VarCell jobCellList = null;
     jj_consume_token(SETDEF);
     jj_consume_token(OBRA);
     jobCellList = CellList();
@@ -99,7 +126,7 @@ jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));
 jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, jobCellList));
   }
 
-  final public void Add(JobList jobList, Token TId_tabVarName) throws ParseException {JobList jobCellList = null;
+  final public void Add(JobList_Obj jobList, Token TId_tabVarName) throws ParseException {JobList_VarCell jobCellList = null;
     jj_consume_token(ADD);
     jj_consume_token(OBRA);
     jobCellList = CellList();
@@ -107,8 +134,8 @@ jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, job
 jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellList));
   }
 
-  final public JobList CellList() throws ParseException {JobBase cellJob = null;
-    JobList jobList = new JobList("CellList");
+  final public JobList_VarCell CellList() throws ParseException {JobBase_VarCell cellJob = null;
+    JobList_VarCell jobList = new JobList_VarCell("CellList");
     cellJob = CellEntry();
 jobList.addJob(cellJob);
     label_2:
@@ -119,7 +146,7 @@ jobList.addJob(cellJob);
         break;
         }
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         break label_2;
       }
       jj_consume_token(COMMA);
@@ -130,7 +157,7 @@ jobList.addJob(cellJob);
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase CellEntry() throws ParseException {JobBase cellJob;
+  final public JobBase_VarCell CellEntry() throws ParseException {JobBase_VarCell cellJob;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VAR_LITERAL:{
       cellJob = CellVar_VarId();
@@ -142,14 +169,14 @@ jobList.addJob(cellJob);
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase CellVar_VarId() throws ParseException {JobBase cellJob;
+  final public JobBase_VarCell CellVar_VarId() throws ParseException {JobBase_VarCell cellJob;
     Token   TId_var;
     Token   TId_id = null;
     TId_var = jj_consume_token(VAR_LITERAL);
@@ -163,7 +190,7 @@ jobList.addJob(cellJob);
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[7] = jj_gen;
       ;
     }
 if (TId_id != null) {
@@ -175,42 +202,143 @@ if (TId_id != null) {
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase CellTupl() throws ParseException {JobBase cellJob;
-    JobBase valueJob;
+  final public JobBase_VarCell CellTupl() throws ParseException {JobBase_VarCell cellJob;
+    JobList_VarValueBase valueJobList;
     Token   TId;
     jj_consume_token(OCBRA);
     TId = jj_consume_token(ID_LITERAL);
     jj_consume_token(COMMA);
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case VAR_LITERAL:{
-      valueJob = ValueVar_VarId();
-      break;
-      }
-    case DEC_LITERAL:
-    case HEX_LITERAL:{
-      valueJob = ValueInt();
-      break;
-      }
-    case ID_LITERAL:{
-      valueJob = ValueId();
-      break;
-      }
-    case STRING_LITERAL:{
-      valueJob = ValueConcatString();
-      break;
-      }
-    default:
-      jj_la1[7] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
+    valueJobList = Expr();
     jj_consume_token(CCBRA);
-cellJob = new JobCreateCell(TId, TId.image, valueJob);
+cellJob = new JobCreateCell(TId, TId.image, valueJobList);
         {if ("" != null) return cellJob;}
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase ValueVar_VarId() throws ParseException {JobBase valueJob;
+  final public JobList_VarValueBase Expr() throws ParseException {JobList_VarValueBase retValueJobList;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case VAR_LITERAL:
+    case DEC_LITERAL:
+    case HEX_LITERAL:{
+      retValueJobList = NumExpr();
+      break;
+      }
+    case ID_LITERAL:
+    case STRING_LITERAL:{
+      retValueJobList = TxtExpr();
+      break;
+      }
+    default:
+      jj_la1[8] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+{if ("" != null) return retValueJobList;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public JobList_VarValueBase NumExpr() throws ParseException {JobList_VarValueBase valueJobList1;
+    JobList_VarValueBase valueJobList2;
+    JobList_VarValueBase retValueJobList;
+    Token   TId;
+    retValueJobList = Term();
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PLUS:
+      case MINUS:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[9] = jj_gen;
+        break label_3;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PLUS:{
+        TId = jj_consume_token(PLUS);
+        break;
+        }
+      case MINUS:{
+        TId = jj_consume_token(MINUS);
+        break;
+        }
+      default:
+        jj_la1[10] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      valueJobList2 = Term();
+valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("PLUS/MINUS");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, TId.image, valueJobList1, valueJobList2));
+    }
+{if ("" != null) return retValueJobList;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public JobList_VarValueBase Term() throws ParseException {JobList_VarValueBase valueJobList1;
+    JobList_VarValueBase valueJobList2;
+    JobList_VarValueBase retValueJobList;
+    Token   TId;
+    retValueJobList = Factor();
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case MUL:
+      case DIV:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[11] = jj_gen;
+        break label_4;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case MUL:{
+        TId = jj_consume_token(MUL);
+        break;
+        }
+      case DIV:{
+        TId = jj_consume_token(DIV);
+        break;
+        }
+      default:
+        jj_la1[12] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      valueJobList2 = Factor();
+valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("MULDIV");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, TId.image, valueJobList1, valueJobList2));
+    }
+{if ("" != null) return retValueJobList;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public JobList_VarValueBase Factor() throws ParseException {JobList_VarValueBase retValueJobList;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case VAR_LITERAL:{
+      retValueJobList = ValueVar_VarId();
+      break;
+      }
+    case DEC_LITERAL:
+    case HEX_LITERAL:{
+      retValueJobList = ValueInt();
+      break;
+      }
+    default:
+      jj_la1[13] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+{if ("" != null) return retValueJobList;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public JobList_VarValueBase ValueVar_VarId() throws ParseException {JobList_VarValueBase retValueJobList;
+    JobBase_VarValueBase valueJob;
     Token   TId_var;
     Token   TId_id = null;
     TId_var = jj_consume_token(VAR_LITERAL);
@@ -224,7 +352,7 @@ cellJob = new JobCreateCell(TId, TId.image, valueJob);
       break;
       }
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[14] = jj_gen;
       ;
     }
 if (TId_id != null) {
@@ -232,11 +360,14 @@ if (TId_id != null) {
         } else {
             valueJob = new JobCreateValueVar(TId_var, TId_var.image);
         }
-        {if ("" != null) return valueJob;}
+        retValueJobList = new JobList_VarValueBase("ValueVar_VarId");
+        retValueJobList.addJob( valueJob );
+        {if ("" != null) return retValueJobList;}
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase ValueInt() throws ParseException {JobBase valueJob;
+  final public JobList_VarValueBase ValueInt() throws ParseException {JobList_VarValueBase retValueJobList;
+    JobBase_VarValueBase valueJob;
     Token   TId;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DEC_LITERAL:{
@@ -248,32 +379,36 @@ if (TId_id != null) {
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
 valueJob = new JobCreateValueInt(TId, TId.image);
-        {if ("" != null) return valueJob;}
+        retValueJobList = new JobList_VarValueBase("ValueInt");
+        retValueJobList.addJob( valueJob );
+        {if ("" != null) return retValueJobList;}
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase ValueId() throws ParseException {JobBase valueJob;
+  final public JobList_VarValueBase TxtExpr() throws ParseException {JobList_VarValueBase valueJobList1;
+    JobList_VarValueBase valueJobList2;
+    JobList_VarValueBase retValueJobList;
     Token   TId;
-    TId = jj_consume_token(ID_LITERAL);
-valueJob = new JobCreateValueId(TId, TId.image);
-        {if ("" != null) return valueJob;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public JobBase ValueConcatString() throws ParseException {JobBase stringJob = null;
-    JobList jobList = new JobList("ValueConcatString");
-
-    JobBase valueJob;
-    Token   TId;
-    TId = jj_consume_token(STRING_LITERAL);
-stringJob = new JobCreateString(TId, TId.image);
-            jobList.addJob(stringJob);
-    label_3:
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case STRING_LITERAL:{
+      retValueJobList = ValueString();
+      break;
+      }
+    case ID_LITERAL:{
+      retValueJobList = ValueId();
+      break;
+      }
+    default:
+      jj_la1[16] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case PLUS:{
@@ -281,67 +416,60 @@ stringJob = new JobCreateString(TId, TId.image);
         break;
         }
       default:
-        jj_la1[10] = jj_gen;
-        break label_3;
+        jj_la1[17] = jj_gen;
+        break label_5;
       }
-      jj_consume_token(PLUS);
-      stringJob = CSelement();
-jobList.addJob(stringJob);
+      TId = jj_consume_token(PLUS);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case STRING_LITERAL:{
+        valueJobList2 = ValueString();
+        break;
+        }
+      case ID_LITERAL:{
+        valueJobList2 = ValueId();
+        break;
+        }
+      case DEC_LITERAL:
+      case HEX_LITERAL:{
+        valueJobList2 = ValueInt();
+        break;
+        }
+      case VAR_LITERAL:{
+        valueJobList2 = ValueVar_VarId();
+        break;
+        }
+      default:
+        jj_la1[18] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("SPLUS");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, "S+", valueJobList1, valueJobList2));
     }
-{if ("" != null) return new JobCreateValueConcatString(TId, jobList);}
+{if ("" != null) return retValueJobList;}
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase CSelement() throws ParseException {JobBase stringJob;
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case STRING_LITERAL:{
-      stringJob = CString();
-      break;
-      }
-    case VAR_LITERAL:{
-      stringJob = CStringVar_VarId();
-      break;
-      }
-    default:
-      jj_la1[11] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-{if ("" != null) return stringJob;}
+  final public JobList_VarValueBase ValueId() throws ParseException {JobList_VarValueBase retValueJobList;
+    JobBase_VarValueBase valueJob;
+    Token   TId;
+    TId = jj_consume_token(ID_LITERAL);
+valueJob = new JobCreateValueString(TId, TId.image, false);
+        retValueJobList = new JobList_VarValueBase("ValueId");
+        retValueJobList.addJob( valueJob );
+        {if ("" != null) return retValueJobList;}
     throw new Error("Missing return statement in function");
   }
 
-  final public JobBase CString() throws ParseException {JobBase stringJob;
+  final public JobList_VarValueBase ValueString() throws ParseException {JobList_VarValueBase retValueJobList;
+    JobBase_VarValueBase valueJob;
     Token   TId;
     TId = jj_consume_token(STRING_LITERAL);
-stringJob = new JobCreateString(TId, TId.image);
-        {if ("" != null) return stringJob;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public JobBase CStringVar_VarId() throws ParseException {JobBase stringJob;
-    Token   TId_var;
-    Token   TId_id = null;
-    TId_var = jj_consume_token(VAR_LITERAL);
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case PERIOD:{
-      jj_consume_token(PERIOD);
-      jj_consume_token(VALUE);
-      jj_consume_token(OBRA);
-      TId_id = jj_consume_token(ID_LITERAL);
-      jj_consume_token(CBRA);
-      break;
-      }
-    default:
-      jj_la1[12] = jj_gen;
-      ;
-    }
-if (TId_id != null) {
-            stringJob = new JobCreateStringVarId(TId_var, TId_var.image, TId_id.image);
-        } else {
-            stringJob = new JobCreateStringVar(TId_var, TId_var.image);
-        }
-        {if ("" != null) return stringJob;}
+valueJob = new JobCreateValueString(TId, TId.image, true);
+        retValueJobList = new JobList_VarValueBase("ValueString");
+        retValueJobList.addJob( valueJob );
+        {if ("" != null) return retValueJobList;}
     throw new Error("Missing return statement in function");
   }
 
@@ -354,7 +482,7 @@ if (TId_id != null) {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[13];
+  final private int[] jj_la1 = new int[19];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -362,10 +490,10 @@ if (TId_id != null) {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1400000,0x1400000,0x1000000,0x200800,0x0,0x1000000,0x0,0x1f000000,0x0,0xc000000,0x0,0x11000000,0x0,};
+      jj_la1_0 = new int[] {0x2801000,0x2801000,0x801000,0x2000000,0x400800,0x0,0x2000000,0x0,0x3e000000,0x0,0x0,0x0,0x0,0x1a000000,0x0,0x18000000,0x24000000,0x0,0x3e000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x10,0x4,0x20,0x0,0x20,0x0,0x100,0x0,0x20,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x20,0x8,0x40,0x0,0x600,0x600,0x1800,0x1800,0x0,0x40,0x0,0x0,0x200,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -379,7 +507,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -393,7 +521,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -403,7 +531,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -421,7 +549,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -430,7 +558,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -439,7 +567,7 @@ if (TId_id != null) {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 13; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -490,12 +618,12 @@ if (TId_id != null) {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[41];
+    boolean[] la1tokens = new boolean[45];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 19; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -507,7 +635,7 @@ if (TId_id != null) {
         }
       }
     }
-    for (int i = 0; i < 41; i++) {
+    for (int i = 0; i < 45; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

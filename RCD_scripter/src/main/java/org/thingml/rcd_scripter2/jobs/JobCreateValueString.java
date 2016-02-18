@@ -8,29 +8,33 @@ package org.thingml.rcd_scripter2.jobs;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
-import org.thingml.rcd_scripter2.variables.VarValueId;
+import org.thingml.rcd_scripter2.variables.VarValueString;
 
 /**
  *
  * @author steffend
  */
-public class JobCreateValueId extends JobBase {
+public class JobCreateValueString extends JobBase_VarValueBase {
     private final String image;
     
 
-    public JobCreateValueId(Token t, String image) {
+    public JobCreateValueString(Token t, String image, boolean removeQuotes) {
         super(t);
-        this.image = image;
+        if (removeQuotes == true) {
+            this.image = image.substring(0, image.length()-1).substring(1);
+        } else {
+            this.image = image;
+        }
     }
     
     @Override
-    public String getType() {
-        return "JobCreateValueId";
+    public String getTypeString() {
+        return "JobCreateValueString";
     }
     
     @Override
     public VarValueBase execute(ExecuteContext ctx) {
-        VarValueBase ret = new VarValueId(image);
+        VarValueBase ret = new VarValueString(image);
         return ret;
     }
 }

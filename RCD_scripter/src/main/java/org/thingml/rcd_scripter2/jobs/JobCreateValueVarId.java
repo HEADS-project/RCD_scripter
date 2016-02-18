@@ -13,7 +13,7 @@ import org.thingml.rcd_scripter2.variables.VarValueBase;
  *
  * @author steffend
  */
-public class JobCreateValueVarId extends JobBase {
+public class JobCreateValueVarId extends JobBase_VarValueBase {
     private String var;
     private String id;
     
@@ -25,7 +25,7 @@ public class JobCreateValueVarId extends JobBase {
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateValueVarId";
     }
     

@@ -13,7 +13,7 @@ import org.thingml.rcd_scripter2.variables.VarCell;
  *
  * @author steffend
  */
-public class JobCreateCellVar extends JobBase {
+public class JobCreateCellVar extends JobBase_VarCell {
     private String var;
     
 
@@ -23,7 +23,7 @@ public class JobCreateCellVar extends JobBase {
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateCellVar";
     }
     

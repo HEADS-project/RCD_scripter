@@ -12,7 +12,7 @@ import org.thingml.rcd_scripter2.parser.Token;
  *
  * @author steffend
  */
-public class JobCreateString extends JobBase {
+public class JobCreateString extends JobBase_String {
     private final String image;
     
 
@@ -22,7 +22,7 @@ public class JobCreateString extends JobBase {
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateString";
     }
     

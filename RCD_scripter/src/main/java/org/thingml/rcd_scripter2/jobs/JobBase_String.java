@@ -13,24 +13,13 @@ import org.thingml.rcd_scripter2.variables.VarCell;
  *
  * @author steffend
  */
-public class JobCreateCellVarId extends JobBase_VarCell {
-    private String var;
-    private String id;
-    
-
-    public JobCreateCellVarId(Token t, String var, String id) {
+abstract public class JobBase_String extends JobBase_Obj {
+ 
+    public JobBase_String(Token t) {
         super(t);
-        this.var = var;
-        this.id = id;
     }
     
-    @Override
-    public String getTypeString() {
-        return "JobCreateCellVarId";
-    }
-    
-    @Override
-    public VarCell execute(ExecuteContext ctx) {
-        return ctx.getCellVarId(var, id);
-    }
+    abstract public String getTypeString();
+    abstract public String execute(ExecuteContext ctx);
+
 }

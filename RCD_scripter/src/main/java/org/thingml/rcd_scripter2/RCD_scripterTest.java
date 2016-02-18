@@ -5,7 +5,7 @@
  */
 package org.thingml.rcd_scripter2;
 
-import org.thingml.rcd_scripter2.jobs.JobList;
+import org.thingml.rcd_scripter2.jobs.JobList_Obj;
 import org.thingml.rcd_scripter2.parser.RcdScript2Parser;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class RCD_scripterTest { 
     public static void main(String[] args) { 
         RcdScript2Parser parser;
-        JobList jobList;
+        JobList_Obj jobList;
         ExecuteContext jobContext = new ExecuteContext();
         
         jobContext.setTrace(true);

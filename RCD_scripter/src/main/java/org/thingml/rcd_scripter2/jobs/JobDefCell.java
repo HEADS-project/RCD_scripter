@@ -13,11 +13,11 @@ import org.thingml.rcd_scripter2.variables.VarCell;
  *
  * @author steffend
  */
-class JobDefCell extends JobBase {
+class JobDefCell extends JobBase_Obj {
 
     private String varName;
     private String copyFromName = null;
-    private JobBase jobCreateCell = null;
+    private JobBase_Obj jobCreateCell = null;
     
     public JobDefCell(Token t, String varName, String copyFromName) {
         super(t);
@@ -25,14 +25,14 @@ class JobDefCell extends JobBase {
         this.copyFromName = copyFromName;
     }
     
-    public JobDefCell(Token t, String varName, JobBase jobCreateCell ) {
+    public JobDefCell(Token t, String varName, JobBase_Obj jobCreateCell ) {
         super(t);
         this.varName = varName;
         this.jobCreateCell = jobCreateCell;
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobDefCell";
     }
     

@@ -7,12 +7,12 @@ PARSER_BEGIN (RcdScript2Parser)
    package org.thingml.rcd_scripter2.parser;
    import org.thingml.rcd_scripter2.jobs.*;
    public class RcdScript2Parser {
-         public JobList makeJobs()throws ParseException, TokenMgrError
+         public JobList_Obj makeJobs()throws ParseException, TokenMgrError
    { return(init()) ; }
    }
 PARSER_END (RcdScript2Parser)
 
-SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "| "/"}
+SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "| "//"}
 
 /* COMMENTS */
 
@@ -38,6 +38,8 @@ MORE :
 TOKEN [IGNORE_CASE]: /* Commands */
 {
   <ADD :("ADD")>
+|
+  <ARRAY :("ARRAY")>
 |
   <CELL :("CELL")>
 |
@@ -117,11 +119,17 @@ TOKEN:  /* Separators */
     <DOLLAR:("$")>
 |
     <PLUS:("+")>
+|
+    <MINUS:("-")>
+|
+    <MUL:("*")>
+|
+    <DIV:("/")>
 }
 
-JobList  init():
+JobList_Obj  init():
 {
-  JobList jobList = new JobList("Main");
+  JobList_Obj jobList = new JobList_Obj("Main");
 }
 {
     (
@@ -133,17 +141,19 @@ JobList  init():
     {return jobList;}
 }
 
-void Def(JobList jobList):
+void Def(JobList_Obj jobList):
 {
 }
 {
     (
         DefTable(jobList)
+        |
+        DefArray(jobList)
     )
     {}
 }
 
-void DefTable(JobList jobList):
+void DefTable(JobList_Obj jobList):
 {
     Token TId_tabName;
     Token TId_tabInitName;
@@ -164,8 +174,27 @@ void DefTable(JobList jobList):
 }
 
 
+void DefArray(JobList_Obj jobList):
+{
+    Token TId_arrName;
+    JobList_VarValueBase valueJobList;
+}
+{
+    <ARRAY>
+    TId_arrName = <VAR_LITERAL>
+    <ASSIGN>
+    <ARRAY>
+    <OBRA>
+    (
+        valueJobList = Expr()
+    )
+    <CBRA>
+    {jobList.addJob( new JobDefArray(TId_arrName, TId_arrName.image, valueJobList));}
+}
 
-void Statement(JobList jobList):
+
+
+void Statement(JobList_Obj jobList):
 {
 }
 {
@@ -175,7 +204,7 @@ void Statement(JobList jobList):
     {}
 }
 
-void VarMethod(JobList jobList):
+void VarMethod(JobList_Obj jobList):
 {
     Token TId_tabVarName;
 }
@@ -192,9 +221,9 @@ void VarMethod(JobList jobList):
     {}
 }
 
-void SetDefault(JobList jobList, Token TId_tabVarName):
+void SetDefault(JobList_Obj jobList, Token TId_tabVarName):
 {
-    JobList jobCellList = null;
+    JobList_VarCell jobCellList = null;
 }
 {
     (
@@ -206,9 +235,9 @@ void SetDefault(JobList jobList, Token TId_tabVarName):
     {jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, jobCellList));}
 }
 
-void Add(JobList jobList, Token TId_tabVarName):
+void Add(JobList_Obj jobList, Token TId_tabVarName):
 {
-    JobList jobCellList = null;
+    JobList_VarCell jobCellList = null;
 }
 {
     (
@@ -220,10 +249,10 @@ void Add(JobList jobList, Token TId_tabVarName):
     {jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellList));}
 }
 
-JobList CellList():
+JobList_VarCell CellList():
 {
-    JobBase cellJob = null;
-    JobList jobList = new JobList("CellList");
+    JobBase_VarCell cellJob = null;
+    JobList_VarCell jobList = new JobList_VarCell("CellList");
 
 }
 {
@@ -240,9 +269,9 @@ JobList CellList():
 }
 
 
-JobBase CellEntry():
+JobBase_VarCell CellEntry():
 {
-    JobBase cellJob;
+    JobBase_VarCell cellJob;
 }
 {
     cellJob = CellVar_VarId()
@@ -254,9 +283,9 @@ JobBase CellEntry():
 }
 
 
-JobBase CellVar_VarId():
+JobBase_VarCell CellVar_VarId():
 {
-    JobBase cellJob; 
+    JobBase_VarCell cellJob; 
     Token   TId_var;
     Token   TId_id = null;
 }
@@ -281,35 +310,117 @@ JobBase CellVar_VarId():
     }
 }
 
-JobBase CellTupl():
+JobBase_VarCell CellTupl():
 {
-    JobBase cellJob; 
-    JobBase valueJob; 
+    JobBase_VarCell cellJob; 
+    JobList_VarValueBase valueJobList;
     Token   TId;
 }
 {
     <OCBRA>
     TId = <ID_LITERAL>
     <COMMA>
-    (
-        valueJob = ValueVar_VarId()
-        |
-        valueJob = ValueInt()
-        |
-        valueJob = ValueId()
-        |
-        valueJob = ValueConcatString()
-    )
+    valueJobList = Expr()
     <CCBRA>
     {
-        cellJob = new JobCreateCell(TId, TId.image, valueJob);
+        
+        cellJob = new JobCreateCell(TId, TId.image, valueJobList);
         return cellJob;
     }
 }
 
-JobBase ValueVar_VarId():
+JobList_VarValueBase Expr():
 {
-    JobBase valueJob; 
+    JobList_VarValueBase retValueJobList; 
+}
+{
+    (
+        retValueJobList = NumExpr()
+        |
+        retValueJobList = TxtExpr()
+    )
+    {
+        return retValueJobList;
+    }
+}
+
+JobList_VarValueBase NumExpr():
+{
+    JobList_VarValueBase valueJobList1; 
+    JobList_VarValueBase valueJobList2; 
+    JobList_VarValueBase retValueJobList; 
+    Token   TId;
+}
+{
+    (
+        retValueJobList = Term()
+        (
+            (
+                TId = <PLUS>
+                |
+                TId = <MINUS>
+            )
+            valueJobList2 = Term()
+            { 
+                valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("PLUS/MINUS");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, TId.image, valueJobList1, valueJobList2));
+            }
+        )*
+    )
+    {
+        return retValueJobList;
+    }
+}
+
+JobList_VarValueBase Term():
+{
+    JobList_VarValueBase valueJobList1; 
+    JobList_VarValueBase valueJobList2; 
+    JobList_VarValueBase retValueJobList; 
+    Token   TId;
+}
+{
+    (
+        retValueJobList = Factor()
+        (
+            (
+                TId = <MUL>
+                |
+                TId = <DIV>
+            )
+            valueJobList2 = Factor()
+            { 
+                valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("MULDIV");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, TId.image, valueJobList1, valueJobList2));
+            }
+        )*
+    )
+    {
+        return retValueJobList;
+    }
+}
+
+JobList_VarValueBase Factor():
+{
+    JobList_VarValueBase retValueJobList; 
+}
+{
+    (
+        retValueJobList = ValueVar_VarId()
+        |
+        retValueJobList = ValueInt()
+    )
+    {
+        return retValueJobList;
+    }
+}
+
+JobList_VarValueBase ValueVar_VarId():
+{
+    JobList_VarValueBase retValueJobList; 
+    JobBase_VarValueBase valueJob; 
     Token   TId_var;
     Token   TId_id = null;
 }
@@ -330,13 +441,16 @@ JobBase ValueVar_VarId():
         } else {
             valueJob = new JobCreateValueVar(TId_var, TId_var.image);
         }
-        return valueJob;
+        retValueJobList = new JobList_VarValueBase("ValueVar_VarId");
+        retValueJobList.addJob( valueJob );
+        return retValueJobList;
     }
 }
 
-JobBase ValueInt():
+JobList_VarValueBase ValueInt():
 {
-    JobBase valueJob; 
+    JobList_VarValueBase retValueJobList; 
+    JobBase_VarValueBase valueJob; 
     Token   TId;
 }
 {
@@ -347,13 +461,53 @@ JobBase ValueInt():
     )
     {
         valueJob = new JobCreateValueInt(TId, TId.image);
-        return valueJob;
+        retValueJobList = new JobList_VarValueBase("ValueInt");
+        retValueJobList.addJob( valueJob );
+        return retValueJobList;
     }
 }
 
-JobBase ValueId():
+JobList_VarValueBase TxtExpr():
 {
-    JobBase valueJob; 
+    JobList_VarValueBase valueJobList1; 
+    JobList_VarValueBase valueJobList2; 
+    JobList_VarValueBase retValueJobList; 
+    Token   TId;
+}
+{
+    (
+        (
+            retValueJobList = ValueString()
+            |
+            retValueJobList = ValueId()
+        )
+        (
+            TId = <PLUS>
+            (
+                valueJobList2 = ValueString()
+                |
+                valueJobList2 = ValueId()
+                |
+                valueJobList2 = ValueInt()
+                |
+                valueJobList2 = ValueVar_VarId()
+            )
+            { 
+                valueJobList1 = retValueJobList;
+                retValueJobList = new JobList_VarValueBase("SPLUS");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, "S+", valueJobList1, valueJobList2));
+            }
+        )*
+    )
+    {
+        return retValueJobList;
+    }
+}
+
+JobList_VarValueBase ValueId():
+{
+    JobList_VarValueBase retValueJobList; 
+    JobBase_VarValueBase valueJob; 
     Token   TId;
 }
 {
@@ -361,53 +515,17 @@ JobBase ValueId():
         TId = <ID_LITERAL>
     )
     {
-        valueJob = new JobCreateValueId(TId, TId.image);
-        return valueJob;
+        valueJob = new JobCreateValueString(TId, TId.image, false);
+        retValueJobList = new JobList_VarValueBase("ValueId");
+        retValueJobList.addJob( valueJob );
+        return retValueJobList;
     }
 }
 
-JobBase ValueConcatString():
+JobList_VarValueBase ValueString():
 {
-    JobBase stringJob = null;
-    JobList jobList = new JobList("ValueConcatString");
-
-    JobBase valueJob; 
-    Token   TId;
-}
-{
-    (
-        TId = <STRING_LITERAL>
-        {
-            stringJob = new JobCreateString(TId, TId.image);
-            jobList.addJob(stringJob);
-        }
-
-        (
-            <PLUS>
-            stringJob = CSelement()
-            {jobList.addJob(stringJob);}
-        )*
-    )
-    {return new JobCreateValueConcatString(TId, jobList);}
-}
-
-
-JobBase CSelement():
-{
-    JobBase stringJob; 
-}
-{
-    (
-        stringJob = CString()
-        |
-        stringJob = CStringVar_VarId()
-    )
-    {return stringJob;}
-}
-
-JobBase CString():
-{
-    JobBase stringJob; 
+    JobList_VarValueBase retValueJobList; 
+    JobBase_VarValueBase valueJob; 
     Token   TId;
 }
 {
@@ -415,40 +533,9 @@ JobBase CString():
         TId = <STRING_LITERAL>
     )
     {
-        stringJob = new JobCreateString(TId, TId.image);
-        return stringJob;
+        valueJob = new JobCreateValueString(TId, TId.image, true);
+        retValueJobList = new JobList_VarValueBase("ValueString");
+        retValueJobList.addJob( valueJob );
+        return retValueJobList;
     }
 }
-
-JobBase CStringVar_VarId():
-{
-    JobBase stringJob; 
-    Token   TId_var;
-    Token   TId_id = null;
-}
-{
-    (
-        TId_var = <VAR_LITERAL>
-        (
-            <PERIOD>
-            <VALUE>
-            <OBRA>
-            TId_id = <ID_LITERAL>
-            <CBRA>
-        )?
-    )
-    {
-        if (TId_id != null) {
-            stringJob = new JobCreateStringVarId(TId_var, TId_var.image, TId_id.image);
-        } else {
-            stringJob = new JobCreateStringVar(TId_var, TId_var.image);
-        }
-        return stringJob;
-    }
-}
-
-
-
-
-
-

@@ -14,7 +14,7 @@ import org.thingml.rcd_scripter2.variables.VarValueInt;
  *
  * @author steffend
  */
-public class JobCreateValueInt extends JobBase {
+public class JobCreateValueInt extends JobBase_VarValueBase {
     private final String image;
     
 
@@ -24,7 +24,7 @@ public class JobCreateValueInt extends JobBase {
     }
     
     @Override
-    public String getType() {
+    public String getTypeString() {
         return "JobCreateValueInt";
     }
     
