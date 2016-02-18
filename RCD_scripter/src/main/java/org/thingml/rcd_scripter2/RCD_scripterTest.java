@@ -5,6 +5,8 @@
  */
 package org.thingml.rcd_scripter2;
 
+import org.thingml.rcd_scripter2.jobs.JobList;
+import org.thingml.rcd_scripter2.parser.RcdScript2Parser;
 import java.io.FileReader;
 import java.util.ArrayList;
 

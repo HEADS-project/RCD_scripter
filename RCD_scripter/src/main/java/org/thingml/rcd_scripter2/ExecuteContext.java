@@ -7,6 +7,13 @@ package org.thingml.rcd_scripter2;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.thingml.rcd_scripter2.variables.VarArray;
+import org.thingml.rcd_scripter2.variables.VarBase;
+import org.thingml.rcd_scripter2.variables.VarCell;
+import org.thingml.rcd_scripter2.variables.VarRow;
+import org.thingml.rcd_scripter2.variables.VarTable;
+import org.thingml.rcd_scripter2.variables.VarValueBase;
+import org.thingml.rcd_scripter2.variables.VarValueString;
 
 /**
  *

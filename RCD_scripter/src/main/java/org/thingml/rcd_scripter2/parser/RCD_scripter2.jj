@@ -1,0 +1,454 @@
+/* RCD scriptgrammar.jj version 2 using task joblist*/
+options
+{
+    STATIC = false ;
+}
+PARSER_BEGIN (RcdScript2Parser)
+   package org.thingml.rcd_scripter2.parser;
+   import org.thingml.rcd_scripter2.jobs.*;
+   public class RcdScript2Parser {
+         public JobList makeJobs()throws ParseException, TokenMgrError
+   { return(init()) ; }
+   }
+PARSER_END (RcdScript2Parser)
+
+SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "| "/"}
+
+/* COMMENTS */
+
+MORE :
+{
+  "##" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
+
+TOKEN [IGNORE_CASE]: /* Commands */
+{
+  <ADD :("ADD")>
+|
+  <CELL :("CELL")>
+|
+  <FILE :("FILE")>
+|
+  <FOR_EACH :("FOR_EACH")>
+|
+  <HAS :("HAS")>
+|
+  <IF :("IF")>
+|
+  <IN :("IN")>
+|
+  <INT :("INT")>
+|
+  <PRINT :("PRINT")>
+|
+  <ROW :("ROW")>
+|
+  <SETDEF :("SETDEF")>
+|
+  <TABLE :("TABLE")>
+|
+  <VALUE :("VALUE")>
+}
+
+
+TOKEN :  /* Literals */
+{
+  < VAR_LITERAL: <DOLLAR><ID_LITERAL> >
+|
+  < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < DEC_LITERAL: <DIGIT> (<DIGIT>)* >
+|
+  < HEX_LITERAL: "0" ["x","X"] (<HEX_DIGIT>)+ >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+TOKEN :  /* Character groups */
+{
+  < LETTER: [ "a"-"z", "A"-"Z", "_" ] >
+|
+  < DIGIT: [ "0"-"9"] >
+|
+  < HEX_DIGIT: [ "0"-"9", "a"-"f", "A"-"F"] >
+}
+
+TOKEN:  /* Separators */
+{
+    <OBRA:("(")+>
+|
+    <CBRA:(")")+>
+|
+    <OCBRA:("{")+>
+|
+    <CCBRA:("}")+>
+|
+    <COMMA:(",")>
+|
+    <PERIOD:(".")>
+|
+    <ASSIGN:("=")>
+|
+    <DOLLAR:("$")>
+|
+    <PLUS:("+")>
+}
+
+JobList  init():
+{
+  JobList jobList = new JobList("Main");
+}
+{
+    (
+        Def(jobList)
+        |
+        Statement(jobList)
+    )*
+    <EOF>
+    {return jobList;}
+}
+
+void Def(JobList jobList):
+{
+}
+{
+    (
+        DefTable(jobList)
+    )
+    {}
+}
+
+void DefTable(JobList jobList):
+{
+    Token TId_tabName;
+    Token TId_tabInitName;
+    String tabInitName = null;
+}
+{
+    <TABLE>
+    TId_tabName = <VAR_LITERAL>
+    <ASSIGN>
+    <TABLE>
+    <OBRA>
+    (
+        TId_tabInitName = <VAR_LITERAL>
+        {tabInitName = TId_tabInitName.image;}
+    )?
+    <CBRA>
+    {jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));}
+}
+
+
+
+void Statement(JobList jobList):
+{
+}
+{
+    (
+        VarMethod(jobList)
+    )
+    {}
+}
+
+void VarMethod(JobList jobList):
+{
+    Token TId_tabVarName;
+}
+{
+    (
+        TId_tabVarName = <VAR_LITERAL>
+        <PERIOD>
+        (
+            SetDefault(jobList, TId_tabVarName)
+            |
+            Add(jobList, TId_tabVarName)
+        )
+    )
+    {}
+}
+
+void SetDefault(JobList jobList, Token TId_tabVarName):
+{
+    JobList jobCellList = null;
+}
+{
+    (
+        <SETDEF>
+        <OBRA>
+        jobCellList = CellList()
+        <CBRA>
+    )
+    {jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+}
+
+void Add(JobList jobList, Token TId_tabVarName):
+{
+    JobList jobCellList = null;
+}
+{
+    (
+        <ADD>
+        <OBRA>
+        jobCellList = CellList()
+        <CBRA>
+    )
+    {jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+}
+
+JobList CellList():
+{
+    JobBase cellJob = null;
+    JobList jobList = new JobList("CellList");
+
+}
+{
+    (
+        cellJob = CellEntry()
+        {jobList.addJob(cellJob);}
+        (
+            <COMMA>
+            cellJob = CellEntry()        
+            {jobList.addJob(cellJob);}
+        )*
+    )
+    {return jobList;}
+}
+
+
+JobBase CellEntry():
+{
+    JobBase cellJob;
+}
+{
+    cellJob = CellVar_VarId()
+    |
+    cellJob = CellTupl()
+    {
+        return cellJob;
+    }
+}
+
+
+JobBase CellVar_VarId():
+{
+    JobBase cellJob; 
+    Token   TId_var;
+    Token   TId_id = null;
+}
+{
+    (
+        TId_var = <VAR_LITERAL>
+        (
+            <PERIOD>
+            <CELL>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
+    )
+    {
+        if (TId_id != null) {
+            cellJob = new JobCreateCellVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            cellJob = new JobCreateCellVar(TId_var, TId_var.image);
+        }
+        return cellJob;
+    }
+}
+
+JobBase CellTupl():
+{
+    JobBase cellJob; 
+    JobBase valueJob; 
+    Token   TId;
+}
+{
+    <OCBRA>
+    TId = <ID_LITERAL>
+    <COMMA>
+    (
+        valueJob = ValueVar_VarId()
+        |
+        valueJob = ValueInt()
+        |
+        valueJob = ValueId()
+        |
+        valueJob = ValueConcatString()
+    )
+    <CCBRA>
+    {
+        cellJob = new JobCreateCell(TId, TId.image, valueJob);
+        return cellJob;
+    }
+}
+
+JobBase ValueVar_VarId():
+{
+    JobBase valueJob; 
+    Token   TId_var;
+    Token   TId_id = null;
+}
+{
+    (
+        TId_var = <VAR_LITERAL>
+        (
+            <PERIOD>
+            <VALUE>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
+    )
+    {
+        if (TId_id != null) {
+            valueJob = new JobCreateValueVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            valueJob = new JobCreateValueVar(TId_var, TId_var.image);
+        }
+        return valueJob;
+    }
+}
+
+JobBase ValueInt():
+{
+    JobBase valueJob; 
+    Token   TId;
+}
+{
+    (
+        TId = <DEC_LITERAL>
+        |
+        TId = <HEX_LITERAL>
+    )
+    {
+        valueJob = new JobCreateValueInt(TId, TId.image);
+        return valueJob;
+    }
+}
+
+JobBase ValueId():
+{
+    JobBase valueJob; 
+    Token   TId;
+}
+{
+    (
+        TId = <ID_LITERAL>
+    )
+    {
+        valueJob = new JobCreateValueId(TId, TId.image);
+        return valueJob;
+    }
+}
+
+JobBase ValueConcatString():
+{
+    JobBase stringJob = null;
+    JobList jobList = new JobList("ValueConcatString");
+
+    JobBase valueJob; 
+    Token   TId;
+}
+{
+    (
+        TId = <STRING_LITERAL>
+        {
+            stringJob = new JobCreateString(TId, TId.image);
+            jobList.addJob(stringJob);
+        }
+
+        (
+            <PLUS>
+            stringJob = CSelement()
+            {jobList.addJob(stringJob);}
+        )*
+    )
+    {return new JobCreateValueConcatString(TId, jobList);}
+}
+
+
+JobBase CSelement():
+{
+    JobBase stringJob; 
+}
+{
+    (
+        stringJob = CString()
+        |
+        stringJob = CStringVar_VarId()
+    )
+    {return stringJob;}
+}
+
+JobBase CString():
+{
+    JobBase stringJob; 
+    Token   TId;
+}
+{
+    (
+        TId = <STRING_LITERAL>
+    )
+    {
+        stringJob = new JobCreateString(TId, TId.image);
+        return stringJob;
+    }
+}
+
+JobBase CStringVar_VarId():
+{
+    JobBase stringJob; 
+    Token   TId_var;
+    Token   TId_id = null;
+}
+{
+    (
+        TId_var = <VAR_LITERAL>
+        (
+            <PERIOD>
+            <VALUE>
+            <OBRA>
+            TId_id = <ID_LITERAL>
+            <CBRA>
+        )?
+    )
+    {
+        if (TId_id != null) {
+            stringJob = new JobCreateStringVarId(TId_var, TId_var.image, TId_id.image);
+        } else {
+            stringJob = new JobCreateStringVar(TId_var, TId_var.image);
+        }
+        return stringJob;
+    }
+}
+
+
+
+
+
+
