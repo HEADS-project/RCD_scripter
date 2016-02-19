@@ -294,6 +294,8 @@ void Statement(JobList_Obj jobList):
 {
     (
         VarMethod(jobList)
+        |
+        Print(jobList)
     )
     {}
 }
@@ -363,6 +365,21 @@ void Add(JobList_Obj jobList, Token TId_varName):
     {jobList.addJob( new JobVarAddCellList(TId_varName, TId_varName.image, copyVarName, jobCellList));}
 }
 
+void Print(JobList_Obj jobList):
+{
+    JobList_VarValueBase retValueJobList; 
+    Token TId;
+}
+{
+    (
+        TId = <PRINT>
+        <OBRA>
+        retValueJobList = TxtExpr()
+        <CBRA>
+    )
+    {jobList.addJob( new JobPrint(TId, retValueJobList));}
+}
+
 JobList_VarCell CellList():
 {
     JobBase_VarCell cellJob = null;
@@ -388,12 +405,12 @@ JobBase_VarCell CellEntry():
     JobBase_VarCell cellJob;
 }
 {
-    cellJob = CellVar_VarId()
-    |
-    cellJob = CellTupl()
-    {
-        return cellJob;
-    }
+    (
+        cellJob = CellVar_VarId()
+        |
+        cellJob = CellTupl()
+    )
+    {return cellJob;}
 }
 
 
@@ -408,10 +425,10 @@ JobBase_VarCell CellVar_VarId():
         TId_var = <VAR_LITERAL>
         (
             <PERIOD>
-            <CELL>
-            <OBRA>
+//            <CELL>
+//            <OBRA>
             TId_id = <ID_LITERAL>
-            <CBRA>
+//            <CBRA>
         )?
     )
     {
@@ -543,10 +560,10 @@ JobList_VarValueBase ValueVar_VarId():
         TId_var = <VAR_LITERAL>
         (
             <PERIOD>
-            <VALUE>
-            <OBRA>
+//            <VALUE>
+//            <OBRA>
             TId_id = <ID_LITERAL>
-            <CBRA>
+//            <CBRA>
         )?
     )
     {

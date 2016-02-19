@@ -11,24 +11,24 @@ DefArray  -> <DEF> Var <=> <ARRAY> <(> Num | <=>VarArray <)>
 DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <,> String <)>
 
 Statement -> ForBlock | IfBlock | VarMethod | Print | Fprint 
-ForBlock -> <FOR_EACH> <(> ForType Var <IN> Var <)> <{> Statement <}>
+ForBlock -> <FOR_EACH> <(> Var <IN> Var <)> <{> Statement <}>
 ForType -> <ROW> | <INT>
 
 IfBlock -> <IF> <(> IfTest <)> <{> Statement <}>
 IfTest -> TestHas
-TestHas -> Var <.> <HAS> <(> Cell <)> 
+TestHas -> Var <HAS> <(> Cell <)> 
 
 VarMethod -> Var <.> (M_Add | M_Setdefault | Print )
 M_Add -> <ADD> <(> CellList | =Var <)>
 M_Setdefault -> <SETDEF> <(> CellList | =Var <)> 
 
-Print -> <PRINT><(> ConcatString <)> 
-Fprint -> <FPRINT><(> Var <,> ConcatString <)> 
+Print -> <PRINT><(> TxtExpr <)> 
+Fprint -> <FPRINT><(> Var <,> TxtExpr <)> 
 
 CellList -> CellEntry (<,> CellEntry)*
 CellEntry -> Tupl | VarCell | VarIdCell 
 Tupl -> <{>Id, Expr <}>
-VarIdCell -> Var <.> <CELL><(> Id <)>
+VarIdCell -> Var <.> Id 
 
 Var = Var (Table)
 Var = Var (Row)
@@ -48,7 +48,7 @@ Factor -> Num |  VarValue | VarIdValue
 TxtExpr -> (String | Id)  (<+> TxtElement)*
 TxtElement -> String | Num | Id | VarValue | VarIdValue
 
-VarIdValue -> Var <.> <VALUE> <(> (Id) <)>    // Return VALUE
+VarIdValue -> Var <.> Id    // Return VALUE
 Num -> Dec | Hex
 Dec -> Digit+
 Hex -> "0" ["x","X"] (HexDigit)+ 

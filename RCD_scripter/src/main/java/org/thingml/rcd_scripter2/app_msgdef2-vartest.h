@@ -48,3 +48,13 @@
 //DEF $CopyCell = CELL(=$CelleVerdien)
 
 //DEF $CopyVerdi = VALUE(=$Verdien)
+
+//DEF $CopyValueId = VALUE($OneRow.NAME)
+
+//DEF $Test = VALUE($OneRow.NAME)
+//DEF $CopyCellId = CELL($OneRow.NAME) 
+
+//##PRINT("$CopyCellId.NAME:"+$CopyCellId.NAME)
+//PRINT("$CopyValueId:"+$CopyValueId)
+
+
