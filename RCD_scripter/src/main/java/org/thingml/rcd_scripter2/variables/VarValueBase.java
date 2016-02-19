@@ -14,13 +14,23 @@ abstract public class VarValueBase extends VarBase {
     public enum Operation { STRPLUS, PLUS, MINUS, MUL, DIV };
     public enum VarType { INT, STRING };
     protected String image;
+    protected String operationImage;
     
     public VarValueBase(String image) {
         this.image = image;
+        this.operationImage = image;
     }
 
     public String getString() {
         return image;
+    }
+
+    public void setOperationImage(String image) {
+        this.operationImage = image;
+    }
+    
+    public String getOperationImage() {
+        return operationImage;
     }
     
     abstract public String getTypeString();
@@ -87,6 +97,7 @@ abstract public class VarValueBase extends VarBase {
                 //INT + INT -> INT
                 int result = ((VarValueInt) valueLeft).getInt() + ((VarValueInt) valueRight).getInt();
                 newValue = new VarValueInt(""+result);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")+("+valueRight.getOperationImage()+")");
             }
             if (valueLeft.getType() == VarType.STRING) {
                 //String + String -> String
@@ -113,6 +124,7 @@ abstract public class VarValueBase extends VarBase {
             if (valueLeft.getType() == VarType.INT) {
                 int result = ((VarValueInt) valueLeft).getInt() - ((VarValueInt) valueRight).getInt();
                 newValue = new VarValueInt(""+result);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")-("+valueRight.getOperationImage()+")");
             }
         }
         
@@ -130,6 +142,7 @@ abstract public class VarValueBase extends VarBase {
             if (valueLeft.getType() == VarType.INT) {
                 int result = ((VarValueInt) valueLeft).getInt() * ((VarValueInt) valueRight).getInt();
                 newValue = new VarValueInt(""+result);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")*("+valueRight.getOperationImage()+")");
             }
         }
         
@@ -147,6 +160,7 @@ abstract public class VarValueBase extends VarBase {
             if (valueLeft.getType() == VarType.INT) {
                 int result = ((VarValueInt) valueLeft).getInt() / ((VarValueInt) valueRight).getInt();
                 newValue = new VarValueInt(""+result);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")/("+valueRight.getOperationImage()+")");
             }
         }
         

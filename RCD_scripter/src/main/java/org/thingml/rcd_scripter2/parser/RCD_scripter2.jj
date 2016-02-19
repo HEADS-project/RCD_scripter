@@ -37,6 +37,8 @@ MORE :
 
 TOKEN [IGNORE_CASE]: /* Commands */
 {
+  <DEF :("DEF")>
+|
   <ADD :("ADD")>
 |
   <ARRAY :("ARRAY")>
@@ -143,53 +145,145 @@ JobList_Obj  init():
 
 void Def(JobList_Obj jobList):
 {
+    Token TId_defVarName;
 }
 {
+    <DEF>
+    TId_defVarName = <VAR_LITERAL>
+    <ASSIGN>
     (
-        DefTable(jobList)
+        DefTable(jobList, TId_defVarName)
         |
-        DefArray(jobList)
+        DefRow(jobList, TId_defVarName)
+        |
+        DefCell(jobList, TId_defVarName)
+        |
+        DefValue(jobList, TId_defVarName)
+        |
+        DefArray(jobList, TId_defVarName)
     )
     {}
 }
 
-void DefTable(JobList_Obj jobList):
+void DefTable(JobList_Obj jobList, Token TId_defVarName):
 {
-    Token TId_tabName;
     Token TId_tabInitName;
     String tabInitName = null;
 }
 {
     <TABLE>
-    TId_tabName = <VAR_LITERAL>
-    <ASSIGN>
-    <TABLE>
     <OBRA>
     (
+        <ASSIGN>
         TId_tabInitName = <VAR_LITERAL>
         {tabInitName = TId_tabInitName.image;}
     )?
     <CBRA>
-    {jobList.addJob( new JobDefTable(TId_tabName, TId_tabName.image, tabInitName));}
+    {jobList.addJob( new JobDefTable(TId_defVarName, TId_defVarName.image, tabInitName));}
 }
 
 
-void DefArray(JobList_Obj jobList):
+void DefRow(JobList_Obj jobList, Token TId_defVarName):
 {
-    Token TId_arrName;
-    JobList_VarValueBase valueJobList;
+    Token TId_copyFromRowName = null;
+    String copyFromRowName = null;
+    JobList_VarCell jobCellList = null;
 }
 {
-    <ARRAY>
-    TId_arrName = <VAR_LITERAL>
-    <ASSIGN>
+    <ROW>
+    <OBRA>
+    (
+        jobCellList = CellList()
+        |
+        (
+            <ASSIGN>
+            TId_copyFromRowName = <VAR_LITERAL>
+            {copyFromRowName = TId_copyFromRowName.image;}
+        )
+    )
+    <CBRA>
+    {jobList.addJob( new JobDefRow(TId_defVarName, TId_defVarName.image, copyFromRowName, jobCellList));}
+}
+
+void DefCell(JobList_Obj jobList, Token TId_defVarName):
+{
+    Token TId_copyFromCellName = null;
+    String copyFromCellName = null;
+    JobBase_VarCell jobCell = null;
+    JobList_VarCell jobCellList = null;
+}
+{
+    <CELL>
+    <OBRA>
+    (
+        (
+            jobCell = CellEntry()
+            {
+                jobCellList = new JobList_VarCell("DefCell");
+                jobCellList.addJob(jobCell);
+            }
+        )
+        |
+        (
+            <ASSIGN>
+            TId_copyFromCellName = <VAR_LITERAL>
+            {copyFromCellName = TId_copyFromCellName.image;}
+        )
+    )
+    <CBRA>
+    {jobList.addJob( new JobDefCell(TId_defVarName, TId_defVarName.image, copyFromCellName, jobCellList));}
+}
+
+void DefValue(JobList_Obj jobList, Token TId_defVarName):
+{
+    Token TId_copyFromValueName = null;
+    String copyFromValueName = null;
+    JobList_VarValueBase jobValue = null;
+}
+{
+    <VALUE>
+    <OBRA>
+    (
+        jobValue = Expr()
+        |
+        (
+            <ASSIGN>
+            TId_copyFromValueName = <VAR_LITERAL>
+            {copyFromValueName = TId_copyFromValueName.image;}
+        )
+    )
+    <CBRA>
+    {jobList.addJob( new JobDefValue(TId_defVarName, TId_defVarName.image, copyFromValueName, jobValue));}
+}
+
+
+
+void DefArray(JobList_Obj jobList, Token TId_defVarName):
+{
+    Token TId_copyFromArrName = null;
+    String copyFromArrName = null;
+    JobList_VarValueBase valueJobListSize = null;
+    JobList_VarValueBase valueJobListDefault = null;
+}
+{
     <ARRAY>
     <OBRA>
     (
-        valueJobList = Expr()
+        (
+            valueJobListSize = ValueInt()
+            <COMMA>
+            valueJobListDefault = Expr()
+
+        )
+        |
+        (
+            <ASSIGN>
+            TId_copyFromArrName = <VAR_LITERAL>
+            {copyFromArrName = TId_copyFromArrName.image;}
+        )
     )
     <CBRA>
-    {jobList.addJob( new JobDefArray(TId_arrName, TId_arrName.image, valueJobList));}
+    {jobList.addJob( new JobDefArray(TId_defVarName, TId_defVarName.image, copyFromArrName, valueJobListSize, valueJobListDefault));}
 }
 
 
@@ -206,47 +300,67 @@ void Statement(JobList_Obj jobList):
 
 void VarMethod(JobList_Obj jobList):
 {
-    Token TId_tabVarName;
+    Token TId_varName;
 }
 {
     (
-        TId_tabVarName = <VAR_LITERAL>
+        TId_varName = <VAR_LITERAL>
         <PERIOD>
         (
-            SetDefault(jobList, TId_tabVarName)
+            SetDefault(jobList, TId_varName)
             |
-            Add(jobList, TId_tabVarName)
+            Add(jobList, TId_varName)
         )
     )
     {}
 }
 
-void SetDefault(JobList_Obj jobList, Token TId_tabVarName):
+void SetDefault(JobList_Obj jobList, Token TId_varName):
 {
+    Token TId_copyVarName = null;
+    String copyVarName = null;
     JobList_VarCell jobCellList = null;
 }
 {
     (
         <SETDEF>
         <OBRA>
-        jobCellList = CellList()
+        (
+            jobCellList = CellList()
+            |
+            (
+            <ASSIGN>
+            TId_copyVarName = <VAR_LITERAL>
+            { copyVarName = TId_copyVarName.image;}
+            )
+        )
         <CBRA>
     )
-    {jobList.addJob( new JobTableSetDefault(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+    {jobList.addJob( new JobVarSetDefault(TId_varName, TId_varName.image, copyVarName, jobCellList));}
 }
 
-void Add(JobList_Obj jobList, Token TId_tabVarName):
+void Add(JobList_Obj jobList, Token TId_varName):
 {
+    Token TId_copyVarName = null;
+    String copyVarName = null;
     JobList_VarCell jobCellList = null;
 }
 {
     (
         <ADD>
         <OBRA>
-        jobCellList = CellList()
+        (
+            jobCellList = CellList()
+            |
+            (
+            <ASSIGN>
+            TId_copyVarName = <VAR_LITERAL>
+            { copyVarName = TId_copyVarName.image;}
+            )
+        )
         <CBRA>
     )
-    {jobList.addJob( new JobTableAdd(TId_tabVarName, TId_tabVarName.image, jobCellList));}
+    {jobList.addJob( new JobVarAddCellList(TId_varName, TId_varName.image, copyVarName, jobCellList));}
 }
 
 JobList_VarCell CellList():

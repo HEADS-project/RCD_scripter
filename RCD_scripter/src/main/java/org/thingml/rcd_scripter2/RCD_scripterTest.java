@@ -8,7 +8,6 @@ package org.thingml.rcd_scripter2;
 import org.thingml.rcd_scripter2.jobs.JobList_Obj;
 import org.thingml.rcd_scripter2.parser.RcdScript2Parser;
 import java.io.FileReader;
-import java.util.ArrayList;
 
 /**
  *
@@ -23,9 +22,9 @@ public class RCD_scripterTest {
         
         jobContext.setTrace(true);
         
-        //String inputfile = "C:\\javasrc\\javacc_examples\\src\\main\\java\\no\\sintef\\instrumentation\\javacc_example\\sql_script.txt";
-        //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter/app_msgdef4_red.h";
-        String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-1.h";
+        //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-1.h";
+        String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-vartest.h";
+        System.out.println("Using file <"+inputfile+">");
         System.out.println("Parser starting...");
         try{
             parser = new RcdScript2Parser(new FileReader(inputfile)); 

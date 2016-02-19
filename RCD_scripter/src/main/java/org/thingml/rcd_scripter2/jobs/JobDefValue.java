@@ -8,45 +8,49 @@ package org.thingml.rcd_scripter2.jobs;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarCell;
-import org.thingml.rcd_scripter2.variables.VarRow;
+import org.thingml.rcd_scripter2.variables.VarValueBase;
 
 /**
  *
  * @author steffend
  */
-public class JobDefRow extends JobBase_Obj {
+public class JobDefValue extends JobBase_Obj {
 
     private String varName;
     private String copyFromName = null;
-    JobList_VarCell jobCellList = null;
+    JobList_VarValueBase jobValue = null;
     
-    public JobDefRow(Token t, String varName, String copyFromName, JobList_VarCell jobCellList) {
+    
+    public JobDefValue(Token t, String varName, String copyFromName, JobList_VarValueBase jobValue) {
         super(t);
         this.varName = varName;
         this.copyFromName = copyFromName;
-        this.jobCellList = jobCellList;
+        this.jobValue = jobValue;
     }
     
     @Override
     public String getTypeString() {
-        return "JobDefRow";
+        return "JobDefValue";
     }
     
     @Override
     public Object execute(ExecuteContext ctx) {
-        VarRow newRow = null;
-                
+        VarValueBase newValue = null;
+        
         if (copyFromName != null) {
-            newRow = ctx.copyRowVar(copyFromName);
-            ctx.addVar(varName, newRow);
+            newValue = ctx.getValueVar(copyFromName);
+            ctx.addVar(varName, newValue);
         }
-        if (jobCellList != null) {
-            newRow = new VarRow();
-            jobCellList.executeCellsToRow(ctx, newRow);
-            ctx.addVar(varName, newRow);
+        
+        if (jobValue != null) {
+            newValue = jobValue.executeOneValue(ctx);
+            ctx.addVar(varName, newValue);
         }
-
-        return newRow;
+        
+        return newValue;
     }
 
+    
+    
+    
 }

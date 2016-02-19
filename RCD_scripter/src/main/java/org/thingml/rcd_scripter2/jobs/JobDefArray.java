@@ -9,6 +9,7 @@ import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarArray;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
+import org.thingml.rcd_scripter2.variables.VarValueInt;
 
 /**
  *
@@ -17,12 +18,16 @@ import org.thingml.rcd_scripter2.variables.VarValueBase;
 public class JobDefArray extends JobBase_Obj {
 
     private String varName;
-    private JobList_VarValueBase jobListVarValue;
+    private String copyFromVarName;
+    private JobList_VarValueBase jobListSizeValue;
+    private JobList_VarValueBase jobListDefaultValue;
     
-    public JobDefArray(Token t, String varName, JobList_VarValueBase jobListVarValue) {
+    public JobDefArray(Token t, String varName, String copyFromVarName, JobList_VarValueBase jobListSizeValue, JobList_VarValueBase jobListDefaultValue) {
         super(t);
         this.varName = varName;
-        this.jobListVarValue = jobListVarValue;
+        this.copyFromVarName = copyFromVarName;
+        this.jobListSizeValue = jobListSizeValue;
+        this.jobListDefaultValue = jobListDefaultValue;
     }
     
     public String getTypeString() {
@@ -31,9 +36,15 @@ public class JobDefArray extends JobBase_Obj {
     
     public Object execute(ExecuteContext ctx) {
         VarArray newArray = null;
-        if (jobListVarValue != null) {
-            VarValueBase defaultValue = jobListVarValue.executeOneValue(ctx);
-            newArray = new VarArray(defaultValue);
+        if (copyFromVarName != null) {
+            VarArray copyFromArray = ctx.getArrayVar(copyFromVarName);
+            newArray = new VarArray(copyFromArray);
+            ctx.addVar(varName, newArray);
+        }
+        if (jobListSizeValue != null) {
+            VarValueInt allocValue = (VarValueInt) jobListSizeValue.executeOneValue(ctx);
+            VarValueBase    defaultValue = jobListDefaultValue.executeOneValue(ctx);
+            newArray = new VarArray(allocValue.getInt(), defaultValue);
             ctx.addVar(varName, newArray);
         }
         

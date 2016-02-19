@@ -7,6 +7,7 @@ package org.thingml.rcd_scripter2.variables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.thingml.rcd_scripter2.ExecuteContext;
 
 /**
  *
@@ -14,26 +15,33 @@ import java.util.Iterator;
  */
 public class VarArray extends VarBase {
 
-    private final int startAlloc = 256;
+    private int allocSize;
     private int maxIndex = 0;
-    private ArrayList<VarValueBase> arrayList = new ArrayList<VarValueBase>(startAlloc);
+    private ArrayList<VarValueBase> arrayList = null;
     private VarValueBase defaultValue = null;
 
-    public VarArray(VarValueBase defaultValue) {
+    public VarArray(int allocSize, VarValueBase defaultValue) {
+        this.allocSize = allocSize;
         this.defaultValue = defaultValue;
-        for (int i = 0; i < startAlloc; i++) {
-            arrayList.set(i, defaultValue);
+        this.arrayList = new ArrayList<VarValueBase>(allocSize);
+        for (int i = 0; i < allocSize; i++) {
+            arrayList.add(0, defaultValue);
         }
     }
-
+    
     public VarArray(VarArray copyFromArray) {
         copyArray(copyFromArray); 
     }
 
     private void copyArray(VarArray copyFromArray) {
+        this.allocSize = copyFromArray.allocSize;
         this.defaultValue = copyFromArray.defaultValue;
         this.maxIndex = copyFromArray.maxIndex;
-        for (int i = 0; i < startAlloc; i++) {
+        this.arrayList = new ArrayList<VarValueBase>(allocSize);
+        for (int i = 0; i < allocSize; i++) {
+            arrayList.add(0, defaultValue);
+        }
+        for (int i = 0; i < allocSize; i++) {
             arrayList.set(i, copyFromArray.arrayList.get(i));
         }
     }
@@ -61,9 +69,9 @@ public class VarArray extends VarBase {
     
     @Override
     public String printString(){
-        String ret = "<"+getTypeString()+" Default value:"+getDefaultValue().printString()+"\n";
+        String ret = "<"+getTypeString()+" AllocSize:"+allocSize+" Default value:"+getDefaultValue().printString()+"\n";
         for (int i = 0; i < maxIndex; i++) {
-            ret += "Row #" + i + ":"+getValue(i).printString();
+            ret += "Index #" + i + ":"+getValue(i).printString();
         }
         ret += ">\n";
         return ret;

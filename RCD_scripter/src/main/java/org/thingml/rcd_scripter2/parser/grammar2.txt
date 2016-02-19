@@ -3,12 +3,12 @@ Script -> (Def | Statement)*
 
 Def -> DefTable | DefRow | DefCell | DefFile | DefArray
 
-DefTable  -> <TABLE>   VarTable <=>  <TABLE> <(> (VarTable)? <)> 
-DefRow    -> <ROW>     VarRow <=> <ROW> <(> (CellList | VarRow)? <)>
-DefCell   -> <CELL> VarCell <=> <CELL> <(> Cell | VarCell <)>
-DefFile   -> <FILE>    VarFile <=> <OPENFILE> <(> String <,> String <)>
-DefValue  -> <VALUE>    VarValue <=> <VALUE> <(> Expr | VarValue <)>
-DefArray  -> <ARRAY>   VarArray <=>  <ARRAY> <(> Expr <)> 
+DefTable  -> <DEF> Var <=> <TABLE> <(> (<=>VarTable)? <)> 
+DefRow    -> <DEF> Var <=> <ROW> <(> (CellList | <=>VarRow)? <)>
+DefCell   -> <DEF> Var <=> <CELL> <(> CellEntry | <=>VarCell <)>
+DefValue  -> <DEF> Var <=> <VALUE> <(> Expr | <=>VarValue <)>
+DefArray  -> <DEF> Var <=> <ARRAY> <(> Num | <=>VarArray <)> 
+DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <,> String <)>
 
 Statement -> ForBlock | IfBlock | VarMethod | Print | Fprint 
 ForBlock -> <FOR_EACH> <(> ForType Var <IN> Var <)> <{> Statement <}>
@@ -19,14 +19,14 @@ IfTest -> TestHas
 TestHas -> Var <.> <HAS> <(> Cell <)> 
 
 VarMethod -> Var <.> (M_Add | M_Setdefault | Print )
-M_Add -> <ADD> <(> CellList | Var <)>
-M_Setdefault -> <SETDEF> <(> CellList | Var <)> 
+M_Add -> <ADD> <(> CellList | =Var <)>
+M_Setdefault -> <SETDEF> <(> CellList | =Var <)> 
 
 Print -> <PRINT><(> ConcatString <)> 
 Fprint -> <FPRINT><(> Var <,> ConcatString <)> 
 
-CellList -> Cell (<,> Cell)*
-Cell -> Tupl | VarCell | VarIdCell 
+CellList -> CellEntry (<,> CellEntry)*
+CellEntry -> Tupl | VarCell | VarIdCell 
 Tupl -> <{>Id, Expr <}>
 VarIdCell -> Var <.> <CELL><(> Id <)>
 

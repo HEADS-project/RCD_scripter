@@ -7,6 +7,7 @@ package org.thingml.rcd_scripter2.variables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.thingml.rcd_scripter2.ExecuteContext;
 
 /**
  *
@@ -48,14 +49,16 @@ public class VarTable extends VarBase {
         return defaultRow;
     }
     
-    public void setDefaultRowObj(VarRow row) {
+    @Override
+    public void setDefault(ExecuteContext ctx, String idName) {
+        VarRow row  = ctx.getRowVar(idName);
         defaultRow = row;
     }
     
-    public VarRow getNewRowObj() {
-        VarRow newRow = new VarRow(defaultRow);
+    @Override
+    public void add(ExecuteContext ctx, String idName) {
+        VarRow newRow = ctx.getRowVar(idName);
         rowList.add(newRow);
-        return newRow;
     }
 
     @Override

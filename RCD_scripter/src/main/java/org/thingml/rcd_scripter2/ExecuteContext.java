@@ -39,6 +39,22 @@ public class ExecuteContext {
         varList.put(name, var);
     }
     
+    public void addVarSilent(String name, VarBase var) {
+        varList.put(name, var);
+    }
+
+    public String getVarName(VarBase obj){
+        Iterator i = varList.entrySet().iterator();
+        while(i.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)i.next();
+            VarBase base = (VarBase)pair.getValue();
+            if (base == obj) {
+                return ""+pair.getKey();
+            }
+        }
+        return "???";
+    }
+    
     public VarBase getBaseVar(String name) {
         VarBase var = varList.get(name);
         if (var == null) {
@@ -108,6 +124,7 @@ public class ExecuteContext {
         return ret;
     }
     
+    
     public VarCell getCellVarId(String var, String id) {
         VarCell varCell = null;
         //VarBase varBase = varList.get(var);
@@ -134,14 +151,17 @@ public class ExecuteContext {
         return ret;
     }
 
-    public VarValueBase getValueVar(String var) {
-        VarCell varCell = getCellVar(var);
-        VarValueBase ret = new VarValueString("ERROR Empty");
+    public VarValueBase getValueVar(String name) {
+        VarBase var = getBaseVar(name);
+        VarValueBase ret = null;
 
-        if (varCell != null) {
-            ret = varCell.getValue();
-        } 
-
+        if (var != null) {
+            if (var instanceof VarValueBase) {
+                ret = (VarValueBase) var;
+            } else  {
+                System.out.println("Warning variable <"+name+"> is not instanceof VarValueBase");
+            }
+        }
         return ret;
     }
 

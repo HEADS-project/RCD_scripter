@@ -40,7 +40,7 @@ public class VarValueInt extends VarValueBase {
     
     @Override
     public String printString() {
-        String ret = "<"+getTypeString()+":"+getString()+":"+intValue+">";
+        String ret = "<"+getTypeString()+" Image:"+getString()+" Value:"+intValue+" Operations:"+getOperationImage()+">";
         return ret;
     }
 
