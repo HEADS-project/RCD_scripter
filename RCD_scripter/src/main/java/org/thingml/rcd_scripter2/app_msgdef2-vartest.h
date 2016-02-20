@@ -55,6 +55,13 @@
 //DEF $CopyCellId = CELL($OneRow.NAME) 
 
 //##PRINT("$CopyCellId.NAME:"+$CopyCellId.NAME)
-//PRINT("$CopyValueId:"+$CopyValueId)
+//##PRINT("$CopyValueId:"+$CopyValueId)
+//PRINT("$OneRow.NAME:" + $OneRow.NAME + " $OneRow.Number:" + $OneRow.Number)
 
+//PRINT("Before loop")
+//FOR_EACH($LoopRow IN $MsgDef) {
+//PRINT("In loop")
+//PRINT("$LoopRow.TRACE_NAME:" + $LoopRow.TRACE_NAME + " $LoopRow.ENUM_VAL:" + $LoopRow.ENUM_VAL)
+//}
+//PRINT("After loop")
 

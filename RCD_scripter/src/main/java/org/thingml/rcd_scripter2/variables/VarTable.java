@@ -15,7 +15,7 @@ import org.thingml.rcd_scripter2.ExecuteContext;
  */
 public class VarTable extends VarBase {
 
-    private ArrayList<VarRow> rowList = null;
+    public ArrayList<VarRow> rowList = null;
     private VarRow defaultRow = null;
 
     public VarTable() {

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.thingml.rcd_scripter2.jobs;
+package Old;
 
+import Old.JobBase_String;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 
@@ -12,22 +13,22 @@ import org.thingml.rcd_scripter2.parser.Token;
  *
  * @author steffend
  */
-public class JobCreateStringVar extends JobBase_String {
-    private String var;
+public class JobCreateString extends JobBase_String {
+    private final String image;
     
 
-    public JobCreateStringVar(Token t, String var) {
+    public JobCreateString(Token t, String image) {
         super(t);
-        this.var = var;
+        this.image = image;
     }
     
     @Override
     public String getTypeString() {
-        return "JobCreateStringVar";
+        return "JobCreateString";
     }
     
     @Override
     public String execute(ExecuteContext ctx) {
-        return ctx.getValueVar(var).getString();
+        return image;
     }
 }

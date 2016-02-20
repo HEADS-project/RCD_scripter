@@ -34,7 +34,7 @@ public class ExecuteContext {
     public void addVar(String name, VarBase var) {
         VarBase oldVar = varList.get(name);
         if (oldVar != null) {
-            System.out.println("Warning variable <"+name+"> is replaced");
+            //System.out.println("Warning variable <"+name+"> is replaced");
         }
         varList.put(name, var);
     }

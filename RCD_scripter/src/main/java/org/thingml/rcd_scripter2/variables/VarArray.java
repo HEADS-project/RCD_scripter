@@ -70,7 +70,7 @@ public class VarArray extends VarBase {
     @Override
     public String printString(){
         String ret = "<"+getTypeString()+" AllocSize:"+allocSize+" Default value:"+getDefaultValue().printString()+"\n";
-        for (int i = 0; i < maxIndex; i++) {
+        for (int i = 0; i < size(); i++) {
             ret += "Index #" + i + ":"+getValue(i).printString();
         }
         ret += ">\n";

@@ -296,6 +296,8 @@ void Statement(JobList_Obj jobList):
         VarMethod(jobList)
         |
         Print(jobList)
+        |
+        ForEach(jobList)
     )
     {}
 }
@@ -378,6 +380,29 @@ void Print(JobList_Obj jobList):
         <CBRA>
     )
     {jobList.addJob( new JobPrint(TId, retValueJobList));}
+}
+
+void ForEach(JobList_Obj jobList):
+{
+    JobList_Obj forEachJobList = new JobList_Obj("ForEach");
+    Token TId_loopVar;
+    Token TId_inVar;
+}
+{
+    (
+        <FOR_EACH>
+        <OBRA>
+        TId_loopVar = <VAR_LITERAL>
+        <IN>
+        TId_inVar = <VAR_LITERAL>
+        <CBRA>
+        <OCBRA>
+        (
+            Statement(forEachJobList)
+        )*
+        <CCBRA>
+    )
+    {jobList.addJob( new JobForEach(TId_loopVar, TId_loopVar.image, TId_inVar.image, forEachJobList));}
 }
 
 JobList_VarCell CellList():

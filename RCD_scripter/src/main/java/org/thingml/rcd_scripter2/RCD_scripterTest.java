@@ -20,7 +20,7 @@ public class RCD_scripterTest {
         JobList_Obj jobList;
         ExecuteContext jobContext = new ExecuteContext();
         
-        jobContext.setTrace(true);
+        //jobContext.setTrace(true);
         
         //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-1.h";
         String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter/src/main/java/org/thingml/rcd_scripter2/app_msgdef2-vartest.h";
