@@ -82,7 +82,13 @@ abstract public class VarValueBase extends VarBase {
     private static VarValueBase doOperationStringPlus(VarValueBase valueLeft, VarValueBase valueRight) {
 
         //Any + Any -> String
-        String result = valueLeft.getString() + valueRight.getString();
+        String leftString = "???";
+        if (valueLeft != null) leftString = valueLeft.getString();
+
+        String rightString = "???"; 
+        if (valueRight != null) rightString = valueRight.getString();
+
+        String result = leftString + rightString;
         VarValueBase newValue = new VarValueString(result);
         
         return newValue;

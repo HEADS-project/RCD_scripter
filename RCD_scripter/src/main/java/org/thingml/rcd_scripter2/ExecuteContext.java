@@ -11,7 +11,7 @@ import org.thingml.rcd_scripter2.variables.VarArray;
 import org.thingml.rcd_scripter2.variables.VarBase;
 import org.thingml.rcd_scripter2.variables.VarCell;
 import org.thingml.rcd_scripter2.variables.VarRow;
-import org.thingml.rcd_scripter2.variables.VarTable;
+import org.thingml.rcd_scripter2.variables.VarRowList;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
 import org.thingml.rcd_scripter2.variables.VarValueString;
 
@@ -55,7 +55,7 @@ public class ExecuteContext {
         return "???";
     }
     
-    public VarBase getBaseVar(String name) {
+    public VarBase getVarBase(String name) {
         VarBase var = varList.get(name);
         if (var == null) {
             System.out.println("Warning variable <"+name+"> is not defined");
@@ -63,32 +63,32 @@ public class ExecuteContext {
         return var;
     }
     
-    public VarTable getTableVar(String name) {
-        VarBase var = getBaseVar(name);
-        VarTable ret = null;
+    public VarRowList getVarRowList(String name) {
+        VarBase var = getVarBase(name);
+        VarRowList ret = null;
         if (var != null) {
-            if (var instanceof VarTable) {
-                ret = (VarTable) var;
+            if (var instanceof VarRowList) {
+                ret = (VarRowList) var;
             } else  {
-                System.out.println("Warning variable <"+name+"> is not instanceof VarTable");
+                System.out.println("Warning variable <"+name+"> is not instanceof VarRowList");
             }
         }
         return ret;
     }
     
-    public VarTable copyTableVar(String name) {
-        VarTable ret = null;
+    public VarRowList copyVarRowList(String name) {
+        VarRowList ret = null;
         if(name != null) {
-            VarTable orig = getTableVar(name);
-            ret = new VarTable(orig);
+            VarRowList orig = getVarRowList(name);
+            ret = new VarRowList(orig);
         } else {
-            ret = new VarTable();
+            ret = new VarRowList();
         }
         return ret;
     }
     
-    public VarRow getRowVar(String name) {
-        VarBase var = getBaseVar(name);
+    public VarRow getVarRow(String name) {
+        VarBase var = getVarBase(name);
         VarRow ret = null;
         if (var != null) {
             if (var instanceof VarRow) {
@@ -100,10 +100,10 @@ public class ExecuteContext {
         return ret;
     }
     
-    public VarRow copyRowVar(String name) {
+    public VarRow copyVarRow(String name) {
         VarRow ret = null;
         if (name != null) {
-            VarRow orig = getRowVar(name);
+            VarRow orig = getVarRow(name);
             ret = new VarRow(orig);
         } else {
             ret = new VarRow();
@@ -111,8 +111,8 @@ public class ExecuteContext {
         return ret;
     }
     
-    public VarCell getCellVar(String name) {
-        VarBase var = getBaseVar(name);
+    public VarCell getVarCell(String name) {
+        VarBase var = getVarBase(name);
         VarCell ret = null;
         if (var != null) {
             if (var instanceof VarCell) {
@@ -125,10 +125,10 @@ public class ExecuteContext {
     }
     
     
-    public VarCell getCellVarId(String var, String id) {
+    public VarCell getVarCellId(String var, String id) {
         VarCell varCell = null;
         //VarBase varBase = varList.get(var);
-        VarRow varRow = getRowVar(var);
+        VarRow varRow = getVarRow(var);
         if (varRow != null) {
             varCell = varRow.getCell(id);
             if (varCell == null) {
@@ -140,8 +140,15 @@ public class ExecuteContext {
         return varCell;
     }
 
-    public VarValueBase getValueVarId(String var, String id) {
-        VarCell varCell = getCellVarId(var, id);
+    public VarValueBase getVarValueIndex(String var, int index) {
+        VarArray varArray = getVarArray(var);
+        VarValueBase ret = varArray.getValue(index);
+
+        return ret;
+    }
+
+    public VarValueBase getVarValueId(String var, String id) {
+        VarCell varCell = getVarCellId(var, id);
         VarValueBase ret = new VarValueString("ERROR Empty");
 
         if (varCell != null) {
@@ -151,22 +158,22 @@ public class ExecuteContext {
         return ret;
     }
 
-    public VarValueBase getValueVar(String name) {
-        VarBase var = getBaseVar(name);
+    public VarValueBase getVarValue(String name) {
+        VarBase var = getVarBase(name);
         VarValueBase ret = null;
 
         if (var != null) {
             if (var instanceof VarValueBase) {
                 ret = (VarValueBase) var;
             } else  {
-                System.out.println("Warning variable <"+name+"> is not instanceof VarValueBase");
+                ret = new VarValueString(var.printString());
             }
         }
         return ret;
     }
 
     public String getStringVarId(String var, String id) {
-        VarCell varCell = getCellVarId(var, id);
+        VarCell varCell = getVarCellId(var, id);
         String ret = "ERROR Empty";
         //VarBase varBase = varList.get(var);
         if (varCell != null) {
@@ -176,8 +183,8 @@ public class ExecuteContext {
         return ret;
     }
 
-    public VarArray getArrayVar(String name) {
-        VarBase var = getBaseVar(name);
+    public VarArray getVarArray(String name) {
+        VarBase var = getVarBase(name);
         VarArray ret = null;
         if (var != null) {
             if (var instanceof VarArray) {
@@ -189,8 +196,8 @@ public class ExecuteContext {
         return ret;
     }
     
-    public VarArray copyArrayVar(String name) {
-        VarArray orig = getArrayVar(name);
+    public VarArray copyVarArray(String name) {
+        VarArray orig = getVarArray(name);
         VarArray ret = new VarArray(orig);
         return ret;
     }

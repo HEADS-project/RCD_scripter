@@ -15,14 +15,14 @@ import org.thingml.rcd_scripter2.variables.VarValueInt;
  *
  * @author steffend
  */
-public class JobDefArray extends JobBase_Obj {
+public class JobDefVarArray extends JobBase_Obj {
 
     private String varName;
     private String copyFromVarName;
     private JobList_VarValueBase jobListSizeValue;
     private JobList_VarValueBase jobListDefaultValue;
     
-    public JobDefArray(Token t, String varName, String copyFromVarName, JobList_VarValueBase jobListSizeValue, JobList_VarValueBase jobListDefaultValue) {
+    public JobDefVarArray(Token t, String varName, String copyFromVarName, JobList_VarValueBase jobListSizeValue, JobList_VarValueBase jobListDefaultValue) {
         super(t);
         this.varName = varName;
         this.copyFromVarName = copyFromVarName;
@@ -31,13 +31,13 @@ public class JobDefArray extends JobBase_Obj {
     }
     
     public String getTypeString() {
-        return "JobDefArray";
+        return "JobDefVarArray";
     }
     
     public Object execute(ExecuteContext ctx) {
         VarArray newArray = null;
         if (copyFromVarName != null) {
-            VarArray copyFromArray = ctx.getArrayVar(copyFromVarName);
+            VarArray copyFromArray = ctx.getVarArray(copyFromVarName);
             newArray = new VarArray(copyFromArray);
             ctx.addVar(varName, newArray);
         }

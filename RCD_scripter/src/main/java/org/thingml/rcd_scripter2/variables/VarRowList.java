@@ -13,23 +13,23 @@ import org.thingml.rcd_scripter2.ExecuteContext;
  *
  * @author steffend
  */
-public class VarTable extends VarBase {
+public class VarRowList extends VarBase {
 
     public ArrayList<VarRow> rowList = null;
     private VarRow defaultRow = null;
 
-    public VarTable() {
+    public VarRowList() {
         rowList = new ArrayList<VarRow>();
         defaultRow = new VarRow();
     }
 
-    public VarTable(VarTable copyFromTable) {
+    public VarRowList(VarRowList copyFromTable) {
         rowList = new ArrayList<VarRow>();
         defaultRow = new VarRow();
         copyTable(copyFromTable); 
     }
 
-    private void copyTable(VarTable copyFromTable) {
+    private void copyTable(VarRowList copyFromTable) {
         if (copyFromTable != null) {
             defaultRow = new VarRow(copyFromTable.defaultRow);
                 
@@ -51,13 +51,13 @@ public class VarTable extends VarBase {
     
     @Override
     public void setDefault(ExecuteContext ctx, String idName) {
-        VarRow row  = ctx.getRowVar(idName);
+        VarRow row  = ctx.getVarRow(idName);
         defaultRow = row;
     }
     
     @Override
     public void add(ExecuteContext ctx, String idName) {
-        VarRow newRow = ctx.getRowVar(idName);
+        VarRow newRow = ctx.getVarRow(idName);
         rowList.add(newRow);
     }
 
@@ -77,7 +77,7 @@ public class VarTable extends VarBase {
 
     @Override
     public String getTypeString() {
-        return "VarTable";
+        return "VarRowList";
     }
 
 }

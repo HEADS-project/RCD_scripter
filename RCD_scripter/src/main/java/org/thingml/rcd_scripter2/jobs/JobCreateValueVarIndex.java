@@ -8,29 +8,31 @@ package org.thingml.rcd_scripter2.jobs;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
+import org.thingml.rcd_scripter2.variables.VarValueInt;
 
 /**
  *
  * @author steffend
  */
-public class JobCreateValueVarId extends JobBase_VarValueBase {
+public class JobCreateValueVarIndex extends JobBase_VarValueBase {
     private String var;
-    private String id;
-    
+    private final JobList_VarValueBase indexValueJobList;
 
-    public JobCreateValueVarId(Token t, String var, String id) {
+
+    public JobCreateValueVarIndex(Token t, String var, JobList_VarValueBase indexValueJobList) {
         super(t);
         this.var = var;
-        this.id = id;
+        this.indexValueJobList = indexValueJobList;
     }
     
     @Override
     public String getTypeString() {
-        return "JobCreateValueVarId";
+        return "JobCreateValueVarIndex";
     }
     
     @Override
     public VarValueBase execute(ExecuteContext ctx) {
-        return ctx.getVarValueId(var, id);
+        VarValueBase index = indexValueJobList.executeOneValue(ctx);
+        return ctx.getVarValueIndex(var, ((VarValueInt)index).getInt());
     }
 }

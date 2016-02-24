@@ -35,7 +35,7 @@ public class JobVarSetDefault extends JobBase_Obj {
     
     @Override
     public Object execute(ExecuteContext ctx) {
-        VarBase var = ctx.getBaseVar(varName);
+        VarBase var = ctx.getVarBase(varName);
         if (jobCreateCellList != null) {
             VarRow tmpRow = new VarRow();
             jobCreateCellList.executeCellsToRow(ctx, tmpRow);

@@ -7,29 +7,29 @@ package org.thingml.rcd_scripter2.jobs;
 
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
-import org.thingml.rcd_scripter2.variables.VarTable;
+import org.thingml.rcd_scripter2.variables.VarRowList;
 
 /**
  *
  * @author steffend
  */
-public class JobDefTable extends JobBase_Obj {
+public class JobDefRowList extends JobBase_Obj {
 
     private String varName;
     private String copyFromName;
     
-    public JobDefTable(Token t, String varName, String copyFromName) {
+    public JobDefRowList(Token t, String varName, String copyFromName) {
         super(t);
         this.varName = varName;
         this.copyFromName = copyFromName;
     }
     
     public String getTypeString() {
-        return "JobDefTable";
+        return "JobDefRowList";
     }
     
     public Object execute(ExecuteContext ctx) {
-        VarTable newTable = ctx.copyTableVar(copyFromName);
+        VarRowList newTable = ctx.copyVarRowList(copyFromName);
         ctx.addVar(varName, newTable);
         
         return newTable;

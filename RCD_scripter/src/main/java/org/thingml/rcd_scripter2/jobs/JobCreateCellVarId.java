@@ -31,6 +31,6 @@ public class JobCreateCellVarId extends JobBase_VarCell {
     
     @Override
     public VarCell execute(ExecuteContext ctx) {
-        return ctx.getCellVarId(var, id);
+        return ctx.getVarCellId(var, id);
     }
 }

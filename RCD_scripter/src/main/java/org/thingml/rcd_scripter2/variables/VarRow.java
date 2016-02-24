@@ -40,11 +40,11 @@ public class VarRow extends VarBase {
 
     @Override
     public void add(ExecuteContext ctx, String idName) {
-        VarRow newRow = ctx.getRowVar(idName);
+        VarRow newRow = ctx.getVarRow(idName);
         if (newRow != null) {
             addRow(newRow);
         } else {
-            VarCell newCell = ctx.getCellVar(idName);
+            VarCell newCell = ctx.getVarCell(idName);
             if (newCell != null) {
                 addCell(newCell);
             }

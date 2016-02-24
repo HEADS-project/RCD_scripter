@@ -34,14 +34,14 @@ public class JobDefRow extends JobBase_Obj {
     
     @Override
     public Object execute(ExecuteContext ctx) {
-        VarRow newRow = null;
+        VarRow newRow = new VarRow();
                 
         if (copyFromName != null) {
-            newRow = ctx.copyRowVar(copyFromName);
+            newRow = ctx.copyVarRow(copyFromName);
             ctx.addVar(varName, newRow);
-        }
+        } 
         if (jobCellList != null) {
-            newRow = new VarRow();
+            //newRow = new VarRow();
             jobCellList.executeCellsToRow(ctx, newRow);
             ctx.addVar(varName, newRow);
         }

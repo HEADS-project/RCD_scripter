@@ -29,6 +29,6 @@ public class JobCreateValueVar extends JobBase_VarValueBase {
     
     @Override
     public VarValueBase execute(ExecuteContext ctx) {
-        return ctx.getValueVar(var);
+        return ctx.getVarValue(var);
     }
 }

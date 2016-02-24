@@ -6,8 +6,6 @@
 package org.thingml.rcd_scripter2.jobs;
 
 import org.thingml.rcd_scripter2.ExecuteContext;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *

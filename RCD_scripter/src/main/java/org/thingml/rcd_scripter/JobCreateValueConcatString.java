@@ -7,7 +7,7 @@ package org.thingml.rcd_scripter;
 
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.jobs.JobBase_VarValueBase;
-import Old.JobList_String;
+import org.thingml.rcd_scripter2.old.JobList_String;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
 import org.thingml.rcd_scripter2.variables.VarValueString;

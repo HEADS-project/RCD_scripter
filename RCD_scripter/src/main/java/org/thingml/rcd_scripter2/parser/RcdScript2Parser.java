@@ -7,6 +7,13 @@
    { return(init()) ; }
 
   final public JobList_Obj init() throws ParseException {JobList_Obj jobList = new JobList_Obj("Main");
+    Script(jobList);
+    jj_consume_token(0);
+{if ("" != null) return jobList;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public void Script(JobList_Obj jobList) throws ParseException {
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -26,10 +33,13 @@
         Def(jobList);
         break;
         }
-      case FOR_EACH:
       case PRINT:
       case VAR_LITERAL:{
         Statement(jobList);
+        break;
+        }
+      case FOR_EACH:{
+        Block(jobList);
         break;
         }
       default:
@@ -38,9 +48,7 @@
         throw new ParseException();
       }
     }
-    jj_consume_token(0);
-{if ("" != null) return jobList;}
-    throw new Error("Missing return statement in function");
+
   }
 
   final public void Def(JobList_Obj jobList) throws ParseException {Token TId_defVarName;
@@ -48,8 +56,8 @@
     TId_defVarName = jj_consume_token(VAR_LITERAL);
     jj_consume_token(ASSIGN);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case TABLE:{
-      DefTable(jobList, TId_defVarName);
+    case ROWLIST:{
+      DefRowList(jobList, TId_defVarName);
       break;
       }
     case ROW:{
@@ -60,12 +68,8 @@
       DefCell(jobList, TId_defVarName);
       break;
       }
-    case VALUE:{
-      DefValue(jobList, TId_defVarName);
-      break;
-      }
-    case ARRAY:{
-      DefArray(jobList, TId_defVarName);
+    case VARARRAY:{
+      DefVarArray(jobList, TId_defVarName);
       break;
       }
     default:
@@ -73,12 +77,13 @@
       jj_consume_token(-1);
       throw new ParseException();
     }
+    jj_consume_token(SEMI);
 
   }
 
-  final public void DefTable(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_tabInitName;
+  final public void DefRowList(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_tabInitName;
     String tabInitName = null;
-    jj_consume_token(TABLE);
+    jj_consume_token(ROWLIST);
     jj_consume_token(OBRA);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ASSIGN:{
@@ -92,7 +97,7 @@ tabInitName = TId_tabInitName.image;
       ;
     }
     jj_consume_token(CBRA);
-jobList.addJob( new JobDefTable(TId_defVarName, TId_defVarName.image, tabInitName));
+jobList.addJob( new JobDefRowList(TId_defVarName, TId_defVarName.image, tabInitName));
   }
 
   final public void DefRow(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_copyFromRowName = null;
@@ -102,20 +107,30 @@ jobList.addJob( new JobDefTable(TId_defVarName, TId_defVarName.image, tabInitNam
     jj_consume_token(OBRA);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VAR_LITERAL:
-    case OCBRA:{
-      jobCellList = CellList();
-      break;
-      }
+    case OCBRA:
     case ASSIGN:{
-      jj_consume_token(ASSIGN);
-      TId_copyFromRowName = jj_consume_token(VAR_LITERAL);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case VAR_LITERAL:
+      case OCBRA:{
+        jobCellList = CellList();
+        break;
+        }
+      case ASSIGN:{
+        jj_consume_token(ASSIGN);
+        TId_copyFromRowName = jj_consume_token(VAR_LITERAL);
 copyFromRowName = TId_copyFromRowName.image;
+        break;
+        }
+      default:
+        jj_la1[4] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       break;
       }
     default:
-      jj_la1[4] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
+      jj_la1[5] = jj_gen;
+      ;
     }
     jj_consume_token(CBRA);
 jobList.addJob( new JobDefRow(TId_defVarName, TId_defVarName.image, copyFromRowName, jobCellList));
@@ -142,7 +157,7 @@ copyFromCellName = TId_copyFromCellName.image;
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -150,40 +165,35 @@ copyFromCellName = TId_copyFromCellName.image;
 jobList.addJob( new JobDefCell(TId_defVarName, TId_defVarName.image, copyFromCellName, jobCellList));
   }
 
-  final public void DefValue(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_copyFromValueName = null;
-    String copyFromValueName = null;
-    JobList_VarValueBase jobValue = null;
-    jj_consume_token(VALUE);
-    jj_consume_token(OBRA);
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case VAR_LITERAL:
-    case ID_LITERAL:
-    case DEC_LITERAL:
-    case HEX_LITERAL:
-    case STRING_LITERAL:{
-      jobValue = Expr();
-      break;
-      }
-    case ASSIGN:{
-      jj_consume_token(ASSIGN);
-      TId_copyFromValueName = jj_consume_token(VAR_LITERAL);
-copyFromValueName = TId_copyFromValueName.image;
-      break;
-      }
-    default:
-      jj_la1[6] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-    jj_consume_token(CBRA);
-jobList.addJob( new JobDefValue(TId_defVarName, TId_defVarName.image, copyFromValueName, jobValue));
-  }
+//void DefValue(JobList_Obj jobList, Token TId_defVarName):
+//{
+//    Token TId_copyFromValueName = null;
+//    String copyFromValueName = null;
+//    JobList_VarValueBase jobValue = null;
+//}
+//{
+//    <VALUE>
+//    <OBRA>
+//    (
+//        jobValue = Expr()
+//        |
+//        (
+//            <ASSIGN>
+//            TId_copyFromValueName = <VAR_LITERAL>
+//            {copyFromValueName = TId_copyFromValueName.image;}
+//        )
+//    )
+//    <CBRA>
+//    {jobList.addJob( new JobDefValue(TId_defVarName, TId_defVarName.image, copyFromValueName, jobValue));}
+//}
+  final public 
 
-  final public void DefArray(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_copyFromArrName = null;
+
+void DefVarArray(JobList_Obj jobList, Token TId_defVarName) throws ParseException {Token TId_copyFromArrName = null;
     String copyFromArrName = null;
     JobList_VarValueBase valueJobListSize = null;
     JobList_VarValueBase valueJobListDefault = null;
-    jj_consume_token(ARRAY);
+    jj_consume_token(VARARRAY);
     jj_consume_token(OBRA);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DEC_LITERAL:
@@ -205,21 +215,17 @@ copyFromArrName = TId_copyFromArrName.image;
       throw new ParseException();
     }
     jj_consume_token(CBRA);
-jobList.addJob( new JobDefArray(TId_defVarName, TId_defVarName.image, copyFromArrName, valueJobListSize, valueJobListDefault));
+jobList.addJob( new JobDefVarArray(TId_defVarName, TId_defVarName.image, copyFromArrName, valueJobListSize, valueJobListDefault));
   }
 
   final public void Statement(JobList_Obj jobList) throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VAR_LITERAL:{
-      VarMethod(jobList);
+      VarMethodOrAssign(jobList);
       break;
       }
     case PRINT:{
       Print(jobList);
-      break;
-      }
-    case FOR_EACH:{
-      ForEach(jobList);
       break;
       }
     default:
@@ -227,23 +233,38 @@ jobList.addJob( new JobDefArray(TId_defVarName, TId_defVarName.image, copyFromAr
       jj_consume_token(-1);
       throw new ParseException();
     }
+    jj_consume_token(SEMI);
 
   }
 
-  final public void VarMethod(JobList_Obj jobList) throws ParseException {Token TId_varName;
+  final public void VarMethodOrAssign(JobList_Obj jobList) throws ParseException {Token TId_varName;
     TId_varName = jj_consume_token(VAR_LITERAL);
-    jj_consume_token(PERIOD);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case SETDEF:{
-      SetDefault(jobList, TId_varName);
+    case PERIOD:{
+      jj_consume_token(PERIOD);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case SETDEF:{
+        SetDefault(jobList, TId_varName);
+        break;
+        }
+      case ADD:{
+        Add(jobList, TId_varName);
+        break;
+        }
+      default:
+        jj_la1[9] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       break;
       }
-    case ADD:{
-      Add(jobList, TId_varName);
+    case OABRA:
+    case ASSIGN:{
+      VarNameAssign(jobList, TId_varName);
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[10] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -268,7 +289,7 @@ copyVarName = TId_copyVarName.image;
       break;
       }
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -294,12 +315,30 @@ copyVarName = TId_copyVarName.image;
       break;
       }
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     jj_consume_token(CBRA);
 jobList.addJob( new JobVarAddCellList(TId_varName, TId_varName.image, copyVarName, jobCellList));
+  }
+
+  final public void VarNameAssign(JobList_Obj jobList, Token TId_varName) throws ParseException {JobList_VarValueBase indexValueJobList = null;
+    JobList_VarValueBase valueJobList = null;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case OABRA:{
+      jj_consume_token(OABRA);
+      indexValueJobList = NumExpr();
+      jj_consume_token(CABRA);
+      break;
+      }
+    default:
+      jj_la1[13] = jj_gen;
+      ;
+    }
+    jj_consume_token(ASSIGN);
+    valueJobList = Expr();
+jobList.addJob( new JobVarNameAssign(TId_varName, TId_varName.image, indexValueJobList, valueJobList));
   }
 
   final public void Print(JobList_Obj jobList) throws ParseException {JobList_VarValueBase retValueJobList;
@@ -309,6 +348,11 @@ jobList.addJob( new JobVarAddCellList(TId_varName, TId_varName.image, copyVarNam
     retValueJobList = TxtExpr();
     jj_consume_token(CBRA);
 jobList.addJob( new JobPrint(TId, retValueJobList));
+  }
+
+  final public void Block(JobList_Obj jobList) throws ParseException {
+    ForEach(jobList);
+
   }
 
   final public void ForEach(JobList_Obj jobList) throws ParseException {JobList_Obj forEachJobList = new JobList_Obj("ForEach");
@@ -321,21 +365,7 @@ jobList.addJob( new JobPrint(TId, retValueJobList));
     TId_inVar = jj_consume_token(VAR_LITERAL);
     jj_consume_token(CBRA);
     jj_consume_token(OCBRA);
-    label_2:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case FOR_EACH:
-      case PRINT:
-      case VAR_LITERAL:{
-        ;
-        break;
-        }
-      default:
-        jj_la1[12] = jj_gen;
-        break label_2;
-      }
-      Statement(forEachJobList);
-    }
+    Script(forEachJobList);
     jj_consume_token(CCBRA);
 jobList.addJob( new JobForEach(TId_loopVar, TId_loopVar.image, TId_inVar.image, forEachJobList));
   }
@@ -344,7 +374,7 @@ jobList.addJob( new JobForEach(TId_loopVar, TId_loopVar.image, TId_inVar.image, 
     JobList_VarCell jobList = new JobList_VarCell("CellList");
     cellJob = CellEntry();
 jobList.addJob(cellJob);
-    label_3:
+    label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case COMMA:{
@@ -352,8 +382,8 @@ jobList.addJob(cellJob);
         break;
         }
       default:
-        jj_la1[13] = jj_gen;
-        break label_3;
+        jj_la1[14] = jj_gen;
+        break label_2;
       }
       jj_consume_token(COMMA);
       cellJob = CellEntry();
@@ -374,7 +404,7 @@ jobList.addJob(cellJob);
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -395,7 +425,7 @@ jobList.addJob(cellJob);
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
 if (TId_id != null) {
@@ -434,7 +464,7 @@ cellJob = new JobCreateCell(TId, TId.image, valueJobList);
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -447,7 +477,7 @@ cellJob = new JobCreateCell(TId, TId.image, valueJobList);
     JobList_VarValueBase retValueJobList;
     Token   TId;
     retValueJobList = Term();
-    label_4:
+    label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case PLUS:
@@ -456,8 +486,8 @@ cellJob = new JobCreateCell(TId, TId.image, valueJobList);
         break;
         }
       default:
-        jj_la1[17] = jj_gen;
-        break label_4;
+        jj_la1[18] = jj_gen;
+        break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case PLUS:{
@@ -469,7 +499,7 @@ cellJob = new JobCreateCell(TId, TId.image, valueJobList);
         break;
         }
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[19] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -487,7 +517,7 @@ valueJobList1 = retValueJobList;
     JobList_VarValueBase retValueJobList;
     Token   TId;
     retValueJobList = Factor();
-    label_5:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MUL:
@@ -496,8 +526,8 @@ valueJobList1 = retValueJobList;
         break;
         }
       default:
-        jj_la1[19] = jj_gen;
-        break label_5;
+        jj_la1[20] = jj_gen;
+        break label_4;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MUL:{
@@ -509,7 +539,7 @@ valueJobList1 = retValueJobList;
         break;
         }
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[21] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -525,7 +555,7 @@ valueJobList1 = retValueJobList;
   final public JobList_VarValueBase Factor() throws ParseException {JobList_VarValueBase retValueJobList;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VAR_LITERAL:{
-      retValueJobList = ValueVar_VarId();
+      retValueJobList = ValueVar_VarId_VarIndex();
       break;
       }
     case DEC_LITERAL:
@@ -534,7 +564,7 @@ valueJobList1 = retValueJobList;
       break;
       }
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -542,25 +572,42 @@ valueJobList1 = retValueJobList;
     throw new Error("Missing return statement in function");
   }
 
-  final public JobList_VarValueBase ValueVar_VarId() throws ParseException {JobList_VarValueBase retValueJobList;
+  final public JobList_VarValueBase ValueVar_VarId_VarIndex() throws ParseException {JobList_VarValueBase retValueJobList;
     JobBase_VarValueBase valueJob;
     Token   TId_var;
     Token   TId_id = null;
+    JobList_VarValueBase indexValueJobList = null;
     TId_var = jj_consume_token(VAR_LITERAL);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case OABRA:
     case PERIOD:{
-      jj_consume_token(PERIOD);
-      //            <VALUE>
-      //            <OBRA>
-                  TId_id = jj_consume_token(ID_LITERAL);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PERIOD:{
+        jj_consume_token(PERIOD);
+        TId_id = jj_consume_token(ID_LITERAL);
+        break;
+        }
+      case OABRA:{
+        jj_consume_token(OABRA);
+        indexValueJobList = NumExpr();
+        jj_consume_token(CABRA);
+        break;
+        }
+      default:
+        jj_la1[23] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       break;
       }
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[24] = jj_gen;
       ;
     }
 if (TId_id != null) {
             valueJob = new JobCreateValueVarId(TId_var, TId_var.image, TId_id.image);
+        } if (indexValueJobList != null) {
+            valueJob = new JobCreateValueVarIndex(TId_var, TId_var.image, indexValueJobList);
         } else {
             valueJob = new JobCreateValueVar(TId_var, TId_var.image);
         }
@@ -583,7 +630,7 @@ if (TId_id != null) {
       break;
       }
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -608,11 +655,11 @@ valueJob = new JobCreateValueInt(TId, TId.image);
       break;
       }
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
-    label_6:
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case PLUS:{
@@ -620,8 +667,8 @@ valueJob = new JobCreateValueInt(TId, TId.image);
         break;
         }
       default:
-        jj_la1[25] = jj_gen;
-        break label_6;
+        jj_la1[27] = jj_gen;
+        break label_5;
       }
       TId = jj_consume_token(PLUS);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -639,11 +686,11 @@ valueJob = new JobCreateValueInt(TId, TId.image);
         break;
         }
       case VAR_LITERAL:{
-        valueJobList2 = ValueVar_VarId();
+        valueJobList2 = ValueVar_VarId_VarIndex();
         break;
         }
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[28] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -686,7 +733,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[27];
+  final private int[] jj_la1 = new int[29];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -694,10 +741,10 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x4210800,0x4210800,0x3406000,0x0,0x4000000,0x4000000,0x7c000000,0x30000000,0x4210000,0x801000,0x4000000,0x4000000,0x4210000,0x0,0x4000000,0x0,0x7c000000,0x0,0x0,0x0,0x0,0x34000000,0x0,0x30000000,0x48000000,0x0,0x7c000000,};
+      jj_la1_0 = new int[] {0x2210800,0x2210800,0x1406000,0x0,0x2000000,0x2000000,0x2000000,0x18000000,0x2200000,0x801000,0x0,0x2000000,0x2000000,0x0,0x0,0x2000000,0x0,0x3e000000,0x0,0x0,0x0,0x0,0x1a000000,0x0,0x0,0x18000000,0x24000000,0x0,0x3e000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x100,0x110,0x110,0x100,0x100,0x0,0x0,0x110,0x110,0x0,0x40,0x10,0x80,0x0,0xc00,0xc00,0x3000,0x3000,0x0,0x80,0x0,0x0,0x400,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x400,0x408,0x408,0x408,0x400,0x0,0x0,0x520,0x408,0x408,0x20,0x80,0x8,0x100,0x0,0x3000,0x3000,0xc000,0xc000,0x0,0x120,0x120,0x0,0x0,0x1000,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -711,7 +758,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -725,7 +772,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -735,7 +782,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -753,7 +800,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -762,7 +809,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -771,7 +818,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 27; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -822,12 +869,12 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[46];
+    boolean[] la1tokens = new boolean[48];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 27; i++) {
+    for (int i = 0; i < 29; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -839,7 +886,7 @@ valueJob = new JobCreateValueString(TId, TId.image, true);
         }
       }
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 48; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

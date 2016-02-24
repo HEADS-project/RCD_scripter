@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Old;
+package org.thingml.rcd_scripter2.old;
 
 import org.thingml.rcd_scripter2.ExecuteContext;
 import java.util.ArrayList;

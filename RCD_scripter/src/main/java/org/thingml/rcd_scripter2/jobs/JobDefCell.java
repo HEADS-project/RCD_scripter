@@ -37,7 +37,7 @@ public class JobDefCell extends JobBase_Obj {
         VarCell newCell = null;
         
         if (copyFromName != null) {
-            newCell = ctx.getCellVar(copyFromName);
+            newCell = ctx.getVarCell(copyFromName);
             ctx.addVar(varName, newCell);
         }
         

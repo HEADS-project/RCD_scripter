@@ -12,7 +12,7 @@ import org.thingml.rcd_scripter2.variables.VarArray;
 import org.thingml.rcd_scripter2.variables.VarBase;
 import org.thingml.rcd_scripter2.variables.VarCell;
 import org.thingml.rcd_scripter2.variables.VarRow;
-import org.thingml.rcd_scripter2.variables.VarTable;
+import org.thingml.rcd_scripter2.variables.VarRowList;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
 import org.thingml.rcd_scripter2.variables.VarValueInt;
 
@@ -40,23 +40,24 @@ public class JobForEach extends JobBase_Obj {
     
     @Override
     public Object execute(ExecuteContext ctx) {
-        VarBase var = ctx.getBaseVar(inVarName);
+        VarBase var = ctx.getVarBase(inVarName);
         if (var != null) {
             if (var instanceof VarArray) {
                 VarArray varArray = (VarArray) var;
                 for (int i = 0; i < varArray.size(); i++) {
                     VarValueBase valueElem = varArray.getValue(i);
-                    VarCell cellElem = new VarCell("Elem", valueElem);
-                    VarValueInt valueIndex = new VarValueInt(""+i);
-                    VarCell cellIndex = new VarCell("Index", valueIndex);
-                    VarRow row = new VarRow();
-                    row.addCell(cellElem);
-                    row.addCell(cellIndex);
-                    ctx.addVar(loopVarName, row);
+                    //VarCell cellElem = new VarCell("Elem", valueElem);
+                    //VarValueInt valueIndex = new VarValueInt(""+i);
+                    //VarCell cellIndex = new VarCell("Index", valueIndex);
+                    //VarRow row = new VarRow();
+                    //row.addCell(cellElem);
+                    //row.addCell(cellIndex);
+                    //ctx.addVar(loopVarName, row);
+                    ctx.addVar(loopVarName, valueElem);
                     forEachJobList.executeList(ctx);
                 }
-            } else if (var instanceof VarTable) {
-                VarTable varTable = (VarTable) var;
+            } else if (var instanceof VarRowList) {
+                VarRowList varTable = (VarRowList) var;
                 Iterator i = varTable.rowList.iterator();
                 int n = 0;
                 while(i.hasNext()) {
