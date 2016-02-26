@@ -23,69 +23,77 @@ public interface RcdScript2ParserConstants {
   /** RegularExpression Id. */
   int FILE = 15;
   /** RegularExpression Id. */
-  int FOR_EACH = 16;
+  int CLOSE = 16;
   /** RegularExpression Id. */
-  int HAS = 17;
+  int FOR_EACH = 17;
   /** RegularExpression Id. */
-  int IF = 18;
+  int HAS = 18;
   /** RegularExpression Id. */
-  int IN = 19;
+  int IF = 19;
   /** RegularExpression Id. */
-  int INT = 20;
+  int IF_ROW = 20;
   /** RegularExpression Id. */
-  int PRINT = 21;
+  int ELSE = 21;
   /** RegularExpression Id. */
-  int ROW = 22;
+  int IN = 22;
   /** RegularExpression Id. */
-  int SETDEF = 23;
+  int INT = 23;
   /** RegularExpression Id. */
-  int ROWLIST = 24;
+  int PRINT = 24;
   /** RegularExpression Id. */
-  int VAR_LITERAL = 25;
+  int ROW = 25;
   /** RegularExpression Id. */
-  int ID_LITERAL = 26;
+  int SETDEF = 26;
   /** RegularExpression Id. */
-  int DEC_LITERAL = 27;
+  int ROWLIST = 27;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 28;
+  int VAR_LITERAL = 28;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 29;
+  int ID_LITERAL = 29;
   /** RegularExpression Id. */
-  int LETTER = 30;
+  int DEC_LITERAL = 30;
   /** RegularExpression Id. */
-  int DIGIT = 31;
+  int HEX_LITERAL = 31;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 32;
+  int STRING_LITERAL = 32;
   /** RegularExpression Id. */
-  int OBRA = 33;
+  int LETTER = 33;
   /** RegularExpression Id. */
-  int CBRA = 34;
+  int DIGIT = 34;
   /** RegularExpression Id. */
-  int OCBRA = 35;
+  int HEX_DIGIT = 35;
   /** RegularExpression Id. */
-  int CCBRA = 36;
+  int OBRA = 36;
   /** RegularExpression Id. */
-  int OABRA = 37;
+  int CBRA = 37;
   /** RegularExpression Id. */
-  int CABRA = 38;
+  int OCBRA = 38;
   /** RegularExpression Id. */
-  int COMMA = 39;
+  int CCBRA = 39;
   /** RegularExpression Id. */
-  int PERIOD = 40;
+  int OABRA = 40;
   /** RegularExpression Id. */
-  int SEMI = 41;
+  int CABRA = 41;
   /** RegularExpression Id. */
-  int ASSIGN = 42;
+  int COMMA = 42;
   /** RegularExpression Id. */
-  int DOLLAR = 43;
+  int PERIOD = 43;
   /** RegularExpression Id. */
-  int PLUS = 44;
+  int SEMI = 44;
   /** RegularExpression Id. */
-  int MINUS = 45;
+  int ASSIGN = 45;
   /** RegularExpression Id. */
-  int MUL = 46;
+  int EQUAL = 46;
   /** RegularExpression Id. */
-  int DIV = 47;
+  int DOLLAR = 47;
+  /** RegularExpression Id. */
+  int PLUS = 48;
+  /** RegularExpression Id. */
+  int MINUS = 49;
+  /** RegularExpression Id. */
+  int MUL = 50;
+  /** RegularExpression Id. */
+  int DIV = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -110,9 +118,12 @@ public interface RcdScript2ParserConstants {
     "\"VARARRAY\"",
     "\"CELL\"",
     "\"FILE\"",
+    "\"CLOSE\"",
     "\"FOR_EACH\"",
     "\"HAS\"",
     "\"IF\"",
+    "\"IF_ROW\"",
+    "\"ELSE\"",
     "\"IN\"",
     "\"INT\"",
     "\"PRINT\"",
@@ -137,6 +148,7 @@ public interface RcdScript2ParserConstants {
     "\".\"",
     "\";\"",
     "\"=\"",
+    "\"==\"",
     "\"$\"",
     "\"+\"",
     "\"-\"",

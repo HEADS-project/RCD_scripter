@@ -52,7 +52,7 @@ public class JobList_String {
         String newString = "";
         
         while (nextJob != null) {
-            newString += nextJob.execute(ctx);
+            newString += nextJob.executeInternal(ctx);
             nextJob = (JobBase_String) nextJob.getNext(ctx);
         }
         return newString;

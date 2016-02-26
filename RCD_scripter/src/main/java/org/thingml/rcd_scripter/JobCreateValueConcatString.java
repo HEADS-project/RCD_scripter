@@ -31,7 +31,7 @@ public class JobCreateValueConcatString extends JobBase_VarValueBase {
     }
     
     @Override
-    public VarValueBase execute(ExecuteContext ctx) {
+    public VarValueBase executeInternal(ExecuteContext ctx) {
         String concatString = jobCreateStringList.executeToString(ctx);
         
         VarValueBase ret = new VarValueString(concatString);

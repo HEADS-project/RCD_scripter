@@ -40,14 +40,17 @@ public class VarRow extends VarBase {
 
     @Override
     public void add(ExecuteContext ctx, String idName) {
-        VarRow newRow = ctx.getVarRow(idName);
-        if (newRow != null) {
-            addRow(newRow);
-        } else {
-            VarCell newCell = ctx.getVarCell(idName);
-            if (newCell != null) {
-                addCell(newCell);
+        VarBase newVar = ctx.getVarBase(idName);
+        if (newVar != null) {
+            if (newVar instanceof VarRow) {
+                addRow((VarRow)newVar);
             }
+            if (newVar instanceof VarCell) {
+                addCell((VarCell)newVar);
+            }
+        } else {
+            System.out.println("Warning variable <"+idName+"> is not instanceof VarRow or VarCell");
+            ctx.printExecutingInfo();
         }
     }
 

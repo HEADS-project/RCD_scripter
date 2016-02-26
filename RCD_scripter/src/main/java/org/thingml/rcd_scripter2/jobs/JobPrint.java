@@ -8,6 +8,7 @@ package org.thingml.rcd_scripter2.jobs;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarCell;
+import org.thingml.rcd_scripter2.variables.VarFile;
 import org.thingml.rcd_scripter2.variables.VarRow;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
 
@@ -18,10 +19,12 @@ import org.thingml.rcd_scripter2.variables.VarValueBase;
 public class JobPrint extends JobBase_Obj {
 
     private JobList_VarValueBase retValueJobList;
+    private String fileName;
     
-    public JobPrint(Token t, JobList_VarValueBase retValueJobList) {
+    public JobPrint(Token t, String fileName, JobList_VarValueBase retValueJobList) {
         super(t);
         this.retValueJobList = retValueJobList;
+        this.fileName = fileName;
     }
     
     @Override
@@ -30,9 +33,15 @@ public class JobPrint extends JobBase_Obj {
     }
     
     @Override
-    public Object execute(ExecuteContext ctx) {
+    protected Object executeInternal(ExecuteContext ctx) {
         VarValueBase text = retValueJobList.executeOneValue(ctx);
-        System.out.println("Print("+text.getString()+")");
+        if (fileName != null) {
+            VarFile varFile = ctx.getVarFile(fileName);
+            varFile.write(ctx, text.getString());
+            
+        } else {
+            System.out.println("Print("+text.getString()+")");
+        }
         
         return this;
     }

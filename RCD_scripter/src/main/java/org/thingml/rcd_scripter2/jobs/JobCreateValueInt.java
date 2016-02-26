@@ -29,7 +29,7 @@ public class JobCreateValueInt extends JobBase_VarValueBase {
     }
     
     @Override
-    public VarValueBase execute(ExecuteContext ctx) {
+    protected VarValueBase executeInternal(ExecuteContext ctx) {
         VarValueBase ret = new VarValueInt(image);
         return ret;
     }

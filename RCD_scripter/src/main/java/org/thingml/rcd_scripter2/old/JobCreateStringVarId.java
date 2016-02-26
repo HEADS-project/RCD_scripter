@@ -30,7 +30,7 @@ public class JobCreateStringVarId extends JobBase_String {
     }
     
     @Override
-    public String execute(ExecuteContext ctx) {
+    public String executeInternal(ExecuteContext ctx) {
         return ctx.getVarValueId(var, id).getString();
     }
 }

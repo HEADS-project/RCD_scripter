@@ -1,0 +1,191 @@
+## Definition of coders with attributes separated by whitespace and terminated by 
+
+
+DEF $CoderDef = ROWLIST();
+$CoderDef.SetDef({MSGC_BASE, NONE}, 
+                 {PARAMS, ""},
+                 {COMP_SIGN, ""}, 
+                 {DECOMP_SIGN, ""});
+$CoderDef.Add({MSGC_BASE, U16}, 
+              {PARAMS, ", p0"}, 
+              {COMP_SIGN, ", const uint16_t p0"}, 
+              {DECOMP_SIGN, ", uint16_t *p0"});
+$CoderDef.Add({MSGC_BASE, U16U16}, 
+              {PARAMS, ", p0, p1"}, 
+              {COMP_SIGN, ", const uint16_t p0, const uint16_t p1"}, 
+              {DECOMP_SIGN, ", uint16_t *p0, uint16_t *p1"});
+$CoderDef.Add({MSGC_BASE, U16U16U16}, 
+              {PARAMS, ", p0, p1, p2"}, 
+              {COMP_SIGN, ", const uint16_t p0, const uint16_t p1, const uint16_t p2"}, 
+              {DECOMP_SIGN, ", uint16_t *p0, uint16_t *p1, uint16_t *p2"});
+$CoderDef.Add({MSGC_BASE, U32}, 
+              {PARAMS, ", p0"}, 
+              {COMP_SIGN, ", const uint32_t p0"}, 
+              {DECOMP_SIGN, ", uint32_t *p0"});
+$CoderDef.Add({MSGC_BASE, U32U32U16U8U8}, 
+              {PARAMS, ", p0, p1, p2, p3, p4"}, 
+              {COMP_SIGN, ", const uint32_t p0, const uint32_t p1, const uint16_t p2, const uint8_t p3, const uint8_t p4"}, 
+              {DECOMP_SIGN, ", uint32_t *p0, uint32_t *p1, uint16_t *p2, uint8_t *p3, uint8_t *p4"});
+
+FOR_EACH($Row IN $CoderDef) {
+	$Row.ADD({MSGC, "MSGC_"+$Row.MSGC_BASE});
+}
+##PRINT(""+$CoderDef);
+
+## Definition of messages with attributes separated by whitespace and terminated by 
+$MsgEnumPrefix = "MSGID_";
+DEF $MsgDef = ROWLIST();
+$MsgDef.SetDef( {MSGC, MSGC_U16},
+               {TRACE_NAME, NONE},        {TRACE, yes},        {COMMENT, ""});
+$MsgDef.Add( {TRACE_NAME, TMR_SIGNAL},        {ENUM_VAL, 0x01},                      {COMMENT, "Time signal                                  "});
+$MsgDef.Add( {TRACE_NAME, TIME_TICK},         {ENUM_VAL, 0x02}, {TRACE, no},         {COMMENT, "Time tick from OS                            "});
+$MsgDef.Add( {TRACE_NAME, BELT_STATUS},       {ENUM_VAL, 0x13},                      {COMMENT, "Chest belt status change                     "});
+$MsgDef.Add( {TRACE_NAME, BATT_STATUS},       {ENUM_VAL, 0x14},                      {COMMENT, "Battery status change                        "});
+$MsgDef.Add( {TRACE_NAME, CHARGE_CURRENT},    {ENUM_VAL, 0x15},                      {COMMENT, "Charge current (in mA)                       "});
+$MsgDef.Add( {TRACE_NAME, SWITCH_EVENT},      {ENUM_VAL, 0x17},                      {COMMENT, "Push-button (on/off switch) status change    "});
+$MsgDef.Add( {TRACE_NAME, SET_DATA_MODE},     {ENUM_VAL, 0x1b},                      {COMMENT, "Set Data logging mode                        "});
+$MsgDef.Add( {TRACE_NAME, GET_DATA_MODE},     {ENUM_VAL, 0x1c},                      {COMMENT, "Get Data logging mode                        "});
+$MsgDef.Add( {TRACE_NAME, FULL_CLK},          {ENUM_VAL, 0x1d},                      {COMMENT, "Get full clock time                          "});
+$MsgDef.Add( {TRACE_NAME, REFERENCE_CLK},     {ENUM_VAL, 0x1e},                      {COMMENT, "Get reference clock time                     "});
+$MsgDef.Add( {TRACE_NAME, GET_SERNUM},        {ENUM_VAL, 0x1f},                      {COMMENT, "Get CU serial number                         "});
+$MsgDef.Add( {TRACE_NAME, GET_FW_REV},        {ENUM_VAL, 0x20},                      {COMMENT, "Get CU firmware revision                     "});
+$MsgDef.Add( {TRACE_NAME, CTRL_STATE},        {ENUM_VAL, 0x21},                      {COMMENT, "Control status change                        "});
+$MsgDef.Add( {TRACE_NAME, UIND_CMD},          {ENUM_VAL, 0x22},                      {COMMENT, "User Indicator (LED or vibrator) act. cmd    "});
+$MsgDef.Add( {TRACE_NAME, CHARGER_CONNECT},   {ENUM_VAL, 0x31}, {TRACE, no},         {COMMENT, "Charger connected or disconnected            "});
+$MsgDef.Add( {TRACE_NAME, PWR_STATE},         {ENUM_VAL, 0x41},                      {COMMENT, "Set or rep power state for uC and peripherals"});
+$MsgDef.Add( {TRACE_NAME, BATT_LEVEL_FORCED}, {ENUM_VAL, 0x4f},                      {COMMENT, "Battery level forced - added by steffend 20120809    "});
+$MsgDef.Add( {TRACE_NAME, CTRL_STATE_FORCED}, {ENUM_VAL, 0x50},                      {COMMENT, "Control status forced - added by steffend 20120809   "});
+$MsgDef.Add( {TRACE_NAME, CTRL_STATE_REQ},    {ENUM_VAL, 0x51},                      {COMMENT, "Control status request - added by steffend 20120809   "});
+$MsgDef.Add( {TRACE_NAME, DEBUG_SET},         {ENUM_VAL, 0x57},                      {COMMENT, "Control Debug                  "});
+$MsgDef.Add( {TRACE_NAME, SET_IMM_ALERT},     {ENUM_VAL, 0x58},                      {COMMENT, "Set immidiate alert - added by steffend 20130321  "});
+$MsgDef.Add( {TRACE_NAME, GET_CH},            {ENUM_VAL, 0x59}, {TRACE, no},         {COMMENT, "Character from console in PC-app "});
+$MsgDef.Add( {TRACE_NAME, SENDER_TEST},       {ENUM_VAL, 0x5a},                      {COMMENT, "Test output from task_sender_class "});
+$MsgDef.Add( {TRACE_NAME, RESET_TEST},        {ENUM_VAL, 0x5b},                      {COMMENT, "Generic reset to processes  "});
+$MsgDef.Add( {TRACE_NAME, PING0},             {ENUM_VAL, 0x5c}, {MSGC, MSGC_NONE},   {COMMENT, "ThingMl test message  "});
+$MsgDef.Add( {TRACE_NAME, PING1},             {ENUM_VAL, 0x5d},                      {COMMENT, "ThingMl test message  "});
+$MsgDef.Add( {TRACE_NAME, PONG1},             {ENUM_VAL, 0x5e},                      {COMMENT, "ThingMl test message  "});
+$MsgDef.Add( {TRACE_NAME, PONG2},             {ENUM_VAL, 0x5f}, {MSGC, MSGC_U16U16}, {COMMENT, "ThingMl test message  "});
+
+
+
+DEF $CombinedDef = ROWLIST();
+FOR_EACH($MsgRow in $MsgDef) {
+    FOR_EACH($CoderRow in $CoderDef) {
+        IF ($MsgRow.MSGC == $CoderRow.MSGC) {
+            DEF $NewRow = ROW();
+            $NewRow.ADD(=$MsgRow);
+            $NewRow.ADD(=$CoderRow);
+            $CombinedDef.ADD(=$NewRow);
+            ##PRINT("New combined row:" + $NewRow);
+        }
+    }
+}
+
+DEF $MsgArray = VARARRAY(256, "<DEFAULT>");
+$Counter = 0;
+FOR_EACH($LoopRow IN $MsgDef) {
+	$Counter = $Counter + 1;
+	$MsgArray[$LoopRow.ENUM_VAL] = $LoopRow.MSGC;
+}
+
+$AutogenWarning = "This file is autogenerated DON NOT EDIT this file\n\n";
+##################### Generating file ##########################
+
+
+DEF $GenFile = FILE("app_msgc_gen.h");
+$GenFile.PRINT(""+ $AutogenWarning);
+
+$GenFile.PRINT("typedef enum {\n");
+FOR_EACH($Row IN $CoderDef) {
+	$GenFile.PRINT("    "+$Row.MSGC+",\n");
+}
+$GenFile.PRINT("    MSGC_TYPE_MAX\n");
+$GenFile.PRINT("} msgc_type_t;\n");
+
+$GenFile.PRINT("\n\n/*********************************************************************/\n\n");
+
+FOR_EACH($Row IN $CombinedDef) {
+	$GenFile.PRINT("static inline void APP_MSGC_comp_" + $Row.TRACE_NAME + "_" + $Row.MSGC_BASE + "( msgc_t *mc_ptr" + $Row.COMP_SIGN + " ) {\n");
+	$GenFile.PRINT("APP_MSGC_comp" +  "_" + $Row.MSGC_BASE + "( mc_ptr" + $Row.PARAMS + ");\n");
+	$GenFile.PRINT("}\n\n");
+	$GenFile.PRINT("static inline void APP_MSGC_decomp_" + $Row.TRACE_NAME + "_" + $Row.MSGC_BASE + "( msgc_t *mc_ptr" + $Row.DECOMP_SIGN + " ) {\n");
+	$GenFile.PRINT("APP_MSGC_decomp" +  "_" + $Row.MSGC_BASE + "( mc_ptr" + $Row.PARAMS + ");\n");
+	$GenFile.PRINT("}\n\n");
+	$GenFile.PRINT("\n\n/*********************************************************************/\n\n");
+}
+
+
+
+$GenFile.PRINT("END OF FILE\n");
+$GenFile.CLOSE();
+
+##################### Generating file ##########################
+
+
+DEF $GenFile = FILE("app_msg_gen.c");
+$GenFile.PRINT(""+ $AutogenWarning);
+
+
+$GenFile.PRINT("// Message ID name conversion\n");
+$GenFile.PRINT("static const msgid_name_t _msgidName[] = {\n");
+
+FOR_EACH($Row IN $MsgDef) {
+	$GenFile.PRINT("    { " + $MsgEnumPrefix + $Row.TRACE_NAME + ",\t\"" + $Row.TRACE_NAME + "\"\t},\n");
+}
+$GenFile.PRINT("    { MSGID_TMR_SIGNAL,       \"UNKNOWN_SIGNAL\"     }  // Dummy entry, used if id not found\n");
+$GenFile.PRINT("};\n");
+
+
+$GenFile.PRINT("END OF FILE\n");
+$GenFile.CLOSE();
+
+##################### Generating file ##########################
+
+DEF $GenFile = FILE("app_msgc_gen.c");
+$GenFile.PRINT(""+ $AutogenWarning);
+
+$ArraySize = 0;
+FOR_EACH($Value IN $MsgArray) {
+	$ArraySize = $ArraySize + 1;
+}
+
+$GenFile.PRINT("static const uint8_t _coderTypeArr["+$ArraySize+"] = {\n");
+
+$Counter = 0;
+$LineCounter = 0;
+$EntriesPerRow = 8;
+FOR_EACH($Value IN $MsgArray) {
+	$GenFile.PRINT(""+$Value+",\t");
+	$Counter = $Counter + 1;
+	$LineCounter = $LineCounter + 1;
+	IF($LineCounter == $EntriesPerRow) {
+		$First = $Counter - $EntriesPerRow;
+		$Last = $Counter - 1;
+		$LineCounter = 0;
+		$GenFile.PRINT(" /* "+$First+".."+$Last+" */,\n");
+	}
+}
+$GenFile.PRINT("};\n");
+
+$GenFile.PRINT("\n\n/*********************************************************************/\n\n");
+
+$GenFile.PRINT("static const coder_fptr_t _coderTypeFptrArr[MSGC_TYPE_MAX] = {\n");
+FOR_EACH($Row IN $CoderDef) {
+	$GenFile.PRINT("    &MsgcCoder"+$Row.MSGC_BASE+",\n");
+}
+$GenFile.PRINT("};\n");
+
+$GenFile.PRINT("\n\n/*********************************************************************/\n\n");
+
+$GenFile.PRINT("static const decoder_fptr_t _decoderTypeFptrArr[MSGC_TYPE_MAX] = {\n");
+FOR_EACH($Row IN $CoderDef) {
+	$GenFile.PRINT("    &MsgcDecoder"+$Row.MSGC_BASE+",\n");
+}
+$GenFile.PRINT("};\n");
+
+
+$GenFile.PRINT("END OF FILE\n");
+$GenFile.CLOSE();
+
+
+

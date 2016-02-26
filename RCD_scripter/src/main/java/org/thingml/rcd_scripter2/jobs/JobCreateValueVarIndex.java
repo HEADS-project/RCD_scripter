@@ -31,7 +31,7 @@ public class JobCreateValueVarIndex extends JobBase_VarValueBase {
     }
     
     @Override
-    public VarValueBase execute(ExecuteContext ctx) {
+    protected VarValueBase executeInternal(ExecuteContext ctx) {
         VarValueBase index = indexValueJobList.executeOneValue(ctx);
         return ctx.getVarValueIndex(var, ((VarValueInt)index).getInt());
     }

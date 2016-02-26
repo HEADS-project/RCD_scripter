@@ -28,7 +28,7 @@ public class JobCreateCellVar extends JobBase_VarCell {
     }
     
     @Override
-    public VarCell execute(ExecuteContext ctx) {
+    protected VarCell executeInternal(ExecuteContext ctx) {
         return ctx.getVarCell(var);
     }
 }

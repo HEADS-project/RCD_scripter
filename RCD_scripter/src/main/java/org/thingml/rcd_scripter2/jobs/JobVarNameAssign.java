@@ -8,6 +8,7 @@ package org.thingml.rcd_scripter2.jobs;
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarArray;
+import org.thingml.rcd_scripter2.variables.VarBase;
 import org.thingml.rcd_scripter2.variables.VarCell;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
 import org.thingml.rcd_scripter2.variables.VarValueInt;
@@ -35,7 +36,7 @@ public class JobVarNameAssign extends JobBase_Obj {
     }
     
     @Override
-    public Object execute(ExecuteContext ctx) {
+    protected Object executeInternal(ExecuteContext ctx) {
         VarValueBase newValue = jobListCreateValue.executeOneValue(ctx);
 
         if (jobListCreateIndex != null) {
@@ -43,16 +44,18 @@ public class JobVarNameAssign extends JobBase_Obj {
             VarArray array = ctx.getVarArray(varName);
             array.setValue(indexValue.getInt(), newValue);
         } else {
-            if (ctx.getVarBase(varName) == null) {
+            VarBase varBase = ctx.getVarBaseSilent(varName);
+            if (varBase == null) {
                 // Var name does not exist => Create
                 ctx.addVar(varName, newValue);
             } else {
-                if (ctx.getVarValue(varName) != null) {
+                if (varBase instanceof VarValueBase) {
                     // Var name is a Value var => Overwrite
                     ctx.addVar(varName, newValue);
                 } else {
                     // Var name is NOT a Value var => Protect
-                    System.out.println("Warning variable <"+varName+"> is not instanceof VarValueBase");
+                    System.out.println("ERROR variable <"+varName+"> is not instanceof VarValueBase");
+                    ctx.printExecutingInfo();
                 }
             }
         }

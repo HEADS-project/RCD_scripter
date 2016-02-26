@@ -20,6 +20,15 @@ abstract public class JobBase_VarValueBase extends JobBase_Obj {
     }
     
     abstract public String getTypeString();
-    abstract public VarValueBase execute(ExecuteContext ctx);
+    
+    public VarValueBase execute(ExecuteContext ctx) {
+        VarValueBase ret;
+        ctx.pushExecutingToken(t);
+        ret = executeInternal(ctx);
+        ctx.popExecutingToken();
+        return ret;
+    }
+    
+    abstract protected VarValueBase executeInternal(ExecuteContext ctx);
 
 }

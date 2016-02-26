@@ -62,9 +62,8 @@ public class VarRowList extends VarBase {
         // Assure that all default cells not defined in new row are included
         VarRow tmpRow = new VarRow(defaultRow); // Start with default cells
         tmpRow.addRow(newRow);  // Add the new cells
-        newRow.addRow(tmpRow);  // Copy back to original VarRow object
         
-        rowList.add(newRow);
+        rowList.add(tmpRow);
     }
 
     @Override

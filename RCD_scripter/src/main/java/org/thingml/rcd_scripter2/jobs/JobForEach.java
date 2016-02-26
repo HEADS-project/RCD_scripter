@@ -39,7 +39,7 @@ public class JobForEach extends JobBase_Obj {
     }
     
     @Override
-    public Object execute(ExecuteContext ctx) {
+    protected Object executeInternal(ExecuteContext ctx) {
         VarBase var = ctx.getVarBase(inVarName);
         if (var != null) {
             if (var instanceof VarArray) {

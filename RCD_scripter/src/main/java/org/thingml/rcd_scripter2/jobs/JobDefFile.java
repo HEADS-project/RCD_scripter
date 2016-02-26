@@ -7,32 +7,35 @@ package org.thingml.rcd_scripter2.jobs;
 
 import org.thingml.rcd_scripter2.ExecuteContext;
 import org.thingml.rcd_scripter2.parser.Token;
+import org.thingml.rcd_scripter2.variables.VarFile;
 import org.thingml.rcd_scripter2.variables.VarRowList;
+import org.thingml.rcd_scripter2.variables.VarValueBase;
 
 /**
  *
  * @author steffend
  */
-public class JobDefRowList extends JobBase_Obj {
+public class JobDefFile extends JobBase_Obj {
 
     private String varName;
-    private String copyFromName;
+    private JobList_VarValueBase valueJobList;
     
-    public JobDefRowList(Token t, String varName, String copyFromName) {
+    public JobDefFile(Token t, String varName, JobList_VarValueBase valueJobList) {
         super(t);
         this.varName = varName;
-        this.copyFromName = copyFromName;
+        this.valueJobList = valueJobList;
     }
     
     public String getTypeString() {
-        return "JobDefRowList";
+        return "JobDefFile";
     }
     
     protected Object executeInternal(ExecuteContext ctx) {
-        VarRowList newTable = ctx.copyVarRowList(copyFromName);
-        ctx.addVar(varName, newTable);
+        VarValueBase varFileName = valueJobList.executeOneValue(ctx);
+        VarFile newFile = new VarFile(varFileName.getString());
+        ctx.addVar(varName, newFile);
         
-        return newTable;
+        return newFile;
     }
 
 }

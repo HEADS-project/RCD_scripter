@@ -47,11 +47,17 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FILE :("FILE")>
 |
+  <CLOSE :("CLOSE")>
+|
   <FOR_EACH :("FOR_EACH")>
 |
   <HAS :("HAS")>
 |
-  <IF :("IF")>
+  <IF:("IF")>
+|
+  <IF_ROW:("IF_ROW")>
+|
+  <ELSE:("ELSE")>
 |
   <IN :("IN")>
 |
@@ -122,6 +128,8 @@ TOKEN:  /* Separators */
 |
     <ASSIGN:("=")>
 |
+    <EQUAL:("==")>
+|
     <DOLLAR:("$")>
 |
     <PLUS:("+")>
@@ -171,10 +179,12 @@ void Def(JobList_Obj jobList):
         DefRow(jobList, TId_defVarName)
         |
         DefCell(jobList, TId_defVarName)
-        |
-//        DefValue(jobList, TId_defVarName)
 //        |
+//        DefValue(jobList, TId_defVarName)
+        |
         DefVarArray(jobList, TId_defVarName)
+        |
+        DefFile(jobList, TId_defVarName)
     )
     <SEMI>
     {}
@@ -303,6 +313,19 @@ void DefVarArray(JobList_Obj jobList, Token TId_defVarName):
     {jobList.addJob( new JobDefVarArray(TId_defVarName, TId_defVarName.image, copyFromArrName, valueJobListSize, valueJobListDefault));}
 }
 
+void DefFile(JobList_Obj jobList, Token TId_defVarName):
+{
+    JobList_VarValueBase retValueJobList; 
+}
+{
+    <FILE>
+    <OBRA>
+    retValueJobList = TxtExpr()
+    <CBRA>
+    {jobList.addJob( new JobDefFile(TId_defVarName, TId_defVarName.image, retValueJobList));}
+}
+
+
 
 
 void Statement(JobList_Obj jobList):
@@ -328,9 +351,13 @@ void VarMethodOrAssign(JobList_Obj jobList):
         (
             <PERIOD>
             (
-                SetDefault(jobList, TId_varName)
+                M_SetDefault(jobList, TId_varName)
                 |
-                Add(jobList, TId_varName)
+                M_Add(jobList, TId_varName)
+                |
+                M_Close(jobList, TId_varName)
+                |
+                M_Print(jobList, TId_varName)
             )
         )
         |
@@ -341,7 +368,7 @@ void VarMethodOrAssign(JobList_Obj jobList):
     {}
 }
 
-void SetDefault(JobList_Obj jobList, Token TId_varName):
+void M_SetDefault(JobList_Obj jobList, Token TId_varName):
 {
     Token TId_copyVarName = null;
     String copyVarName = null;
@@ -365,7 +392,7 @@ void SetDefault(JobList_Obj jobList, Token TId_varName):
     {jobList.addJob( new JobVarSetDefault(TId_varName, TId_varName.image, copyVarName, jobCellList));}
 }
 
-void Add(JobList_Obj jobList, Token TId_varName):
+void M_Add(JobList_Obj jobList, Token TId_varName):
 {
     Token TId_copyVarName = null;
     String copyVarName = null;
@@ -389,6 +416,34 @@ void Add(JobList_Obj jobList, Token TId_varName):
     {jobList.addJob( new JobVarAddCellList(TId_varName, TId_varName.image, copyVarName, jobCellList));}
 }
 
+void M_Close(JobList_Obj jobList, Token TId_varName):
+{
+}
+{
+    (
+        <CLOSE>
+        <OBRA>
+        <CBRA>
+    )
+    {jobList.addJob( new JobVarClose(TId_varName, TId_varName.image));}
+}
+
+void M_Print(JobList_Obj jobList, Token TId_varName):
+{
+    JobList_VarValueBase retValueJobList; 
+}
+{
+    (
+        <PRINT>
+        <OBRA>
+        retValueJobList = TxtExpr()
+        <CBRA>
+    )
+    {jobList.addJob( new JobPrint(TId_varName, TId_varName.image, retValueJobList));}
+}
+
+
+
 void VarNameAssign(JobList_Obj jobList, Token TId_varName):
 {
     JobList_VarValueBase indexValueJobList = null; 
@@ -411,6 +466,7 @@ void VarNameAssign(JobList_Obj jobList, Token TId_varName):
 void Print(JobList_Obj jobList):
 {
     JobList_VarValueBase retValueJobList; 
+    String fileName = null;
     Token TId;
 }
 {
@@ -420,7 +476,7 @@ void Print(JobList_Obj jobList):
         retValueJobList = TxtExpr()
         <CBRA>
     )
-    {jobList.addJob( new JobPrint(TId, retValueJobList));}
+    {jobList.addJob( new JobPrint(TId, fileName, retValueJobList));}
 }
 
 void Block(JobList_Obj jobList):
@@ -429,13 +485,17 @@ void Block(JobList_Obj jobList):
 {
     (
         ForEach(jobList)
+        |
+        IfRow(jobList)
+        |
+        IfVar(jobList)
     )
     {}
 }
 
 void ForEach(JobList_Obj jobList):
 {
-    JobList_Obj forEachJobList = new JobList_Obj("ForEach");
+    JobList_Obj forEachJobList = new JobList_Obj("ForEachScript");
     Token TId_loopVar;
     Token TId_inVar;
 }
@@ -452,6 +512,70 @@ void ForEach(JobList_Obj jobList):
         <CCBRA>
     )
     {jobList.addJob( new JobForEach(TId_loopVar, TId_loopVar.image, TId_inVar.image, forEachJobList));}
+}
+
+void IfRow(JobList_Obj jobList):
+{
+    JobList_Obj ifJobList = new JobList_Obj("IfRowScript");
+    JobList_Obj elseJobList = new JobList_Obj("ElseRowScript");
+    Token TId_rowVar;
+    JobBase_VarCell jobCell;
+    JobList_VarCell jobCellList = null;
+}
+{
+    (
+        <IF_ROW>
+        <OBRA>
+        TId_rowVar = <VAR_LITERAL>
+        <HAS>
+        jobCell = CellEntry()        
+        <CBRA>
+        <OCBRA>
+        Script(ifJobList)
+        <CCBRA>
+        (
+            <ELSE> 
+            <OCBRA>
+            Script(elseJobList)
+            <CCBRA>
+        )?
+    )
+    {
+        jobCellList = new JobList_VarCell("IfRowCell");
+        jobCellList.addJob(jobCell);
+        jobList.addJob( new JobIfRow(TId_rowVar, TId_rowVar.image, jobCellList, ifJobList, elseJobList));
+    }
+}
+
+void IfVar(JobList_Obj jobList):
+{
+    JobList_Obj ifJobList = new JobList_Obj("IfVarScript");
+    JobList_Obj elseJobList = new JobList_Obj("ElseVarScript");
+    Token TId;
+    JobList_VarValueBase leftValueJobList;
+    JobList_VarValueBase rightValueJobList;
+}
+{
+    (
+        TId = <IF>
+        <OBRA>
+        leftValueJobList = Expr()
+        <EQUAL>
+        rightValueJobList = Expr()
+        <CBRA>
+        <OCBRA>
+        Script(ifJobList)
+        <CCBRA>
+        (
+            <ELSE> 
+            <OCBRA>
+            Script(elseJobList)
+            <CCBRA>
+        )?
+    )
+    {
+        jobList.addJob( new JobIfVarEq(TId, leftValueJobList, rightValueJobList, ifJobList, elseJobList));
+    }
 }
 
 JobList_VarCell CellList():

@@ -34,7 +34,7 @@ public class JobDefVarArray extends JobBase_Obj {
         return "JobDefVarArray";
     }
     
-    public Object execute(ExecuteContext ctx) {
+    protected Object executeInternal(ExecuteContext ctx) {
         VarArray newArray = null;
         if (copyFromVarName != null) {
             VarArray copyFromArray = ctx.getVarArray(copyFromVarName);

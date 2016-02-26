@@ -20,6 +20,15 @@ abstract public class JobBase_VarCell extends JobBase_Obj {
     }
     
     abstract public String getTypeString();
-    abstract public VarCell execute(ExecuteContext ctx);
+    
+    public VarCell execute(ExecuteContext ctx) {
+        VarCell ret;
+        ctx.pushExecutingToken(t);
+        ret = executeInternal(ctx);
+        ctx.popExecutingToken();
+        return ret;
+    }
+
+    abstract protected VarCell executeInternal(ExecuteContext ctx);
 
 }

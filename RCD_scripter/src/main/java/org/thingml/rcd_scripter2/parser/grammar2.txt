@@ -8,22 +8,26 @@ DefRow    -> <DEF> Var <=> <ROW> <(> (CellList | <=>VarRow)? <)>
 DefCell   -> <DEF> Var <=> <CELL> <(> CellEntry | <=>VarCell <)>
 DefValue  -> <DEF> Var <=> <VALUE> <(> Expr | <=>VarValue <)>
 DefVarArray  -> <DEF> Var <=> <VARARRAY> <(> Num | <=>VarArray <)> 
-DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <,> String <)>
+DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <)>
 
 
-Block -> ForBlock | IfBlock
+Block -> ForBlock | IfRowBlock | IfVarBlock
 ForBlock -> <FOR_EACH> <(> Var <IN> Var <)> <{> Script <}>
-IfBlock -> <IF> <(> IfTest <)> <{> Script <}>
-IfTest -> TestHas
-TestHas -> Var <HAS> <(> Cell <)> 
+
+IfRowBlock -> <IF_ROW> <(> CmpHas <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+CmpHas -> Var <HAS> CellEntry 
+
+IfVarBlock -> <IF> <(> CmpVar <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+CmpVar -> Expr <==> Expr 
 
 Statement ->  (VarMethod | VarAssign | VarIndexAssign | Print | Fprint)<;>
-VarMethod -> Var <.> (M_Add | M_Setdefault | Print )
+VarMethod -> Var <.> (M_Add | M_Setdefault | M_Close | M_Print )
 M_Add -> <ADD> <(> CellList | =Var <)>
 M_Setdefault -> <SETDEF> <(> CellList | =Var <)> 
+M_Close -> <CLOSE> <(><)> 
+M_Print -> <PRINT><(> TxtExpr <)> 
 
 Print -> <PRINT><(> TxtExpr <)> 
-Fprint -> <FPRINT><(> Var <,> TxtExpr <)> 
 
 CellList -> CellEntry (<,> CellEntry)*
 CellEntry -> Tupl | VarCell | VarIdCell 

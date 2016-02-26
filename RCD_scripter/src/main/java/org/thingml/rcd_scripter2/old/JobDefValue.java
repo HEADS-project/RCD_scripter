@@ -36,7 +36,7 @@ public class JobDefValue extends JobBase_Obj {
     }
     
     @Override
-    public Object execute(ExecuteContext ctx) {
+    public Object executeInternal(ExecuteContext ctx) {
         VarValueBase newValue = null;
         
         if (copyFromName != null) {

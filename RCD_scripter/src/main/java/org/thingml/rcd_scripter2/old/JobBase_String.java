@@ -21,6 +21,6 @@ abstract public class JobBase_String extends JobBase_Obj {
     }
     
     abstract public String getTypeString();
-    abstract public String execute(ExecuteContext ctx);
+    abstract public String executeInternal(ExecuteContext ctx);
 
 }

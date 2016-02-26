@@ -1,7 +1,9 @@
 //## Definition of coders with attributes separated by whitespace and terminated by 
 
+$Test = "{ MSGID_TMR_SIGNAL\n,       \"UNKNOWN_SIGNAL\"     }  // Dummy entry, used if id not found");
+
 //DEF $CoderDef = ROWLIST();
-//$CoderDef.SetDef({MSGC, MSGC_NONE}, {TEST, TESTID}, 
+//$CoderDef.SetDef({MSGC, "MSGC_NONE"}, {TEST, TESTID}, 
 //                 {PARAMS, ""},
 //                 {COMP_SIGN, ""}, 
 //                 {DECOMP_SIGN, ""});
@@ -15,9 +17,11 @@
 //              {DECOMP_SIGN, ", uint16_t *p0, uint16_t *p1"});
 
 //## Definition of messages with attributes separated by whitespace and terminated by 
+$MsgEnumPrefix = "MSGID_";
+
 //DEF $MsgDef = ROWLIST();
-//$MsgDef.SetDef({ENUM_PREFIX, MSGID_}, {MSGC, MSGC_U16},
-//               {TRACE_NAME, NONE},              {ENUM_VAL, 1},   {TRACE, yes},        {COMMENT, ""});
+//$MsgDef.SetDef({MSGC, MSGC_U16},
+//               {TRACE_NAME, NONE},              {ENUM_VAL, 1},   {TRACE, yes},    {COMMENT, ""});
 //$MsgDef.Add( {TRACE_NAME, TMR_SIGNAL},        {ENUM_VAL, 2},                      {COMMENT, "Time signal                                  "});
 //$MsgDef.Add( {TRACE_NAME, TIME_TICK},         {ENUM_VAL, 4}, {TRACE, no},         {COMMENT, "Time tick from OS                            "});
 //DEF $MsgDefCopyWithTwoRows = ROWLIST(=$MsgDef);
@@ -60,20 +64,50 @@
 //PRINT("$OneRow.NAME:" + $OneRow.NAME + " $OneRow.Number:" + $OneRow.Number);
 
 //$Counter = 0;
+//$TraceCount = 0;
 //PRINT("Before loop: " + $Counter);
 //FOR_EACH($LoopRow IN $MsgDef) {
 //$Counter = $Counter + 1;
-//PRINT("In loop: " + $Counter);
+//PRINT("\nIn loop: " + $Counter);
 //PRINT("$LoopRow.TRACE_NAME:" + $LoopRow.TRACE_NAME + " $LoopRow.ENUM_VAL:" + $LoopRow.ENUM_VAL);
 //$MsgArray[$LoopRow.ENUM_VAL] = $LoopRow.MSGC;
+//IF_ROW($LoopRow HAS {TRACE, no}) {
+//PRINT("" + $LoopRow.TRACE_NAME + " has no trace ");
+//} ELSE { $TraceCount = $TraceCount + 1; PRINT("Has TRACE " + $TraceCount);}
 //}
-//PRINT("After loop: " + $Counter);
+//PRINT("After loop: " + $Counter + $TraceCount + " shall have trace");
 
 //$Counter2 = 0;
 //PRINT("Before loop2: " + $Counter2);
 //FOR_EACH($Value IN $MsgArray) {
-//PRINT("In loop2: " + $Counter2 + " Value:" + $Value + " Value["+$Counter2+"]:" + $MsgArray[$Counter2]);
+//PRINT("\nIn loop2: " + $Counter2 + " Value:" + $Value + " Value["+$Counter2+"]:" + $MsgArray[$Counter2]);
 //$Counter2 = $Counter2 + 1;
+//IF($Value == "<USING DEFAULT>") {PRINT(" Is default value ");} else {PRINT("*************** REAL ****************");}
 //}
 //PRINT("After loop2: " + $Counter2);
 
+
+//DEF $CombinedDef = ROWLIST();
+FOR_EACH($MsgRow in $MsgDef) {
+    FOR_EACH($CoderRow in $CoderDef) {
+        IF ($MsgRow.MSGC == $CoderRow.MSGC) {
+            DEF $NewRow = ROW();
+            $NewRow.ADD(=$MsgRow);
+            $NewRow.ADD(=$CoderRow);
+            $CombinedDef.ADD(=$NewRow);
+            ##PRINT("New combined row:" + $NewRow);
+        }
+    }
+}
+
+DEF $TraceList = FILE("C:/Print/trace.txt");
+
+FOR_EACH($Row in $CombinedDef) {
+    IF_ROW($Row HAS  {TRACE, no}) {
+        $myLine = "=>      " + $MsgEnumPrefix + $Row.TRACE_NAME +", " + $Row.TRACE_NAME + ",\n";
+        print(""+$myLine);
+        $TraceList.print(""+$myLine);
+    }
+}
+
+$TraceList.close();

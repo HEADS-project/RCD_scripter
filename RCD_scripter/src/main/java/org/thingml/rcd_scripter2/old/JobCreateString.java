@@ -28,7 +28,7 @@ public class JobCreateString extends JobBase_String {
     }
     
     @Override
-    public String execute(ExecuteContext ctx) {
+    public String executeInternal(ExecuteContext ctx) {
         return image;
     }
 }

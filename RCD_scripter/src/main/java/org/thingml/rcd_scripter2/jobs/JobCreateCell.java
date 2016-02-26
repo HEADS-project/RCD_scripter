@@ -31,7 +31,7 @@ public class JobCreateCell extends JobBase_VarCell {
     }
     
     @Override
-    public VarCell execute(ExecuteContext ctx) {
+    protected VarCell executeInternal(ExecuteContext ctx) {
         VarValueBase newValue = jobListCreateValue.executeOneValue(ctx);
         VarCell newCell = new VarCell(id, newValue);
 

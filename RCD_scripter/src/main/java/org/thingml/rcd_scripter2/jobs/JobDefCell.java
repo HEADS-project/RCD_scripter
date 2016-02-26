@@ -33,7 +33,7 @@ public class JobDefCell extends JobBase_Obj {
     }
     
     @Override
-    public Object execute(ExecuteContext ctx) {
+    protected Object executeInternal(ExecuteContext ctx) {
         VarCell newCell = null;
         
         if (copyFromName != null) {

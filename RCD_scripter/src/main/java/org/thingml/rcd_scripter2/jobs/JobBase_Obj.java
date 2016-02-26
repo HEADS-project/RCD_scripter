@@ -53,7 +53,15 @@ abstract public class JobBase_Obj {
     }
     
     abstract public String getTypeString();
-    abstract public Object execute(ExecuteContext ctx);
+    
+    public Object execute(ExecuteContext ctx) {
+        Object ret;
+        ctx.pushExecutingToken(t);
+        ret = executeInternal(ctx);
+        ctx.popExecutingToken();
+        return ret;
+    }
+    abstract protected Object executeInternal(ExecuteContext ctx);
 
     public void print(){
         System.out.println("List("+listName+":"+sequence+") "+getTypeString()+" Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn);

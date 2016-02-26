@@ -53,7 +53,7 @@ public class JobCreateValueOperation extends JobBase_VarValueBase {
     }
     
     @Override
-    public VarValueBase execute(ExecuteContext ctx) {
+    protected VarValueBase executeInternal(ExecuteContext ctx) {
         VarValueBase leftValue = leftValueJob.executeOneValue(ctx);
         VarValueBase rightValue = rigthValueJob.executeOneValue(ctx);
         

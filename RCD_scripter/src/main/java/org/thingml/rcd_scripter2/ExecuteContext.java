@@ -12,6 +12,7 @@ import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarArray;
 import org.thingml.rcd_scripter2.variables.VarBase;
 import org.thingml.rcd_scripter2.variables.VarCell;
+import org.thingml.rcd_scripter2.variables.VarFile;
 import org.thingml.rcd_scripter2.variables.VarRow;
 import org.thingml.rcd_scripter2.variables.VarRowList;
 import org.thingml.rcd_scripter2.variables.VarValueBase;
@@ -79,7 +80,13 @@ public class ExecuteContext {
         VarBase var = varList.get(name);
         if (var == null) {
             System.out.println("Warning variable <"+name+"> is not defined");
+            printExecutingInfo();
         }
+        return var;
+    }
+    
+    public VarBase getVarBaseSilent(String name) {
+        VarBase var = varList.get(name);
         return var;
     }
     
@@ -91,6 +98,7 @@ public class ExecuteContext {
                 ret = (VarRowList) var;
             } else  {
                 System.out.println("Warning variable <"+name+"> is not instanceof VarRowList");
+                printExecutingInfo();
             }
         }
         return ret;
@@ -115,6 +123,7 @@ public class ExecuteContext {
                 ret = (VarRow) var;
             } else  {
                 System.out.println("Warning variable <"+name+"> is not instanceof VarRow");
+                printExecutingInfo();
             }
         }
         return ret;
@@ -139,6 +148,22 @@ public class ExecuteContext {
                 ret = (VarCell) var;
             } else  {
                 System.out.println("Warning variable <"+name+"> is not instanceof VarCell");
+                printExecutingInfo();
+            }
+        }
+        return ret;
+    }
+    
+    
+    public VarFile getVarFile(String name) {
+        VarBase var = getVarBase(name);
+        VarFile ret = null;
+        if (var != null) {
+            if (var instanceof VarFile) {
+                ret = (VarFile) var;
+            } else  {
+                System.out.println("Warning variable <"+name+"> is not instanceof VarFile");
+                printExecutingInfo();
             }
         }
         return ret;
@@ -153,9 +178,11 @@ public class ExecuteContext {
             varCell = varRow.getCell(id);
             if (varCell == null) {
                 System.out.println("Warning variable <"+var+"."+id+"> is not in ROW");
+                printExecutingInfo();
             }
         } else {
             System.out.println("Warning variable <"+var+"> is not defined");
+            printExecutingInfo();
         } 
         return varCell;
     }
@@ -211,6 +238,7 @@ public class ExecuteContext {
                 ret = (VarArray) var;
             } else  {
                 System.out.println("Warning variable <"+name+"> is not instanceof VarArray");
+                printExecutingInfo();
             }
         }
         return ret;
@@ -229,7 +257,11 @@ public class ExecuteContext {
             HashMap.Entry pair = (HashMap.Entry)i.next();
             VarBase base = (VarBase)pair.getValue();
             ret += "<Content of id("+pair.getKey()+")\n";
-            ret += base.printString();
+            if (base != null) {
+                ret += base.printString();
+            } else {
+                ret += "NULL_PTR";
+            }
             ret += ">\n";
         }
         return ret;

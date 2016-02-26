@@ -15,7 +15,10 @@ import org.thingml.rcd_scripter2.variables.VarValueString;
  * @author steffend
  */
 public class JobCreateValueString extends JobBase_VarValueBase {
-    private final String image;
+    private String image;
+    private final String NL = "\n";
+    private final String TAB = "\t";
+    private final String QUOTE = "\"";
     
 
     public JobCreateValueString(Token t, String image, boolean removeQuotes) {
@@ -25,6 +28,9 @@ public class JobCreateValueString extends JobBase_VarValueBase {
         } else {
             this.image = image;
         }
+        this.image = this.image.replace("\\n", NL);
+        this.image = this.image.replace("\\t", TAB);
+        this.image = this.image.replace("\\\"", QUOTE);
     }
     
     @Override
@@ -33,7 +39,7 @@ public class JobCreateValueString extends JobBase_VarValueBase {
     }
     
     @Override
-    public VarValueBase execute(ExecuteContext ctx) {
+    protected VarValueBase executeInternal(ExecuteContext ctx) {
         VarValueBase ret = new VarValueString(image);
         return ret;
     }
