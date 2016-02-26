@@ -40,6 +40,14 @@ abstract public class JobBase_Obj {
         return next;
     }
     
+    private void enterExecute(ExecuteContext ctx) {
+        ctx.pushExecutingToken(t);
+    }
+    
+    private void exitExecute(ExecuteContext ctx) {
+        ctx.popExecutingToken();
+    }
+
     public Token getToken() {
         return t;
     }

@@ -606,7 +606,7 @@ valueJobList1 = retValueJobList;
     }
 if (TId_id != null) {
             valueJob = new JobCreateValueVarId(TId_var, TId_var.image, TId_id.image);
-        } if (indexValueJobList != null) {
+        } else if (indexValueJobList != null) {
             valueJob = new JobCreateValueVarIndex(TId_var, TId_var.image, indexValueJobList);
         } else {
             valueJob = new JobCreateValueVar(TId_var, TId_var.image);

@@ -7,6 +7,8 @@ package org.thingml.rcd_scripter2;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
+import org.thingml.rcd_scripter2.parser.Token;
 import org.thingml.rcd_scripter2.variables.VarArray;
 import org.thingml.rcd_scripter2.variables.VarBase;
 import org.thingml.rcd_scripter2.variables.VarCell;
@@ -22,13 +24,31 @@ import org.thingml.rcd_scripter2.variables.VarValueString;
 public class ExecuteContext {
     private HashMap<String, VarBase> varList = new HashMap<String, VarBase>();
     private boolean trace = false;
-    
+    private Stack<Token> executingTokenStack = new Stack<Token>();
+
     public boolean getTrace() {
         return trace;
     }
     
     public void setTrace(boolean trace) {
         this.trace = trace;
+    }
+    
+    public void printExecutingInfo() {
+        Token t = executingTokenStack.peek();
+        System.out.println("Executing line => Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn+"\n");
+    }
+    
+    public void pushExecutingToken(Token t) {
+        executingTokenStack.push(t);
+    }
+    
+    public Token popExecutingToken() {
+        return executingTokenStack.pop();
+    }
+    
+    public Token peekExecutingToken() {
+        return executingTokenStack.peek();
     }
     
     public void addVar(String name, VarBase var) {
