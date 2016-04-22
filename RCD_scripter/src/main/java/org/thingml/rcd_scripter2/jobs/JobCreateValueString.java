@@ -28,6 +28,10 @@ public class JobCreateValueString extends JobBase_VarValueBase {
         } else {
             this.image = image;
         }
+        this.image = this.image.replace("\r\n", NL);
+        this.image = this.image.replace("\n\r", NL);
+        this.image = this.image.replace("\r", NL);
+        this.image = this.image.replace("\\r", NL);
         this.image = this.image.replace("\\n", NL);
         this.image = this.image.replace("\\t", TAB);
         this.image = this.image.replace("\\\"", QUOTE);

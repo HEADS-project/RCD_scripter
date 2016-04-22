@@ -11,7 +11,7 @@ package org.thingml.rcd_scripter2.variables;
  */
 abstract public class VarValueBase extends VarBase {
  
-    public enum Operation { STRPLUS, PLUS, MINUS, MUL, DIV };
+    public enum Operation { STRPLUS, STRMINUS, PLUS, MINUS, MUL, DIV };
     public enum VarType { INT, STRING };
     protected String image;
     protected String operationImage;
@@ -63,6 +63,9 @@ abstract public class VarValueBase extends VarBase {
             case STRPLUS:
                 newValue = doOperationStringPlus(valueLeft, valueRight);
                 break;
+            case STRMINUS:
+                newValue = doOperationStringMinus(valueLeft, valueRight);
+                break;
             case PLUS:
                 newValue = doOperationPlus(valueLeft, valueRight);
                 break;
@@ -94,6 +97,21 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
 
+    private static VarValueBase doOperationStringMinus(VarValueBase valueLeft, VarValueBase valueRight) {
+
+        //Any - Any -> String
+        String leftString = "??? doOperationStringMinus() leftString is null";
+        if (valueLeft != null) leftString = valueLeft.getString();
+
+        String rightString = "??? doOperationStringMinus() rightString is null"; 
+        if (valueRight != null) rightString = valueRight.getString();
+
+        String result = leftString.replaceAll(rightString, "");
+        VarValueBase newValue = new VarValueString(result);
+        
+        return newValue;
+    }
+
     private static VarValueBase doOperationPlus(VarValueBase valueLeft, VarValueBase valueRight) {
         VarValueBase newValue = null;
         boolean sameType = valueLeft.getType() == valueRight.getType();
@@ -107,13 +125,15 @@ abstract public class VarValueBase extends VarBase {
             }
             if (valueLeft.getType() == VarType.STRING) {
                 //String + String -> String
-                String result = valueLeft.getString() + valueRight.getString();
-                newValue = new VarValueString(result);
+                newValue =  doOperationStringPlus(valueLeft, valueRight);
+                //String result = valueLeft.getString() + valueRight.getString();
+                //newValue = new VarValueString(result);
             }
         } else {
             //Any + Any -> String
-            String result = valueLeft.getString() + valueRight.getString();
-            newValue = new VarValueString(result);
+            newValue =  doOperationStringPlus(valueLeft, valueRight);
+            //String result = valueLeft.getString() + valueRight.getString();
+            //newValue = new VarValueString(result);
         }
         
         if (newValue == null) {
@@ -132,6 +152,21 @@ abstract public class VarValueBase extends VarBase {
                 newValue = new VarValueInt(""+result);
                 newValue.setOperationImage("("+valueLeft.getOperationImage()+")-("+valueRight.getOperationImage()+")");
             }
+        }
+        
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                int result = ((VarValueInt) valueLeft).getInt() - ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueInt(""+result);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")-("+valueRight.getOperationImage()+")");
+            }
+            if (valueLeft.getType() == VarType.STRING) {
+                //String - String -> String
+                newValue =  doOperationStringMinus(valueLeft, valueRight);
+            }
+        } else {
+            //Any - Any -> String
+            newValue =  doOperationStringMinus(valueLeft, valueRight);
         }
         
         if (newValue == null) {

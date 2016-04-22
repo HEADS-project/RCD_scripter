@@ -12,7 +12,7 @@ PARSER_BEGIN (RcdScript2Parser)
    }
 PARSER_END (RcdScript2Parser)
 
-SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" |"\\"|"\t"|" "| "//"}
+SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" | "\\" | "\t" | " " | "//" | "*/" | "/*"}
 
 /* COMMENTS */
 
@@ -65,6 +65,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <PRINT :("PRINT")>
 |
+  <PRINTLN :("PRINTLN")>
+|
   <ROW :("ROW")>
 |
   <SETDEF :("SETDEF")>
@@ -85,7 +87,7 @@ TOKEN :  /* Literals */
 |
   < STRING_LITERAL:
       "\""
-      (   (~["\"","\\","\n","\r"])
+      (   (~["\"","\\"])
         | ("\\"
             ( ["n","t","b","r","f","\\","'","\""]
             | ["0"-"7"] ( ["0"-"7"] )?
@@ -431,15 +433,26 @@ void M_Close(JobList_Obj jobList, Token TId_varName):
 void M_Print(JobList_Obj jobList, Token TId_varName):
 {
     JobList_VarValueBase retValueJobList; 
+    boolean nl = false;
 }
 {
     (
-        <PRINT>
-        <OBRA>
-        retValueJobList = TxtExpr()
-        <CBRA>
+        (
+            <PRINT>
+            <OBRA>
+            retValueJobList = TxtExpr()
+            <CBRA>
+        )
+        |
+        (
+            <PRINTLN>
+            {nl = true;}
+            <OBRA>
+            retValueJobList = TxtExpr()
+            <CBRA>
+        )
     )
-    {jobList.addJob( new JobPrint(TId_varName, TId_varName.image, retValueJobList));}
+    {jobList.addJob( new JobPrint(TId_varName, TId_varName.image, retValueJobList, nl));}
 }
 
 
@@ -468,15 +481,26 @@ void Print(JobList_Obj jobList):
     JobList_VarValueBase retValueJobList; 
     String fileName = null;
     Token TId;
+    boolean nl = false;
 }
 {
     (
-        TId = <PRINT>
-        <OBRA>
-        retValueJobList = TxtExpr()
-        <CBRA>
+        (
+            TId = <PRINT>
+            <OBRA>
+            retValueJobList = TxtExpr()
+            <CBRA>
+        )
+        |
+        (
+            TId = <PRINTLN>
+            {nl = true;}
+            <OBRA>
+            retValueJobList = TxtExpr()
+            <CBRA>
+        )
     )
-    {jobList.addJob( new JobPrint(TId, fileName, retValueJobList));}
+    {jobList.addJob( new JobPrint(TId, fileName, retValueJobList, nl));}
 }
 
 void Block(JobList_Obj jobList):
@@ -819,7 +843,11 @@ JobList_VarValueBase TxtExpr():
             retValueJobList = ValueId()
         )
         (
-            TId = <PLUS>
+            (
+                TId = <PLUS>
+                |
+                TId = <MINUS>
+            )
             (
                 valueJobList2 = ValueString()
                 |
@@ -831,8 +859,8 @@ JobList_VarValueBase TxtExpr():
             )
             { 
                 valueJobList1 = retValueJobList;
-                retValueJobList = new JobList_VarValueBase("SPLUS");
-                retValueJobList.addJob( new JobCreateValueOperation(TId, "S+", valueJobList1, valueJobList2));
+                retValueJobList = new JobList_VarValueBase("SPLUSMINUS");
+                retValueJobList.addJob( new JobCreateValueOperation(TId, "S"+TId.image, valueJobList1, valueJobList2));
             }
         )*
     )

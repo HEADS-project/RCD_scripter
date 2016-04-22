@@ -45,7 +45,7 @@ Term -> Factor (MulOp Factor)*
 MulOp -> ["*","/"]
 Factor -> Num |  VarValue | VarIdValue | VarIndexValue
 
-TxtExpr -> (String | Id)  (<+> TxtElement)*
+TxtExpr -> (String | Id)  ((<+> | <->) TxtElement)*
 TxtElement -> String | Num | Id | Var | VarValue | VarIdValue | VarIndexValue | VarOtherValue
 
 VarIdValue -> Var <.> Id    // Return VALUE

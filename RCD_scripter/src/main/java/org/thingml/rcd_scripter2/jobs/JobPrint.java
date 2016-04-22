@@ -20,11 +20,13 @@ public class JobPrint extends JobBase_Obj {
 
     private JobList_VarValueBase retValueJobList;
     private String fileName;
+    private boolean nl;
     
-    public JobPrint(Token t, String fileName, JobList_VarValueBase retValueJobList) {
+    public JobPrint(Token t, String fileName, JobList_VarValueBase retValueJobList, boolean nl) {
         super(t);
         this.retValueJobList = retValueJobList;
         this.fileName = fileName;
+        this.nl = nl;
     }
     
     @Override
@@ -35,12 +37,15 @@ public class JobPrint extends JobBase_Obj {
     @Override
     protected Object executeInternal(ExecuteContext ctx) {
         VarValueBase text = retValueJobList.executeOneValue(ctx);
+        String printString = text.getString();
+        if (nl) printString += "\n";
+        
         if (fileName != null) {
             VarFile varFile = ctx.getVarFile(fileName);
-            varFile.write(ctx, text.getString());
+            varFile.write(ctx, printString);
             
         } else {
-            System.out.println("Print("+text.getString()+")");
+            System.out.print(printString);
         }
         
         return this;

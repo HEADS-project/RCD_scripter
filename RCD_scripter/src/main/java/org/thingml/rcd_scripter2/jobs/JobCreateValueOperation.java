@@ -30,6 +30,9 @@ public class JobCreateValueOperation extends JobBase_VarValueBase {
         if (image.contentEquals("S+")==true) {
             this.operation = VarValueBase.Operation.STRPLUS;
             
+        } else if (image.contentEquals("S-")==true) {
+            this.operation = VarValueBase.Operation.STRMINUS;
+            
         } else if (image.contentEquals("+")==true) {
             this.operation = VarValueBase.Operation.PLUS;
             

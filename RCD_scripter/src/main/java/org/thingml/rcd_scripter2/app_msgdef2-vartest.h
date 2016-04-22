@@ -1,5 +1,10 @@
 //## Definition of coders with attributes separated by whitespace and terminated by 
 
+$En = "Hei";
+$EnNl = "Hei\nHei";
+$EnHel = "Hei
+Hei";
+
 $Test = "{ MSGID_TMR_SIGNAL\n,       \"UNKNOWN_SIGNAL\"     }  // Dummy entry, used if id not found");
 
 //DEF $CoderDef = ROWLIST();
