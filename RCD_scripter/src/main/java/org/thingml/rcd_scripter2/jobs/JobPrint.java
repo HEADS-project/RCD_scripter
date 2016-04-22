@@ -38,7 +38,7 @@ public class JobPrint extends JobBase_Obj {
     protected Object executeInternal(ExecuteContext ctx) {
         VarValueBase text = retValueJobList.executeOneValue(ctx);
         String printString = text.getString();
-        if (nl) printString += "\n";
+        if (nl) printString += "\r\n";
         
         if (fileName != null) {
             VarFile varFile = ctx.getVarFile(fileName);

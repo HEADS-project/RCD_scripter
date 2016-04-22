@@ -4,10 +4,15 @@
 
 typedef enum {
     MSGC_U16,
+    MU16,
     MSGC_U16U16,
+    MU16U16,
     MSGC_U16U16U16,
+    MU16U16U16,
     MSGC_U32,
+    MU32,
     MSGC_U32U32U16U8U8,
+    MU32U32U16U8U8,
     MSGC_TYPE_MAX
 } msgc_type_t;
 

@@ -101,6 +101,7 @@ $GenFile.PRINT(""+ $AutogenWarning);
 $GenFile.PRINT("typedef enum {\n");
 FOR_EACH($Row IN $CoderDef) {
 	$GenFile.PRINT("    "+$Row.MSGC+",\n");
+	$GenFile.PRINT("    "+$Row.MSGC-"SGC_"+",\n");
 }
 $GenFile.PRINT("    MSGC_TYPE_MAX\n");
 $GenFile.PRINT("} msgc_type_t;\n");

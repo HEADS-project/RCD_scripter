@@ -16,6 +16,7 @@ import org.thingml.rcd_scripter2.variables.VarValueString;
  */
 public class JobCreateValueString extends JobBase_VarValueBase {
     private String image;
+    private final String CR = "\r";
     private final String NL = "\n";
     private final String TAB = "\t";
     private final String QUOTE = "\"";
@@ -28,10 +29,10 @@ public class JobCreateValueString extends JobBase_VarValueBase {
         } else {
             this.image = image;
         }
-        this.image = this.image.replace("\r\n", NL);
-        this.image = this.image.replace("\n\r", NL);
-        this.image = this.image.replace("\r", NL);
-        this.image = this.image.replace("\\r", NL);
+        //this.image = this.image.replace("\r\n", NL);
+        //this.image = this.image.replace("\n\r", NL);
+        //this.image = this.image.replace("\r", NL);
+        this.image = this.image.replace("\\r", CR);
         this.image = this.image.replace("\\n", NL);
         this.image = this.image.replace("\\t", TAB);
         this.image = this.image.replace("\\\"", QUOTE);
