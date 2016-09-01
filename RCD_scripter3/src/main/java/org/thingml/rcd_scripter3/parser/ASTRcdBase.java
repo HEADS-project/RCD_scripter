@@ -2,7 +2,7 @@
 package org.thingml.rcd_scripter3.parser;
 
 public class ASTRcdBase extends SimpleNode {
-  private String name;
+  private String name = "";
 
   /**
    * Constructor.

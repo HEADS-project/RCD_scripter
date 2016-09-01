@@ -55,47 +55,63 @@ public interface RcdScript3ParserConstants {
   /** RegularExpression Id. */
   int DEC_LITERAL = 33;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 34;
+  int FLOAT_LITERAL = 34;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 35;
+  int DECIMAL_EXPONENT = 35;
   /** RegularExpression Id. */
-  int LETTER = 36;
+  int HEX_LITERAL = 36;
   /** RegularExpression Id. */
-  int DIGIT = 37;
+  int STRING_LITERAL = 37;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 38;
+  int LETTER = 38;
   /** RegularExpression Id. */
-  int OBRA = 39;
+  int DIGIT = 39;
   /** RegularExpression Id. */
-  int CBRA = 40;
+  int HEX_DIGIT = 40;
   /** RegularExpression Id. */
-  int OCBRA = 41;
+  int OBRA = 41;
   /** RegularExpression Id. */
-  int CCBRA = 42;
+  int CBRA = 42;
   /** RegularExpression Id. */
-  int OABRA = 43;
+  int OCBRA = 43;
   /** RegularExpression Id. */
-  int CABRA = 44;
+  int CCBRA = 44;
   /** RegularExpression Id. */
-  int COMMA = 45;
+  int OABRA = 45;
   /** RegularExpression Id. */
-  int PERIOD = 46;
+  int CABRA = 46;
   /** RegularExpression Id. */
-  int SEMI = 47;
+  int COMMA = 47;
   /** RegularExpression Id. */
-  int ASSIGN = 48;
+  int PERIOD = 48;
   /** RegularExpression Id. */
-  int EQUAL = 49;
+  int SEMI = 49;
   /** RegularExpression Id. */
-  int DOLLAR = 50;
+  int COLON = 50;
   /** RegularExpression Id. */
-  int PLUS = 51;
+  int ASSIGN = 51;
   /** RegularExpression Id. */
-  int MINUS = 52;
+  int EQUAL = 52;
   /** RegularExpression Id. */
-  int MUL = 53;
+  int GT = 53;
   /** RegularExpression Id. */
-  int DIV = 54;
+  int LT = 54;
+  /** RegularExpression Id. */
+  int GTE = 55;
+  /** RegularExpression Id. */
+  int LTE = 56;
+  /** RegularExpression Id. */
+  int NOTEQUAL = 57;
+  /** RegularExpression Id. */
+  int DOLLAR = 58;
+  /** RegularExpression Id. */
+  int PLUS = 59;
+  /** RegularExpression Id. */
+  int MINUS = 60;
+  /** RegularExpression Id. */
+  int MUL = 61;
+  /** RegularExpression Id. */
+  int DIV = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -138,6 +154,8 @@ public interface RcdScript3ParserConstants {
     "<VAR_LITERAL>",
     "<ID_LITERAL>",
     "<DEC_LITERAL>",
+    "<FLOAT_LITERAL>",
+    "<DECIMAL_EXPONENT>",
     "<HEX_LITERAL>",
     "<STRING_LITERAL>",
     "<LETTER>",
@@ -152,8 +170,14 @@ public interface RcdScript3ParserConstants {
     "\",\"",
     "\".\"",
     "\";\"",
+    "\":\"",
     "\"=\"",
     "\"==\"",
+    "\">\"",
+    "\"<\"",
+    "\">=\"",
+    "\"<=\"",
+    "\"!=\"",
     "\"$\"",
     "\"+\"",
     "\"-\"",

@@ -1,13 +1,13 @@
 
 package org.thingml.rcd_scripter3.parser;
 
-public class ASTRcdNum extends ASTRcdBase {
+public class ASTRcdId extends ASTRcdBase {
 
   /**
    * Constructor.
    * @param id the id
    */
-  public ASTRcdNum(int id) {
+  public ASTRcdId(int id) {
     super(id);
   }
 

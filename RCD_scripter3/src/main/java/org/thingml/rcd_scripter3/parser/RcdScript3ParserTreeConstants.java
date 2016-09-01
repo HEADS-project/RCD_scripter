@@ -6,22 +6,34 @@ public interface RcdScript3ParserTreeConstants
   public int JJTSTART = 0;
   public int JJTVOID = 1;
   public int JJTRCDDEFHASHLIST = 2;
-  public int JJTRCDDEFFILE = 3;
-  public int JJTRCDOPEXPR = 4;
-  public int JJTRCDVAR = 5;
-  public int JJTRCDSTRING = 6;
-  public int JJTRCDNUM = 7;
+  public int JJTRCDDEFHASH = 3;
+  public int JJTRCDDEFVARARRAY = 4;
+  public int JJTRCDDEFFILE = 5;
+  public int JJTRCDOPEXPR = 6;
+  public int JJTRCDHASH = 7;
+  public int JJTRCDTUPL = 8;
+  public int JJTRCDVAR = 9;
+  public int JJTRCDID = 10;
+  public int JJTRCDSTRING = 11;
+  public int JJTRCDINTNUM = 12;
+  public int JJTRCDFLOATNUM = 13;
 
 
   public String[] jjtNodeName = {
     "Start",
     "void",
     "RcdDefHashList",
+    "RcdDefHash",
+    "RcdDefVarArray",
     "RcdDefFile",
     "RcdOpExpr",
+    "RcdHash",
+    "RcdTupl",
     "RcdVar",
+    "RcdId",
     "RcdString",
-    "RcdNum",
+    "RcdIntNum",
+    "RcdFloatNum",
   };
 }
-/* JavaCC - OriginalChecksum=fb438f2af639f454e506b1d34be4bcd9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=81fcd2125b9f04f4495364762c6ea65e (do not edit this line) */

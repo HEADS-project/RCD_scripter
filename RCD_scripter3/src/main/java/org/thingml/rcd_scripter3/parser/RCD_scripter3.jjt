@@ -83,7 +83,11 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: <DIGIT> (<DIGIT>)* >
+  < DEC_LITERAL: (["+","-"])? (<DIGIT>)+ >
+|
+  < FLOAT_LITERAL: (["+","-"])? (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
+|
+  < #DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
   < HEX_LITERAL: "0" ["x","X"] (<HEX_DIGIT>)+ >
 |
@@ -130,9 +134,21 @@ TOKEN:  /* Separators */
 |
     <SEMI:(";")>
 |
+    <COLON:(":")>
+|
     <ASSIGN:("=")>
 |
     <EQUAL:("==")>
+|
+    <GT:(">")>
+|
+    <LT:("<")>
+|
+    <GTE:(">=")>
+|
+    <LTE:("<=")>
+|
+    <NOTEQUAL:("!=")>
 |
     <DOLLAR:("$")>
 |
@@ -173,14 +189,14 @@ void Def() :
     <ASSIGN>
     (
         DefHashList(t)
-//        |
-//        DefHash()
+        |
+        DefHash(t)
 //        |
 //        DefKeyValue()
 //        |
 //        DefValue(jobList, TId_defVarName)
-//        |
-//        DefVarArray()
+        |
+        DefVarArray(t)
         |
         DefFile(t)
     )
@@ -203,6 +219,36 @@ void DefHashList(Token t) #RcdDefHashList :
 }
 
 
+void DefHash(Token t) #RcdDefHash :
+{
+}
+{
+    <HASH>
+    <OBRA>
+    (
+        Expr()
+    )?
+    <CBRA>
+    {
+	    jjtThis.setName(t.image);
+	}
+}
+
+void DefVarArray(Token t) #RcdDefVarArray :
+{
+}
+{
+    <VARARRAY>
+    <OBRA>
+    (
+        Expr()
+    )?
+    <CBRA>
+    {
+	    jjtThis.setName(t.image);
+	}
+}
+
 void DefFile(Token t) #RcdDefFile :
 {
 }
@@ -218,72 +264,152 @@ void DefFile(Token t) #RcdDefFile :
 	}
 }
 
+// ************* Comparison grammar ***************
+
+void CompExpr() #RcdOpExpr : 
+{
+    Token t;
+}
+{
+  (
+    OpExpr() 
+	( 
+		t = <EQUAL>
+		|
+		t = <GT>
+		|
+		t = <LT>
+		|
+		t = <GTE>
+		|
+		t = <LTE>
+		|
+		t = <NOTEQUAL>
+	) 
+	OpExpr() 
+	{jjtThis.setName(t.image);}
+  ) 
+}
+
+
+// ************* HASH grammar ***************
+
+void Hash() #RcdHash :
+{
+}
+{
+  (
+    <OCBRA> 
+	Tupl()
+	( 
+	    <COMMA>
+		Tupl()
+	)*
+    <CCBRA> 
+  ) 
+}
+
+void Tupl() : 
+{
+}
+{
+  (
+    OpExpr()
+    (
+      <COLON>
+      OpExpr() 
+    )?
+  ) #RcdTupl(>1)
+}
+
+// ************* Expression grammar ***************
+
 void Expr() :
 {
 }
 {
     (
-	    AddExpr() 
-//		| 
-//		HashExpr()
+	    OpExpr() 
+		| 
+		Hash()
 	)
 }
 
-void AddExpr() : 
+void OpExpr() : 
 {
     Token t;
 }
 {
   (
-    MulExpr() 
+    TermExpr() 
 	( 
 	    ( 
-		    t = <PLUS>
+    	    t = <PLUS>
 		    |
             t = <MINUS>
 		) 
-		MulExpr() 
+		OpExpr() 
 		{jjtThis.setName(t.image);}
-	)*
+	)?
   ) #RcdOpExpr(>1)
 }
 
-void MulExpr() : 
+void TermExpr() : 
 {
     Token t;
 }
 {
   (
-    UnaryExpr() 
+    Factor() 
 	( 
 	    ( 
 		    t = <MUL>
 		    |
             t = <DIV>
 		) 
-		UnaryExpr() 
+		TermExpr() 
 		{jjtThis.setName(t.image);}
-	)*
+	)?
   ) #RcdOpExpr(>1)
 }
 
-void UnaryExpr() : {}
+void Factor() : {}
 {
-  <OBRA> AddExpr() <CBRA> 
+  <OBRA> OpExpr() <CBRA> 
   |
   Var() 
   | 
+  Id() 
+  | 
   String()
   |
-  Num()
+  IntNum()
+  |
+  FloatNum()
 }
 
-void Var() #RcdVar :
+void Var() #RcdVar:
 {
     Token t;
 }
 {
-    t = <VAR_LITERAL>
+    (
+        t = <VAR_LITERAL>
+	    (
+    		<OABRA>
+			OpExpr()
+	    	<CABRA>
+    	)?
+        {jjtThis.setName(t.image);}
+    ) 
+}
+
+void Id() #RcdId :
+{
+    Token t;
+}
+{
+    t = <ID_LITERAL>
     {jjtThis.setName(t.image);}
 }
 
@@ -296,12 +422,24 @@ void String() #RcdString :
     {jjtThis.setName(t.image);}
 }
 
-void Num() #RcdNum :
+void IntNum() #RcdIntNum :
 {
     Token t;
 }
 {
-    t = <DEC_LITERAL>
+    (
+        t = <DEC_LITERAL>
+		|
+        t = <HEX_LITERAL>
+	)
     {jjtThis.setName(t.image);}
 }
 
+void FloatNum() #RcdFloatNum :
+{
+    Token t;
+}
+{
+    t = <FLOAT_LITERAL>
+    {jjtThis.setName(t.image);}
+}
