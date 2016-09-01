@@ -1,0 +1,307 @@
+/* RCD scriptgrammar.jj version 2 using task joblist*/
+options {
+  MULTI=true;
+  NODE_DEFAULT_VOID=true;
+  NODE_PACKAGE="org.thingml.rcd_scripter3.parser";
+  STATIC = false ;
+}
+
+PARSER_BEGIN (RcdScript3Parser)
+   package org.thingml.rcd_scripter3.parser;
+   public class RcdScript3Parser {
+         public ASTStart makeAst()throws ParseException, TokenMgrError
+   { return(Start()) ; }
+   }
+PARSER_END (RcdScript3Parser)
+
+SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" | "\\" | "\t" | " " | "//" | "*/" | "/*"}
+
+/* COMMENTS */
+
+MORE :
+{
+  "##" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
+
+TOKEN [IGNORE_CASE]: /* Commands */
+{
+  <DEF :("DEF")>
+|
+  <ADD :("ADD")>
+|
+  <VARARRAY :("VARARRAY")>
+|
+  <KEYVALUE :("KEYVALUE")>
+|
+  <FILE :("FILE")>
+|
+  <CLOSE :("CLOSE")>
+|
+  <FOR_EACH :("FOR_EACH")>
+|
+  <HAS :("HAS")>
+|
+  <IF:("IF")>
+|
+  <IF_ROW:("IF_ROW")>
+|
+  <ELSE:("ELSE")>
+|
+  <IN :("IN")>
+|
+  <INT :("INT")>
+|
+  <PRINT :("PRINT")>
+|
+  <PRINTLN :("PRINTLN")>
+|
+  <HASH :("HASH")>
+|
+  <SETDEF :("SETDEF")>
+|
+  <HASHLIST :("HASHLIST")>
+}
+
+
+TOKEN :  /* Literals */
+{
+  < VAR_LITERAL: <DOLLAR><ID_LITERAL> >
+|
+  < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < DEC_LITERAL: <DIGIT> (<DIGIT>)* >
+|
+  < HEX_LITERAL: "0" ["x","X"] (<HEX_DIGIT>)+ >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+TOKEN :  /* Character groups */
+{
+  < LETTER: [ "a"-"z", "A"-"Z", "_" ] >
+|
+  < DIGIT: [ "0"-"9"] >
+|
+  < HEX_DIGIT: [ "0"-"9", "a"-"f", "A"-"F"] >
+}
+
+TOKEN:  /* Separators */
+{
+    <OBRA:("(")>
+|
+    <CBRA:(")")>
+|
+    <OCBRA:("{")>
+|
+    <CCBRA:("}")>
+|
+    <OABRA:("[")>
+|
+    <CABRA:("]")>
+|
+    <COMMA:(",")>
+|
+    <PERIOD:(".")>
+|
+    <SEMI:(";")>
+|
+    <ASSIGN:("=")>
+|
+    <EQUAL:("==")>
+|
+    <DOLLAR:("$")>
+|
+    <PLUS:("+")>
+|
+    <MINUS:("-")>
+|
+    <MUL:("*")>
+|
+    <DIV:("/")>
+}
+
+ASTStart Start() #Start : {}
+{
+    Script()
+    <EOF>
+    {return jjtThis;}
+}
+
+void Script() : {}
+{
+    (
+        Def()
+//        |
+//        Statement()
+//        |
+//        Block()
+    )*
+}
+
+void Def() : 
+{
+    Token t;
+}
+{
+    <DEF>
+    t = <VAR_LITERAL>
+    <ASSIGN>
+    (
+        DefHashList(t)
+//        |
+//        DefHash()
+//        |
+//        DefKeyValue()
+//        |
+//        DefValue(jobList, TId_defVarName)
+//        |
+//        DefVarArray()
+        |
+        DefFile(t)
+    )
+    <SEMI>
+}
+
+void DefHashList(Token t) #RcdDefHashList :
+{
+}
+{
+    <HASHLIST>
+    <OBRA>
+    (
+        Var()
+    )?
+    <CBRA>
+    {
+	    jjtThis.setName(t.image);
+	}
+}
+
+
+void DefFile(Token t) #RcdDefFile :
+{
+}
+{
+    <FILE>
+    <OBRA>
+    (
+        Expr()
+    )?
+    <CBRA>
+    {
+	    jjtThis.setName(t.image);
+	}
+}
+
+void Expr() :
+{
+}
+{
+    (
+	    AddExpr() 
+//		| 
+//		HashExpr()
+	)
+}
+
+void AddExpr() : 
+{
+    Token t;
+}
+{
+  (
+    MulExpr() 
+	( 
+	    ( 
+		    t = <PLUS>
+		    |
+            t = <MINUS>
+		) 
+		MulExpr() 
+		{jjtThis.setName(t.image);}
+	)*
+  ) #RcdOpExpr(>1)
+}
+
+void MulExpr() : 
+{
+    Token t;
+}
+{
+  (
+    UnaryExpr() 
+	( 
+	    ( 
+		    t = <MUL>
+		    |
+            t = <DIV>
+		) 
+		UnaryExpr() 
+		{jjtThis.setName(t.image);}
+	)*
+  ) #RcdOpExpr(>1)
+}
+
+void UnaryExpr() : {}
+{
+  <OBRA> AddExpr() <CBRA> 
+  |
+  Var() 
+  | 
+  String()
+  |
+  Num()
+}
+
+void Var() #RcdVar :
+{
+    Token t;
+}
+{
+    t = <VAR_LITERAL>
+    {jjtThis.setName(t.image);}
+}
+
+void String() #RcdString :
+{
+    Token t;
+}
+{
+    t = <STRING_LITERAL>
+    {jjtThis.setName(t.image);}
+}
+
+void Num() #RcdNum :
+{
+    Token t;
+}
+{
+    t = <DEC_LITERAL>
+    {jjtThis.setName(t.image);}
+}
+
