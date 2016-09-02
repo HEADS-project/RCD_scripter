@@ -9,8 +9,12 @@ options {
 PARSER_BEGIN (RcdScript3Parser)
    package org.thingml.rcd_scripter3.parser;
    public class RcdScript3Parser {
-         public ASTStart makeAst()throws ParseException, TokenMgrError
-   { return(Start()) ; }
+      public ASTStart makeAst()throws ParseException, TokenMgrError
+      {
+         token_source.defaultLexState = IN_RCD_SKIP_REGION; 
+         token_source.curLexState = IN_RCD_SKIP_REGION; 
+	     return(Start()); 
+	  }
    }
 PARSER_END (RcdScript3Parser)
 
@@ -20,16 +24,22 @@ SKIP: /* WHITE SPACE */ { "\n" | "\r" | "\r\n" | "\\" | "\t" | " " | "//" | "*/"
 
 MORE :
 {
-  "##" : IN_SINGLE_LINE_COMMENT
+  "RCD_SCRIPT_STOP" : IN_RCD_SKIP_REGION
 }
 
-<IN_SINGLE_LINE_COMMENT>
 SPECIAL_TOKEN :
 {
-  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+  <SINGLE_LINE_COMMENT: "##" (~["\n", "\r"])* ("\n" | "\r" | "\r\n")?>
 }
 
-<IN_SINGLE_LINE_COMMENT>
+
+<IN_RCD_SKIP_REGION>
+SPECIAL_TOKEN :
+{
+  <RCD_SKIP_REGION: "RCD_SCRIPT_START" > : DEFAULT
+}
+
+<IN_RCD_SKIP_REGION>
 MORE :
 {
   < ~[] >
@@ -161,9 +171,10 @@ TOKEN:  /* Separators */
     <DIV:("/")>
 }
 
+
 ASTStart Start() #Start : {}
 {
-    Script()
+	Script()
     <EOF>
     {return jjtThis;}
 }

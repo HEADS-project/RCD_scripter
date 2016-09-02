@@ -13,110 +13,112 @@ public interface RcdScript3ParserConstants {
   /** RegularExpression Id. */
   int SINGLE_LINE_COMMENT = 11;
   /** RegularExpression Id. */
-  int DEF = 13;
+  int RCD_SKIP_REGION = 12;
   /** RegularExpression Id. */
-  int ADD = 14;
+  int DEF = 14;
   /** RegularExpression Id. */
-  int VARARRAY = 15;
+  int ADD = 15;
   /** RegularExpression Id. */
-  int KEYVALUE = 16;
+  int VARARRAY = 16;
   /** RegularExpression Id. */
-  int FILE = 17;
+  int KEYVALUE = 17;
   /** RegularExpression Id. */
-  int CLOSE = 18;
+  int FILE = 18;
   /** RegularExpression Id. */
-  int FOR_EACH = 19;
+  int CLOSE = 19;
   /** RegularExpression Id. */
-  int HAS = 20;
+  int FOR_EACH = 20;
   /** RegularExpression Id. */
-  int IF = 21;
+  int HAS = 21;
   /** RegularExpression Id. */
-  int IF_ROW = 22;
+  int IF = 22;
   /** RegularExpression Id. */
-  int ELSE = 23;
+  int IF_ROW = 23;
   /** RegularExpression Id. */
-  int IN = 24;
+  int ELSE = 24;
   /** RegularExpression Id. */
-  int INT = 25;
+  int IN = 25;
   /** RegularExpression Id. */
-  int PRINT = 26;
+  int INT = 26;
   /** RegularExpression Id. */
-  int PRINTLN = 27;
+  int PRINT = 27;
   /** RegularExpression Id. */
-  int HASH = 28;
+  int PRINTLN = 28;
   /** RegularExpression Id. */
-  int SETDEF = 29;
+  int HASH = 29;
   /** RegularExpression Id. */
-  int HASHLIST = 30;
+  int SETDEF = 30;
   /** RegularExpression Id. */
-  int VAR_LITERAL = 31;
+  int HASHLIST = 31;
   /** RegularExpression Id. */
-  int ID_LITERAL = 32;
+  int VAR_LITERAL = 32;
   /** RegularExpression Id. */
-  int DEC_LITERAL = 33;
+  int ID_LITERAL = 33;
   /** RegularExpression Id. */
-  int FLOAT_LITERAL = 34;
+  int DEC_LITERAL = 34;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 35;
+  int FLOAT_LITERAL = 35;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 36;
+  int DECIMAL_EXPONENT = 36;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 37;
+  int HEX_LITERAL = 37;
   /** RegularExpression Id. */
-  int LETTER = 38;
+  int STRING_LITERAL = 38;
   /** RegularExpression Id. */
-  int DIGIT = 39;
+  int LETTER = 39;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 40;
+  int DIGIT = 40;
   /** RegularExpression Id. */
-  int OBRA = 41;
+  int HEX_DIGIT = 41;
   /** RegularExpression Id. */
-  int CBRA = 42;
+  int OBRA = 42;
   /** RegularExpression Id. */
-  int OCBRA = 43;
+  int CBRA = 43;
   /** RegularExpression Id. */
-  int CCBRA = 44;
+  int OCBRA = 44;
   /** RegularExpression Id. */
-  int OABRA = 45;
+  int CCBRA = 45;
   /** RegularExpression Id. */
-  int CABRA = 46;
+  int OABRA = 46;
   /** RegularExpression Id. */
-  int COMMA = 47;
+  int CABRA = 47;
   /** RegularExpression Id. */
-  int PERIOD = 48;
+  int COMMA = 48;
   /** RegularExpression Id. */
-  int SEMI = 49;
+  int PERIOD = 49;
   /** RegularExpression Id. */
-  int COLON = 50;
+  int SEMI = 50;
   /** RegularExpression Id. */
-  int ASSIGN = 51;
+  int COLON = 51;
   /** RegularExpression Id. */
-  int EQUAL = 52;
+  int ASSIGN = 52;
   /** RegularExpression Id. */
-  int GT = 53;
+  int EQUAL = 53;
   /** RegularExpression Id. */
-  int LT = 54;
+  int GT = 54;
   /** RegularExpression Id. */
-  int GTE = 55;
+  int LT = 55;
   /** RegularExpression Id. */
-  int LTE = 56;
+  int GTE = 56;
   /** RegularExpression Id. */
-  int NOTEQUAL = 57;
+  int LTE = 57;
   /** RegularExpression Id. */
-  int DOLLAR = 58;
+  int NOTEQUAL = 58;
   /** RegularExpression Id. */
-  int PLUS = 59;
+  int DOLLAR = 59;
   /** RegularExpression Id. */
-  int MINUS = 60;
+  int PLUS = 60;
   /** RegularExpression Id. */
-  int MUL = 61;
+  int MINUS = 61;
   /** RegularExpression Id. */
-  int DIV = 62;
+  int MUL = 62;
+  /** RegularExpression Id. */
+  int DIV = 63;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
-  int IN_SINGLE_LINE_COMMENT = 1;
+  int IN_RCD_SKIP_REGION = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -130,9 +132,10 @@ public interface RcdScript3ParserConstants {
     "\"//\"",
     "\"*/\"",
     "\"/*\"",
-    "\"##\"",
+    "\"RCD_SCRIPT_STOP\"",
     "<SINGLE_LINE_COMMENT>",
-    "<token of kind 12>",
+    "\"RCD_SCRIPT_START\"",
+    "<token of kind 13>",
     "\"DEF\"",
     "\"ADD\"",
     "\"VARARRAY\"",

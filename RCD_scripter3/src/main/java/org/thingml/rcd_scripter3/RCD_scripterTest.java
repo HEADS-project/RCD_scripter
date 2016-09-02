@@ -15,6 +15,7 @@ import java.io.FileReader;
 public class RCD_scripterTest { 
     public static void main(String[] args) { 
         RcdScript3Parser parser;
+        
         ASTStart ast;
         
         
@@ -36,7 +37,7 @@ public class RCD_scripterTest {
 
             System.out.println("Parse file and generate AST...");
             System.out.println("<");
-            ast = parser.Start(); 
+            ast = parser.makeAst(); 
             System.out.println(">");
           
             ast.dump("");
