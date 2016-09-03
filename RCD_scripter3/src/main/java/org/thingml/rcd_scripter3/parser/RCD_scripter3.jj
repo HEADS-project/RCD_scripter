@@ -9,6 +9,7 @@ options {
 
 PARSER_BEGIN (RcdScript3Parser)
    package org.thingml.rcd_scripter3.parser;
+   import java.io.FileReader;
    public class RcdScript3Parser/*@bgen(jjtree)*/implements RcdScript3ParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
   protected JJTRcdScript3ParserState jjtree = new JJTRcdScript3ParserState();
 
@@ -53,6 +54,8 @@ MORE :
 
 TOKEN [IGNORE_CASE]: /* Commands */
 {
+  <INCLUDE :("INCLUDE")>
+|
   <DEF :("DEF")>
 |
   <ADD :("ADD")>
@@ -218,11 +221,49 @@ void Script() : {}
 {
     (
         Def()
+		|
+		Include()
 //        |
 //        Statement()
 //        |
 //        Block()
     )*
+}
+
+void Include() :
+{
+    Token t;
+	String fileName;
+    RcdScript3Parser subParser;
+    ASTStart subAst;
+}
+{
+    <INCLUDE>
+    <OBRA>
+    t = <STRING_LITERAL>
+    <CBRA>
+    <SEMI>
+    {
+        fileName = t.image.substring(0, t.image.length()-1).substring(1); // Remove quotes
+		System.out.println("Starting to include " + fileName);
+        try{
+			subParser = new RcdScript3Parser(new FileReader(fileName)); 
+			subAst = subParser.makeAst(); 
+            subAst.dump("Include: ");
+			
+			if (subAst.children != null) {
+				for (int i = 0; i < subAst.children.length; ++i) {
+					jjtree.openNodeScope(subAst.children[i]);
+					jjtree.closeNodeScope(subAst.children[i], true);
+				}
+			}
+		}
+        catch (Exception ex) 
+        {
+            ex.printStackTrace();
+        }
+		System.out.println("End of include " + fileName);
+	}
 }
 
 void Def() : 

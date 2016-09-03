@@ -25,5 +25,7 @@ DEF $GenFile4 = FILE({$myId});
 DEF $GenFile5 = FILE({Id:"txt", $myVar});
 
 RCD_SCRIPT_START
+INCLUDE("C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/app_msgdef3-include.h");
+
 
 DEF $GenFile6 = FILE({$moreVar, 12:"txt", "12":"txt", $myVar});
