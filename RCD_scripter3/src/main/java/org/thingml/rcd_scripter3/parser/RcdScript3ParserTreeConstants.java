@@ -9,14 +9,18 @@ public interface RcdScript3ParserTreeConstants
   public int JJTRCDDEFHASH = 3;
   public int JJTRCDDEFVARARRAY = 4;
   public int JJTRCDDEFFILE = 5;
-  public int JJTRCDOPEXPR = 6;
-  public int JJTRCDHASH = 7;
-  public int JJTRCDTUPL = 8;
-  public int JJTRCDVAR = 9;
-  public int JJTRCDID = 10;
-  public int JJTRCDSTRING = 11;
-  public int JJTRCDINTNUM = 12;
-  public int JJTRCDFLOATNUM = 13;
+  public int JJTRCDIFBLOCK = 6;
+  public int JJTRCDFOREACHBLOCK = 7;
+  public int JJTRCDTRUESCRIPT = 8;
+  public int JJTRCDFALSESCRIPT = 9;
+  public int JJTRCDOPEXPR = 10;
+  public int JJTRCDHASH = 11;
+  public int JJTRCDTUPL = 12;
+  public int JJTRCDVAR = 13;
+  public int JJTRCDID = 14;
+  public int JJTRCDSTRING = 15;
+  public int JJTRCDINTNUM = 16;
+  public int JJTRCDFLOATNUM = 17;
 
 
   public String[] jjtNodeName = {
@@ -26,6 +30,10 @@ public interface RcdScript3ParserTreeConstants
     "RcdDefHash",
     "RcdDefVarArray",
     "RcdDefFile",
+    "RcdIfBlock",
+    "RcdForEachBlock",
+    "RcdTrueScript",
+    "RcdFalseScript",
     "RcdOpExpr",
     "RcdHash",
     "RcdTupl",
@@ -36,4 +44,4 @@ public interface RcdScript3ParserTreeConstants
     "RcdFloatNum",
   };
 }
-/* JavaCC - OriginalChecksum=81fcd2125b9f04f4495364762c6ea65e (do not edit this line) */
+/* JavaCC - OriginalChecksum=4a6a1930553d2fbc94211d7b38bf21c0 (do not edit this line) */

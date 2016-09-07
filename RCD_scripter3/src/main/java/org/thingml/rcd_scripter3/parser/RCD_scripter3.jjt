@@ -185,13 +185,13 @@ ASTStart Start() #Start : {}
 void Script() : {}
 {
     (
-        Def()
-		|
 		Include()
+		|
+        Def()
+        |
+        Block()
 //        |
 //        Statement()
-//        |
-//        Block()
     )*
 }
 
@@ -231,6 +231,7 @@ void Include() :
 	}
 }
 
+// ************* Def xxx ***************
 void Def() : 
 {
     Token t;
@@ -314,6 +315,66 @@ void DefFile(Token t) #RcdDefFile :
     {
 	    jjtThis.setName(t.image);
 	}
+}
+
+// ************* Block ***************
+
+void Block() :
+{
+}
+{
+	IfBlock()
+	|
+	ForEachBlock()
+}
+
+void IfBlock() #RcdIfBlock :
+{
+}
+{
+	<IF>
+	<OBRA>
+	CompExpr()
+	<CBRA>
+    <OCBRA>
+	TrueScript()
+    <CCBRA>
+	(
+		<ELSE>
+        <OCBRA>
+		FalseScript()
+        <CCBRA>
+	)?
+}
+
+
+void ForEachBlock() #RcdForEachBlock :
+{
+}
+{
+	<FOR_EACH>
+	<OBRA>
+	Var()
+	<IN>
+    Var()
+	<CBRA>
+	<OCBRA>
+	TrueScript()
+    <CCBRA>
+}
+
+void TrueScript() #RcdTrueScript :
+{
+}
+{
+	Script()
+}
+
+void FalseScript() #RcdFalseScript :
+{
+}
+{
+	Script()
 }
 
 // ************* Comparison grammar ***************

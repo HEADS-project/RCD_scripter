@@ -1,9 +1,12 @@
+RCD_SCRIPT_START
 //## Definition of coders with attributes separated by whitespace and terminated by 
 
 DEF $MsgDef = HASHLIST();
 DEF $MsgDef2 = HASHLIST($Input);
 
+RCD_SCRIPT_STOP
 aflææaldfk jkajdf kja fkk kkfj 
+RCD_SCRIPT_START
 
 DEF $Hash0 = HASH();
 DEF $Hash1 = HASH($Input);
@@ -16,15 +19,25 @@ DEF $VarArray4 = VARARRAY(5 + $var[5]);
 DEF $VarArray5 = VARARRAY(5 + $var[id]);
 DEF $VarArray6 = VARARRAY(5 + $var[$var5]);
 DEF $VarArray7 = VARARRAY(5 + $var["var5"]);
-RCD_SCRIPT_START
 DEF $GenFile1 = FILE("app_msg_gen.h"+"mere"*4);
-RCD_SCRIPT_STOP
 DEF $GenFile2 = FILE(4 * 4 / 4 + 0x4 - -4 + +4 + $variname);
 DEF $GenFile3 = FILE(1.1 + +2.2 + -3.3 + -4.4E-4 + 1.05E+5);
 DEF $GenFile4 = FILE({$myId});
 DEF $GenFile5 = FILE({Id:"txt", $myVar});
 
-RCD_SCRIPT_START
+if (2>3) {
+    DEF $GenFileIf1 = FILE(1);
+    DEF $GenFileIf2 = FILE(2);
+} else {
+    DEF $GenFileElse1 = FILE(1);
+    DEF $GenFileElse2 = FILE(2);
+}
+
+for_each ($var1 IN $varList) {
+    DEF $GenFileFor1 = FILE(1);
+    DEF $GenFileFor2 = FILE(2);
+}
+
 INCLUDE("C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/app_msgdef3-include.h");
 
 

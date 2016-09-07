@@ -220,13 +220,13 @@ ASTStart Start()        : {/*@bgen(jjtree) Start */
 void Script() : {}
 {
     (
-        Def()
-		|
 		Include()
+		|
+        Def()
+        |
+        Block()
 //        |
 //        Statement()
-//        |
-//        Block()
     )*
 }
 
@@ -266,6 +266,7 @@ void Include() :
 	}
 }
 
+// ************* Def xxx ***************
 void Def() : 
 {
     Token t;
@@ -472,6 +473,170 @@ void DefFile(Token t)             :
         jjtree.closeNodeScope(jjtn000, true);
       }
     }
+/*@egen*/
+}
+
+// ************* Block ***************
+
+void Block() :
+{
+}
+{
+	IfBlock()
+	|
+	ForEachBlock()
+}
+
+void IfBlock()             :
+{/*@bgen(jjtree) RcdIfBlock */
+  ASTRcdIfBlock jjtn000 = new ASTRcdIfBlock(JJTRCDIFBLOCK);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdIfBlock */
+        try {
+/*@egen*/
+	<IF>
+	<OBRA>
+	CompExpr()
+	<CBRA>
+    <OCBRA>
+	TrueScript()
+    <CCBRA>
+	(
+		<ELSE>
+        <OCBRA>
+		FalseScript()
+        <CCBRA>
+	)?/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+
+void ForEachBlock()                  :
+{/*@bgen(jjtree) RcdForEachBlock */
+  ASTRcdForEachBlock jjtn000 = new ASTRcdForEachBlock(JJTRCDFOREACHBLOCK);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdForEachBlock */
+        try {
+/*@egen*/
+	<FOR_EACH>
+	<OBRA>
+	Var()
+	<IN>
+    Var()
+	<CBRA>
+	<OCBRA>
+	TrueScript()
+    <CCBRA>/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void TrueScript()                :
+{/*@bgen(jjtree) RcdTrueScript */
+  ASTRcdTrueScript jjtn000 = new ASTRcdTrueScript(JJTRCDTRUESCRIPT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdTrueScript */
+        try {
+/*@egen*/
+	Script()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void FalseScript()                 :
+{/*@bgen(jjtree) RcdFalseScript */
+  ASTRcdFalseScript jjtn000 = new ASTRcdFalseScript(JJTRCDFALSESCRIPT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdFalseScript */
+        try {
+/*@egen*/
+	Script()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
 /*@egen*/
 }
 
