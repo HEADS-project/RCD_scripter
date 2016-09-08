@@ -3,7 +3,7 @@ package org.thingml.rcd_scripter3.parser;
 
 public interface RcdScript3ParserTreeConstants
 {
-  public int JJTSTART = 0;
+  public int JJTRCDSTART = 0;
   public int JJTVOID = 1;
   public int JJTRCDDEFHASHLIST = 2;
   public int JJTRCDDEFHASH = 3;
@@ -13,18 +13,19 @@ public interface RcdScript3ParserTreeConstants
   public int JJTRCDFOREACHBLOCK = 7;
   public int JJTRCDTRUESCRIPT = 8;
   public int JJTRCDFALSESCRIPT = 9;
-  public int JJTRCDOPEXPR = 10;
-  public int JJTRCDHASH = 11;
-  public int JJTRCDTUPL = 12;
-  public int JJTRCDVAR = 13;
-  public int JJTRCDID = 14;
-  public int JJTRCDSTRING = 15;
-  public int JJTRCDINTNUM = 16;
-  public int JJTRCDFLOATNUM = 17;
+  public int JJTRCDPRINT = 10;
+  public int JJTRCDOPEXPR = 11;
+  public int JJTRCDHASH = 12;
+  public int JJTRCDTUPL = 13;
+  public int JJTRCDVAR = 14;
+  public int JJTRCDID = 15;
+  public int JJTRCDSTRING = 16;
+  public int JJTRCDINTNUM = 17;
+  public int JJTRCDFLOATNUM = 18;
 
 
   public String[] jjtNodeName = {
-    "Start",
+    "RcdStart",
     "void",
     "RcdDefHashList",
     "RcdDefHash",
@@ -34,6 +35,7 @@ public interface RcdScript3ParserTreeConstants
     "RcdForEachBlock",
     "RcdTrueScript",
     "RcdFalseScript",
+    "RcdPrint",
     "RcdOpExpr",
     "RcdHash",
     "RcdTupl",
@@ -44,4 +46,4 @@ public interface RcdScript3ParserTreeConstants
     "RcdFloatNum",
   };
 }
-/* JavaCC - OriginalChecksum=4a6a1930553d2fbc94211d7b38bf21c0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=1ff9388c249c9ca5bcb053eee5d53f00 (do not edit this line) */

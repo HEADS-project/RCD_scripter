@@ -1,12 +1,8 @@
-RCD_SCRIPT_START
 //## Definition of coders with attributes separated by whitespace and terminated by 
 
 DEF $MsgDef = HASHLIST();
 DEF $MsgDef2 = HASHLIST($Input);
 
-RCD_SCRIPT_STOP
-aflææaldfk jkajdf kja fkk kkfj 
-RCD_SCRIPT_START
 
 DEF $Hash0 = HASH();
 DEF $Hash1 = HASH($Input);
@@ -42,3 +38,8 @@ INCLUDE("C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scr
 
 
 DEF $GenFile6 = FILE({$moreVar, 12:"txt", "12":"txt", $myVar});
+
+
+RCD_SCRIPT_START
+print("Hei\n");
+print("Hei"+" igjen\n");

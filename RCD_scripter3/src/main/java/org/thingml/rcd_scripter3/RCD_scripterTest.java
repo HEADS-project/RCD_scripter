@@ -15,8 +15,8 @@ import java.io.FileReader;
 public class RCD_scripterTest { 
     public static void main(String[] args) { 
         RcdScript3Parser parser;
-        
-        ASTStart ast;
+        ExecuteContext jobContext = new ExecuteContext();
+        ASTRcdStart ast;
         
         String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/app_msgdef3-vartest.h";
         //String inputfile = "RCD_script.h";
@@ -40,12 +40,13 @@ public class RCD_scripterTest {
             System.out.println(">");
           
             ast.dump("Main: ");
-  
+            
+            ast.execute(jobContext);
         } 
         catch (Exception ex) 
         {
             ex.printStackTrace();
         }
-        System.out.println("RCD scripter END");
+        System.out.println("\nRCD scripter END");
     }
 }

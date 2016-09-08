@@ -3,15 +3,20 @@
    package org.thingml.rcd_scripter3.parser;
    import java.io.FileReader;
    public class RcdScript3Parser/*@bgen(jjtree)*/implements RcdScript3ParserTreeConstants, RcdScript3ParserConstants {/*@bgen(jjtree)*/
-  protected JJTRcdScript3ParserState jjtree = new JJTRcdScript3ParserState();public ASTStart makeAst()throws ParseException, TokenMgrError
-      {
-         token_source.defaultLexState = IN_RCD_SKIP_REGION;
-         token_source.curLexState = IN_RCD_SKIP_REGION;
-             return(Start());
-          }
+  protected JJTRcdScript3ParserState jjtree = new JJTRcdScript3ParserState();private String fileName;
+        public ASTRcdStart makeAst()throws ParseException, TokenMgrError
+        {
+            token_source.defaultLexState = IN_RCD_SKIP_REGION;
+            token_source.curLexState = IN_RCD_SKIP_REGION;
+                return(Start());
+        }
 
-  final public ASTStart Start() throws ParseException {/*@bgen(jjtree) Start */
-  ASTStart jjtn000 = new ASTStart(JJTSTART);
+        public void setFileName(String name) {
+            fileName = name;
+        }
+
+  final public ASTRcdStart Start() throws ParseException {/*@bgen(jjtree) RcdStart */
+  ASTRcdStart jjtn000 = new ASTRcdStart(JJTRCDSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -49,7 +54,8 @@ if (jjtc000) {
       case INCLUDE:
       case DEF:
       case FOR_EACH:
-      case IF:{
+      case IF:
+      case PRINT:{
         ;
         break;
         }
@@ -71,6 +77,10 @@ if (jjtc000) {
         Block();
         break;
         }
+      case PRINT:{
+        Statement();
+        break;
+        }
       default:
         jj_la1[1] = jj_gen;
         jj_consume_token(-1);
@@ -82,7 +92,7 @@ if (jjtc000) {
   final public void Include() throws ParseException {Token t;
         String fileName;
     RcdScript3Parser subParser;
-    ASTStart subAst;
+    ASTRcdStart subAst;
     jj_consume_token(INCLUDE);
     jj_consume_token(OBRA);
     t = jj_consume_token(STRING_LITERAL);
@@ -456,6 +466,43 @@ if (jjtc000) {
   jjtree.openNodeScope(jjtn000);
     try {
       Script();
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+    }
+  }
+
+// ************* Statement ***************
+  final public 
+void Statement() throws ParseException {
+    Print();
+    jj_consume_token(SEMI);
+  }
+
+  final public void Print() throws ParseException {/*@bgen(jjtree) RcdPrint */
+  ASTRcdPrint jjtn000 = new ASTRcdPrint(JJTRCDPRINT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(PRINT);
+      jj_consume_token(OBRA);
+      Expr();
+      jj_consume_token(CBRA);
     } catch (Throwable jjte000) {
 if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -924,7 +971,7 @@ if (jjtc000) {
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xa0c000,0xa0c000,0x400a0000,0x0,0x0,0x0,0x0,0xa00000,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x10a0c000,0x10a0c000,0x400a0000,0x0,0x0,0x0,0x0,0xa00000,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x0,0x1,0x2,0x28de,0x28de,0x28de,0x0,0x0,0xfc00000,0x20000,0x100000,0x28de,0x60000000,0x60000000,0x80000000,0x80000000,0x8de,0x8000,0x48,};

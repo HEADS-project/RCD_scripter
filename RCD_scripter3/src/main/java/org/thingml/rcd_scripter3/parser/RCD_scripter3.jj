@@ -14,12 +14,18 @@ PARSER_BEGIN (RcdScript3Parser)
   protected JJTRcdScript3ParserState jjtree = new JJTRcdScript3ParserState();
 
 /*@egen*/
-      public ASTStart makeAst()throws ParseException, TokenMgrError
-      {
-         token_source.defaultLexState = IN_RCD_SKIP_REGION; 
-         token_source.curLexState = IN_RCD_SKIP_REGION; 
-	     return(Start()); 
-	  }
+        private String fileName;
+        public ASTRcdStart makeAst()throws ParseException, TokenMgrError
+        {
+            token_source.defaultLexState = IN_RCD_SKIP_REGION; 
+            token_source.curLexState = IN_RCD_SKIP_REGION; 
+                return(Start()); 
+        }
+
+        public void setFileName(String name) {
+            fileName = name;
+        }
+
    }
 PARSER_END (RcdScript3Parser)
 
@@ -179,12 +185,12 @@ TOKEN:  /* Separators */
 }
 
 
-ASTStart Start()        : {/*@bgen(jjtree) Start */
-  ASTStart jjtn000 = new ASTStart(JJTSTART);
+ASTRcdStart Start()           : {/*@bgen(jjtree) RcdStart */
+  ASTRcdStart jjtn000 = new ASTRcdStart(JJTRCDSTART);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Start */
+{/*@bgen(jjtree) RcdStart */
         try {
 /*@egen*/
 	Script()
@@ -225,8 +231,8 @@ void Script() : {}
         Def()
         |
         Block()
-//        |
-//        Statement()
+        |
+        Statement()
     )*
 }
 
@@ -235,7 +241,7 @@ void Include() :
     Token t;
 	String fileName;
     RcdScript3Parser subParser;
-    ASTStart subAst;
+    ASTRcdStart subAst;
 }
 {
     <INCLUDE>
@@ -639,6 +645,55 @@ void FalseScript()                 :
         }
 /*@egen*/
 }
+
+// ************* Statement ***************
+
+void Statement() :
+{
+}
+{
+	(
+		Print()
+	)
+	<SEMI>
+}
+
+void Print()           :
+{/*@bgen(jjtree) RcdPrint */
+  ASTRcdPrint jjtn000 = new ASTRcdPrint(JJTRCDPRINT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdPrint */
+        try {
+/*@egen*/
+	<PRINT>
+	<OBRA>
+	Expr()
+	<CBRA>/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 
 // ************* Comparison grammar ***************
 
