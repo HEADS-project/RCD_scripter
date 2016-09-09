@@ -414,7 +414,7 @@ void CompExpr() #RcdOpExpr :
 }
 {
   (
-    OpExpr() 
+    Expr() 
 	( 
 		t = <EQUAL>
 		|
@@ -428,96 +428,65 @@ void CompExpr() #RcdOpExpr :
 		|
 		t = <NOTEQUAL>
 	) 
-	OpExpr() 
+	Expr() 
 	{jjtThis.setName(t.image);}
   ) 
 }
 
 
-// ************* HASH grammar ***************
-
-void Hash() #RcdHash :
-{
-}
-{
-  (
-    <OCBRA> 
-	Tupl()
-	( 
-	    <COMMA>
-		Tupl()
-	)*
-    <CCBRA> 
-  ) 
-}
-
-void Tupl() : 
-{
-}
-{
-  (
-    OpExpr()
-    (
-      <COLON>
-      OpExpr() 
-    )?
-  ) #RcdTupl(>1)
-}
-
 // ************* Expression grammar ***************
 
-void Expr() :
+void Expr() : 
 {
 }
 {
-    (
-	    OpExpr() 
-		| 
-		Hash()
-	)
+    TermExpr() 
+	( 
+		ExprFollow() 
+	)*
 }
 
-void OpExpr() : 
+void ExprFollow() #RcdOpExpr: 
 {
     Token t;
 }
 {
-  (
+    ( 
+        t = <PLUS>
+        |
+        t = <MINUS>
+    ) 
     TermExpr() 
-	( 
-	    ( 
-    	    t = <PLUS>
-		    |
-            t = <MINUS>
-		) 
-		OpExpr() 
-		{jjtThis.setName(t.image);}
-	)?
-  ) #RcdOpExpr(>1)
+    {jjtThis.setName(t.image);}
 }
 
 void TermExpr() : 
 {
+}
+{
+    Factor() 
+	( 
+        TermExprFollow()
+	)*
+}
+
+void TermExprFollow() #RcdOpExpr: 
+{
     Token t;
 }
 {
-  (
+    ( 
+        t = <MUL>
+        |
+        t = <DIV>
+    ) 
     Factor() 
-	( 
-	    ( 
-		    t = <MUL>
-		    |
-            t = <DIV>
-		) 
-		TermExpr() 
-		{jjtThis.setName(t.image);}
-	)?
-  ) #RcdOpExpr(>1)
+    {jjtThis.setName(t.image);}
 }
 
 void Factor() : {}
 {
-  <OBRA> OpExpr() <CBRA> 
+  <OBRA> Expr() <CBRA> 
   |
   Var() 
   | 
@@ -528,6 +497,8 @@ void Factor() : {}
   IntNum()
   |
   FloatNum()
+  |
+  Hash()
 }
 
 void Var() #RcdVar:
@@ -539,7 +510,7 @@ void Var() #RcdVar:
         t = <VAR_LITERAL>
 	    (
     		<OABRA>
-			OpExpr()
+			Expr()
 	    	<CABRA>
     	)?
         {jjtThis.setName(t.image);}
@@ -585,3 +556,34 @@ void FloatNum() #RcdFloatNum :
     t = <FLOAT_LITERAL>
     {jjtThis.setName(t.image);}
 }
+
+// ************* HASH grammar ***************
+
+void Hash() #RcdHash :
+{
+}
+{
+  (
+    <OCBRA> 
+	Tupl()
+	( 
+	    <COMMA>
+		Tupl()
+	)*
+    <CCBRA> 
+  ) 
+}
+
+void Tupl() : 
+{
+}
+{
+  (
+    Expr()
+    (
+      <COLON>
+      Expr() 
+    )?
+  ) #RcdTupl(>1)
+}
+

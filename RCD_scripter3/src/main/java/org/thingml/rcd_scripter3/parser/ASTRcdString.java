@@ -2,7 +2,6 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarValueBase;
 import org.thingml.rcd_scripter3.variables.VarValueString;
 
 public class ASTRcdString extends ASTRcdBase {
@@ -29,9 +28,7 @@ public class ASTRcdString extends ASTRcdBase {
         image = image.replace("\\t", TAB);
         image = image.replace("\\\"", QUOTE);
         
-        VarValueBase newVar = new VarValueString(image);
-        
-        ctx.pushVar(newVar);
+        ctx.pushVar(new VarValueString(image));
     }
 
 

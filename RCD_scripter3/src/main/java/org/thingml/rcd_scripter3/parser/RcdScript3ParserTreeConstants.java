@@ -15,13 +15,13 @@ public interface RcdScript3ParserTreeConstants
   public int JJTRCDFALSESCRIPT = 9;
   public int JJTRCDPRINT = 10;
   public int JJTRCDOPEXPR = 11;
-  public int JJTRCDHASH = 12;
-  public int JJTRCDTUPL = 13;
-  public int JJTRCDVAR = 14;
-  public int JJTRCDID = 15;
-  public int JJTRCDSTRING = 16;
-  public int JJTRCDINTNUM = 17;
-  public int JJTRCDFLOATNUM = 18;
+  public int JJTRCDVAR = 12;
+  public int JJTRCDID = 13;
+  public int JJTRCDSTRING = 14;
+  public int JJTRCDINTNUM = 15;
+  public int JJTRCDFLOATNUM = 16;
+  public int JJTRCDHASH = 17;
+  public int JJTRCDTUPL = 18;
 
 
   public String[] jjtNodeName = {
@@ -37,13 +37,13 @@ public interface RcdScript3ParserTreeConstants
     "RcdFalseScript",
     "RcdPrint",
     "RcdOpExpr",
-    "RcdHash",
-    "RcdTupl",
     "RcdVar",
     "RcdId",
     "RcdString",
     "RcdIntNum",
     "RcdFloatNum",
+    "RcdHash",
+    "RcdTupl",
   };
 }
-/* JavaCC - OriginalChecksum=1ff9388c249c9ca5bcb053eee5d53f00 (do not edit this line) */
+/* JavaCC - OriginalChecksum=318e7cace4ca8aecc88848148c99ab46 (do not edit this line) */

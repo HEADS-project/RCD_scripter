@@ -709,7 +709,7 @@ void CompExpr()            :
   try {
 /*@egen*/
   (
-    OpExpr() 
+    Expr() 
 	( 
 		t = <EQUAL>
 		|
@@ -723,7 +723,7 @@ void CompExpr()            :
 		|
 		t = <NOTEQUAL>
 	) 
-	OpExpr()/*@bgen(jjtree)*/
+	Expr()/*@bgen(jjtree)*/
         {
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
@@ -754,197 +754,121 @@ void CompExpr()            :
 }
 
 
-// ************* HASH grammar ***************
-
-void Hash()          :
-{/*@bgen(jjtree) RcdHash */
-  ASTRcdHash jjtn000 = new ASTRcdHash(JJTRCDHASH);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/
-}
-{/*@bgen(jjtree) RcdHash */
-  try {
-/*@egen*/
-  (
-    <OCBRA> 
-	Tupl()
-	( 
-	    <COMMA>
-		Tupl()
-	)*
-    <CCBRA> 
-  )/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/ 
-}
-
-void Tupl() : 
-{
-}
-{/*@bgen(jjtree) #RcdTupl(> 1) */
-  {
-    ASTRcdTupl jjtn001 = new ASTRcdTupl(JJTRCDTUPL);
-    boolean jjtc001 = true;
-    jjtree.openNodeScope(jjtn001);
-  }
-  try {
-/*@egen*/
-  (
-    OpExpr()
-    (
-      <COLON>
-      OpExpr() 
-    )?
-  )/*@bgen(jjtree)*/
-  } catch (Throwable jjte001) {
-    if (jjtc001) {
-      jjtree.clearNodeScope(jjtn001);
-      jjtc001 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte001 instanceof RuntimeException) {
-      throw (RuntimeException)jjte001;
-    }
-    if (jjte001 instanceof ParseException) {
-      throw (ParseException)jjte001;
-    }
-    throw (Error)jjte001;
-  } finally {
-    if (jjtc001) {
-      jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
-    }
-  }
-/*@egen*/             
-}
-
 // ************* Expression grammar ***************
 
-void Expr() :
+void Expr() : 
 {
 }
 {
-    (
-	    OpExpr() 
-		| 
-		Hash()
-	)
-}
-
-void OpExpr() : 
-{
-    Token t;
-}
-{/*@bgen(jjtree) #RcdOpExpr(> 1) */
-  {
-    ASTRcdOpExpr jjtn001 = new ASTRcdOpExpr(JJTRCDOPEXPR);
-    boolean jjtc001 = true;
-    jjtree.openNodeScope(jjtn001);
-  }
-  try {
-/*@egen*/
-  (
     TermExpr() 
 	( 
-	    ( 
-    	    t = <PLUS>
-		    |
-            t = <MINUS>
-		) 
-		OpExpr() 
-		{jjtn001.setName(t.image);}
-	)?
-  )/*@bgen(jjtree)*/
-  } catch (Throwable jjte001) {
-    if (jjtc001) {
-      jjtree.clearNodeScope(jjtn001);
-      jjtc001 = false;
-    } else {
-      jjtree.popNode();
+		ExprFollow() 
+	)*
+}
+
+void ExprFollow()           : 
+{/*@bgen(jjtree) RcdOpExpr */
+    ASTRcdOpExpr jjtn000 = new ASTRcdOpExpr(JJTRCDOPEXPR);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdOpExpr */
+    try {
+/*@egen*/
+    ( 
+        t = <PLUS>
+        |
+        t = <MINUS>
+    ) 
+    TermExpr()/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
     }
-    if (jjte001 instanceof RuntimeException) {
-      throw (RuntimeException)jjte001;
+/*@egen*/ 
+    {jjtn000.setName(t.image);}/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
-    if (jjte001 instanceof ParseException) {
-      throw (ParseException)jjte001;
-    }
-    throw (Error)jjte001;
-  } finally {
-    if (jjtc001) {
-      jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
-    }
-  }
-/*@egen*/               
+/*@egen*/
 }
 
 void TermExpr() : 
 {
-    Token t;
 }
-{/*@bgen(jjtree) #RcdOpExpr(> 1) */
-  {
-    ASTRcdOpExpr jjtn001 = new ASTRcdOpExpr(JJTRCDOPEXPR);
-    boolean jjtc001 = true;
-    jjtree.openNodeScope(jjtn001);
-  }
-  try {
-/*@egen*/
-  (
+{
     Factor() 
 	( 
-	    ( 
-		    t = <MUL>
-		    |
-            t = <DIV>
-		) 
-		TermExpr() 
-		{jjtn001.setName(t.image);}
-	)?
-  )/*@bgen(jjtree)*/
-  } catch (Throwable jjte001) {
-    if (jjtc001) {
-      jjtree.clearNodeScope(jjtn001);
-      jjtc001 = false;
-    } else {
-      jjtree.popNode();
+        TermExprFollow()
+	)*
+}
+
+void TermExprFollow()           : 
+{/*@bgen(jjtree) RcdOpExpr */
+    ASTRcdOpExpr jjtn000 = new ASTRcdOpExpr(JJTRCDOPEXPR);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdOpExpr */
+    try {
+/*@egen*/
+    ( 
+        t = <MUL>
+        |
+        t = <DIV>
+    ) 
+    Factor()/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
     }
-    if (jjte001 instanceof RuntimeException) {
-      throw (RuntimeException)jjte001;
+/*@egen*/ 
+    {jjtn000.setName(t.image);}/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
-    if (jjte001 instanceof ParseException) {
-      throw (ParseException)jjte001;
-    }
-    throw (Error)jjte001;
-  } finally {
-    if (jjtc001) {
-      jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
-    }
-  }
-/*@egen*/               
+/*@egen*/
 }
 
 void Factor() : {}
 {
-  <OBRA> OpExpr() <CBRA> 
+  <OBRA> Expr() <CBRA> 
   |
   Var() 
   | 
@@ -955,6 +879,8 @@ void Factor() : {}
   IntNum()
   |
   FloatNum()
+  |
+  Hash()
 }
 
 void Var()        :
@@ -972,7 +898,7 @@ void Var()        :
         t = <VAR_LITERAL>
 	    (
     		<OABRA>
-			OpExpr()
+			Expr()
 	    	<CABRA>
     	)?/*@bgen(jjtree)*/
         {
@@ -1110,4 +1036,87 @@ void FloatNum()              :
       }
     }
 /*@egen*/
+}
+
+// ************* HASH grammar ***************
+
+void Hash()          :
+{/*@bgen(jjtree) RcdHash */
+  ASTRcdHash jjtn000 = new ASTRcdHash(JJTRCDHASH);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdHash */
+  try {
+/*@egen*/
+  (
+    <OCBRA> 
+	Tupl()
+	( 
+	    <COMMA>
+		Tupl()
+	)*
+    <CCBRA> 
+  )/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/ 
+}
+
+void Tupl() : 
+{
+}
+{/*@bgen(jjtree) #RcdTupl(> 1) */
+  {
+    ASTRcdTupl jjtn001 = new ASTRcdTupl(JJTRCDTUPL);
+    boolean jjtc001 = true;
+    jjtree.openNodeScope(jjtn001);
+  }
+  try {
+/*@egen*/
+  (
+    Expr()
+    (
+      <COLON>
+      Expr() 
+    )?
+  )/*@bgen(jjtree)*/
+  } catch (Throwable jjte001) {
+    if (jjtc001) {
+      jjtree.clearNodeScope(jjtn001);
+      jjtc001 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte001 instanceof RuntimeException) {
+      throw (RuntimeException)jjte001;
+    }
+    if (jjte001 instanceof ParseException) {
+      throw (ParseException)jjte001;
+    }
+    throw (Error)jjte001;
+  } finally {
+    if (jjtc001) {
+      jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
+    }
+  }
+/*@egen*/             
 }

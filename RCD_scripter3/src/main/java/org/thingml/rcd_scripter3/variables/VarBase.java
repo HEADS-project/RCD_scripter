@@ -13,6 +13,7 @@ import org.thingml.rcd_scripter3.parser.Token;
  * @author steffend
  */
 abstract public class VarBase {
+    abstract public String getString();
     abstract public String printString();
     abstract public String getTypeString();
     

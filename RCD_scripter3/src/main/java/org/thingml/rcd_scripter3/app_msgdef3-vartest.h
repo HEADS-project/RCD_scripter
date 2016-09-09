@@ -40,6 +40,14 @@ INCLUDE("C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scr
 DEF $GenFile6 = FILE({$moreVar, 12:"txt", "12":"txt", $myVar});
 
 
-RCD_SCRIPT_START
 print("Hei\n");
 print("Hei"+" igjen\n");
+print(10+"\n");
+print(10 + 20 + "\n");
+print(10 + 2 * 20 * 3 * 4 + "\n");
+print("Tekst:" + 10 + 20 + "\n");
+##DEF $VarHash0 = HASH({ One:1, Two:2});
+##print("$VarHash0: " + $VarHash0 + "\n");
+RCD_SCRIPT_START
+print("Hash: " + { One:1, "Two":2 , 3:3 } + "\n");
+
