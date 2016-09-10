@@ -15,7 +15,7 @@ public class ASTRcdId extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws Exception {
+    public void execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
         ctx.pushVar(new VarId(image));

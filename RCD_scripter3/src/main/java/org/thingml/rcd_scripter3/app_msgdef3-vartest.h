@@ -46,8 +46,9 @@ print(10+"\n");
 print(10 + 20 + "\n");
 print(10 + 2 * 20 * 3 * 4 + "\n");
 print("Tekst:" + 10 + 20 + "\n");
-##DEF $VarHash0 = HASH({ One:1, Two:2});
-##print("$VarHash0: " + $VarHash0 + "\n");
+
+DEF $VarHash0 = HASH({ One:1, Two:2});
+print("$VarHash0: " + $VarHash0 + "\n");
 RCD_SCRIPT_START
-print("Hash: " + { One:1, "Two":2 , 3:3 } + "\n");
+print("Hash: " + { TmpOne:1, "TmpTwo":2 , 33:3 } + "\n");
 

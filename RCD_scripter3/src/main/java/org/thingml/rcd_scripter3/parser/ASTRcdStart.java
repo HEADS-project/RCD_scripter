@@ -1,6 +1,8 @@
 
 package org.thingml.rcd_scripter3.parser;
 
+import org.thingml.rcd_scripter3.ExecuteContext;
+
 public class ASTRcdStart extends ASTRcdBase {
 
   /**
@@ -15,5 +17,9 @@ public class ASTRcdStart extends ASTRcdBase {
     super(p, id);
   }
 
+    public void execute(ExecuteContext ctx) throws ExecuteException {
+        executeChildren(ctx);
+    }
+			
 
 }

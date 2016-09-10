@@ -274,6 +274,7 @@ void DefHashList(Token t) #RcdDefHashList :
     <CBRA>
     {
 	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
 	}
 }
 
@@ -290,6 +291,7 @@ void DefHash(Token t) #RcdDefHash :
     <CBRA>
     {
 	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
 	}
 }
 
@@ -305,6 +307,7 @@ void DefVarArray(Token t) #RcdDefVarArray :
     <CBRA>
     {
 	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
 	}
 }
 
@@ -320,6 +323,7 @@ void DefFile(Token t) #RcdDefFile :
     <CBRA>
     {
 	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
 	}
 }
 
@@ -339,6 +343,7 @@ void IfBlock() #RcdIfBlock :
 }
 {
 	<IF>
+    { jjtThis.setToken(token); }
 	<OBRA>
 	CompExpr()
 	<CBRA>
@@ -359,6 +364,7 @@ void ForEachBlock() #RcdForEachBlock :
 }
 {
 	<FOR_EACH>
+    { jjtThis.setToken(token); }
 	<OBRA>
 	Var()
 	<IN>
@@ -400,6 +406,7 @@ void Print() #RcdPrint :
 }
 {
 	<PRINT>
+    { jjtThis.setToken(token); }
 	<OBRA>
 	Expr()
 	<CBRA>
@@ -429,7 +436,10 @@ void CompExpr() #RcdOpExpr :
 		t = <NOTEQUAL>
 	) 
 	Expr() 
-	{jjtThis.setName(t.image);}
+	{
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
   ) 
 }
 
@@ -457,7 +467,10 @@ void ExprFollow() #RcdOpExpr:
         t = <MINUS>
     ) 
     TermExpr() 
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void TermExpr() : 
@@ -481,7 +494,10 @@ void TermExprFollow() #RcdOpExpr:
         t = <DIV>
     ) 
     Factor() 
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void Factor() : {}
@@ -513,7 +529,10 @@ void Var() #RcdVar:
 			Expr()
 	    	<CABRA>
     	)?
-        {jjtThis.setName(t.image);}
+        {
+            jjtThis.setName(t.image);
+            jjtThis.setToken(t); 
+        }
     ) 
 }
 
@@ -523,7 +542,10 @@ void Id() #RcdId :
 }
 {
     t = <ID_LITERAL>
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void String() #RcdString :
@@ -532,7 +554,10 @@ void String() #RcdString :
 }
 {
     t = <STRING_LITERAL>
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void IntNum() #RcdIntNum :
@@ -545,7 +570,10 @@ void IntNum() #RcdIntNum :
 		|
         t = <HEX_LITERAL>
 	)
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void FloatNum() #RcdFloatNum :
@@ -554,7 +582,10 @@ void FloatNum() #RcdFloatNum :
 }
 {
     t = <FLOAT_LITERAL>
-    {jjtThis.setName(t.image);}
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 // ************* HASH grammar ***************
@@ -565,6 +596,9 @@ void Hash() #RcdHash :
 {
   (
     <OCBRA> 
+    {
+        jjtThis.setToken(token); 
+    }
 	Tupl()
 	( 
 	    <COMMA>
@@ -578,12 +612,15 @@ void Tupl() :
 {
 }
 {
-  (
-    Expr()
     (
-      <COLON>
-      Expr() 
-    )?
-  ) #RcdTupl(>1)
+        Expr()
+        (
+            <COLON>
+                {
+                    jjtThis.setToken(token); 
+                }
+            Expr() 
+        )?
+    ) #RcdTupl(>1)
 }
 

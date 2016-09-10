@@ -8,6 +8,8 @@ package org.thingml.rcd_scripter3;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.parser.Token;
 //import org.thingml.rcd_scripter2.variables.VarArray;
 //import org.thingml.rcd_scripter2.variables.VarBase;
@@ -102,15 +104,25 @@ public class ExecuteContext {
         return var;
     }
     
-    public VarValueBase popVarValue() {
-        VarBase var = popVar();
-        VarValueBase ret = null;
+    public <T> T popVarX(ASTRcdBase b) throws ExecuteException {
+        VarBase var = null;
+        T ret = null;
+        
+        try {
+            var = popVar();
+        } catch (Exception ex) {
+            if (b != null) {
+                throw b.generateExecuteException("Error popVarX failed : No value on stack.\n" + ex);
+            }
+        }
 
         if (var != null) {
-            if (var instanceof VarValueBase) {
-                ret = (VarValueBase) var;
-            } else  {
-                ret = new VarValueString(var.printString());
+            try {
+                ret = (T) var;
+            } catch (Exception ex) {
+                if (b != null) {
+                    throw b.generateExecuteException("Error popVarX failed : Got " + var.getClass().getName() + " expected " + ret.getClass().getName());
+                }
             }
         }
         return ret;

@@ -19,7 +19,7 @@ public class ASTRcdString extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws Exception {
+    public void execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
         image = image.substring(0, image.length()-1).substring(1);

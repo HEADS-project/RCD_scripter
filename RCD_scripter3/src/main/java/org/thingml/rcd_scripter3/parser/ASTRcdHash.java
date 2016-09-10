@@ -16,7 +16,7 @@ public class ASTRcdHash extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws Exception {
+    public void execute(ExecuteContext ctx) throws ExecuteException {
         VarHash hash = new VarHash();
         VarKeyValue kv;
         

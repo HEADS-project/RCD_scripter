@@ -2,6 +2,7 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdOpExpr extends ASTRcdBase {
@@ -15,10 +16,10 @@ public class ASTRcdOpExpr extends ASTRcdBase {
   }
 
     @Override
-    public void execute(ExecuteContext ctx) throws Exception {
+    public void execute(ExecuteContext ctx) throws ExecuteException {
         executeChildren(ctx);
-        VarValueBase rightValue = ctx.popVarValue();
-        VarValueBase leftValue = ctx.popVarValue();
+        VarBase rightValue = ctx.popVarX(this);
+        VarBase leftValue = ctx.popVarX(this);
         VarValueBase.Operation operation;
         String image = getName();
  
@@ -35,7 +36,7 @@ public class ASTRcdOpExpr extends ASTRcdBase {
             operation = VarValueBase.Operation.DIV;
             
         } else {
-            throw new Error("Operation <"+image+"> is not supported on Values");
+            throw generateExecuteException("Operation <"+image+"> is not supported on Values");
         }
         
         VarValueBase result = VarValueBase.doOperation(leftValue, operation, rightValue);

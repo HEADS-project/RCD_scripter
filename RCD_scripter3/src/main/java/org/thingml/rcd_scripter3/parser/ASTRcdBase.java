@@ -4,8 +4,8 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 
 public class ASTRcdBase extends SimpleNode {
-    private String name = "";
-    private Token token = null;
+    public String name = "";
+    public Token token = null;
 
     /**
      * Constructor.
@@ -39,21 +39,29 @@ public class ASTRcdBase extends SimpleNode {
     token = t;
   }
 
-    public void executeChildren(ExecuteContext ctx) throws Exception {
+    public boolean executeChildren(ExecuteContext ctx) throws ExecuteException {
+        boolean ret = false;
         if (children != null) {
+            ret = true;
             for (int i = 0; i < children.length; ++i) {
                 ASTRcdBase c = (ASTRcdBase) children[i];
                 c.execute(ctx);
             }
         }
+        return ret;
     }
-
-    public void execute(ExecuteContext ctx) throws Exception {
+    
+    public void execute(ExecuteContext ctx) throws ExecuteException {
         String nodeName = super.toString();  
-        System.out.println(nodeName+".execute() is not implemented");
-        executeChildren(ctx);
+        throw generateExecuteException(nodeName+".execute() is not implemented");
+        //executeChildren(ctx);
     }
 			
+    /** Generate ExecuteException. */
+    public ExecuteException generateExecuteException(String message) {
+        return new ExecuteException(token, message);
+    }
+
 
   /**
    * {@inheritDoc}
