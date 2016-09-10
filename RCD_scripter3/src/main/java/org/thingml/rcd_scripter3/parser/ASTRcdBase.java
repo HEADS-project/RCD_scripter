@@ -39,10 +39,10 @@ public class ASTRcdBase extends SimpleNode {
     token = t;
   }
 
-    public boolean executeChildren(ExecuteContext ctx) throws ExecuteException {
-        boolean ret = false;
+    public int executeChildren(ExecuteContext ctx) throws ExecuteException {
+        int ret = 0;
         if (children != null) {
-            ret = true;
+            ret = children.length;
             for (int i = 0; i < children.length; ++i) {
                 ASTRcdBase c = (ASTRcdBase) children[i];
                 c.execute(ctx);

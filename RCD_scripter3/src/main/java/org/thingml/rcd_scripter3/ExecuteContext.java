@@ -69,7 +69,7 @@ public class ExecuteContext {
     public void addVar(String name, VarBase var) {
         VarBase oldVar = varList.get(name);
         if (oldVar != null) {
-            //System.out.println("Warning variable <"+name+"> is replaced");
+            System.out.println("Warning variable <"+name+"> is replaced");
         }
         varList.put(name, var);
     }
@@ -90,11 +90,10 @@ public class ExecuteContext {
         return "???";
     }
     
-    public VarBase getVarBase(String name) {
+    public VarBase getVarBase(ASTRcdBase b, String name)  throws ExecuteException {
         VarBase var = varList.get(name);
         if (var == null) {
-            System.out.println("Warning variable <"+name+"> is not defined");
-            printExecutingInfo();
+            throw b.generateExecuteException("Warning variable <"+name+"> is not defined");
         }
         return var;
     }
@@ -128,15 +127,17 @@ public class ExecuteContext {
         return ret;
     }
 
-    public VarValueBase getVarValue(String name) {
-        VarBase var = getVarBase(name);
-        VarValueBase ret = null;
+    public <T> T getVarX(ASTRcdBase b, String name) throws ExecuteException {
+        VarBase var = getVarBase(b, name);
+        T ret = null;
 
         if (var != null) {
-            if (var instanceof VarValueBase) {
-                ret = (VarValueBase) var;
-            } else  {
-                ret = new VarValueString(var.printString());
+            try {
+                ret = (T) var;
+            } catch (Exception ex) {
+                if (b != null) {
+                    throw b.generateExecuteException("Error popVarX failed : Got " + var.getClass().getName() + " expected " + ret.getClass().getName());
+                }
             }
         }
         return ret;

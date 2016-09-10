@@ -7,6 +7,8 @@ package org.thingml.rcd_scripter3.variables;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
  *
@@ -37,6 +39,19 @@ public class VarHash extends VarBase {
         hash.putAll(hash_add.hash);
     }
 
+    @Override
+    public VarBase fetchFromIndex(ASTRcdBase b, VarBase var) throws ExecuteException {
+        VarKeyValue kv = getKeyValue(var.getString());
+        VarBase ret = null;
+        if (kv != null) {
+            ret = kv.getValue();
+        } else {
+            System.out.println("Warning "+b.getName()+"["+var.getString()+"] is not defined");
+        }
+        
+        return ret;
+    }
+        
     @Override
     public String printString(){
         String ret = "VarHash: " + getString();

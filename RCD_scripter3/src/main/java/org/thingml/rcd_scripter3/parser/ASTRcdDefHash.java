@@ -16,14 +16,15 @@ public class ASTRcdDefHash extends ASTRcdBase {
 
     @Override
     public void execute(ExecuteContext ctx) throws ExecuteException {
-        boolean hasInit = executeChildren(ctx);
+        int children = executeChildren(ctx);
         VarHash newHash;
-        if (hasInit) {
-            VarBase init = ctx.popVar();
-            newHash = new VarHash();
+        if (children > 0) {
+            VarHash initHash = ctx.popVarX(this);
+            newHash = new VarHash(initHash);
         } else {
             newHash = new VarHash();
         }
+        ctx.addVar(name, newHash);
     }
 
 }
