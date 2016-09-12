@@ -89,4 +89,9 @@ public class VarHashList extends VarBase {
         return "VarHashList";
     }
 
+    @Override
+    public VarType getType() {
+        return VarType.HASHLIST;
+    }
+    
 }

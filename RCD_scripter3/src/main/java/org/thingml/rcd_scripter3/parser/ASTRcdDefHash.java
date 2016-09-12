@@ -19,7 +19,7 @@ public class ASTRcdDefHash extends ASTRcdBase {
         int children = executeChildren(ctx);
         VarHash newHash;
         if (children > 0) {
-            VarHash initHash = ctx.popVarX(this);
+            VarHash initHash = ctx.popVarX(this, VarHash.class);
             newHash = new VarHash(initHash);
         } else {
             newHash = new VarHash();

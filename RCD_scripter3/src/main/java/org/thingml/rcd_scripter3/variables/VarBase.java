@@ -15,9 +15,12 @@ import org.thingml.rcd_scripter3.parser.Token;
  * @author steffend
  */
 abstract public class VarBase {
+    public enum VarType { KEYVALUE, HASHLIST, ID, HASH, INT, STRING };
+
     abstract public String getString();
     abstract public String printString();
     abstract public String getTypeString();
+    abstract public VarType getType();
     
     public void setDefault(ASTRcdBase b, VarBase var) throws ExecuteException {
         throw b.generateExecuteException("ERROR method setDefault() not supported for "+getTypeString());

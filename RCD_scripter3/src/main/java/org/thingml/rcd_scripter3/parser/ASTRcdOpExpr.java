@@ -18,8 +18,8 @@ public class ASTRcdOpExpr extends ASTRcdBase {
     @Override
     public void execute(ExecuteContext ctx) throws ExecuteException {
         executeChildren(ctx);
-        VarBase rightValue = ctx.popVarX(this);
-        VarBase leftValue = ctx.popVarX(this);
+        VarBase rightValue = ctx.popVar(this);
+        VarBase leftValue = ctx.popVar(this);
         VarValueBase.Operation operation;
         String image = getName();
  

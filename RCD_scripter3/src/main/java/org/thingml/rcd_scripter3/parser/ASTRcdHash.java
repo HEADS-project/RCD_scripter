@@ -24,7 +24,7 @@ public class ASTRcdHash extends ASTRcdBase {
             for (int i = 0; i < children.length; ++i) {
                 ASTRcdBase c = (ASTRcdBase) children[i];
                 c.execute(ctx);
-                kv = (VarKeyValue) ctx.popVar();
+                kv = ctx.popVarX(this, VarKeyValue.class);
                 hash.addKeyValue(kv);
             }
         }

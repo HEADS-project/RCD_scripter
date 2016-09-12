@@ -38,6 +38,11 @@ public class VarKeyValue extends VarBase {
     }
 
     @Override
+    public VarType getType() {
+        return VarType.KEYVALUE;
+    }
+    
+    @Override
     public String printString(){
         String ret = key+":"+value.printString();
         return ret;

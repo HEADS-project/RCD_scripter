@@ -46,7 +46,7 @@ public class VarHash extends VarBase {
         if (kv != null) {
             ret = kv.getValue();
         } else {
-            System.out.println("Warning "+b.getName()+"["+var.getString()+"] is not defined");
+            throw b.generateExecuteException("ERROR "+b.getName()+"["+var.getString()+"] is not defined");
         }
         
         return ret;
@@ -79,4 +79,17 @@ public class VarHash extends VarBase {
         return "Hash";
     }
 
+    @Override
+    public VarType getType() {
+        return VarType.HASH;
+    }
+    
+    public void add(ASTRcdBase b, VarBase var) throws ExecuteException {
+        if (var instanceof VarHash) {
+            addHash((VarHash) var);
+        } else {
+            throw b.generateExecuteException("ERROR method add() VarHash cannot add <"+var.getType()+">)");
+        }
+    }
+    
 }

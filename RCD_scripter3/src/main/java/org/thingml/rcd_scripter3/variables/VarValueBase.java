@@ -12,7 +12,7 @@ package org.thingml.rcd_scripter3.variables;
 abstract public class VarValueBase extends VarBase {
  
     public enum Operation { PLUS, MINUS, MUL, DIV };
-    public enum VarType { INT, STRING };
+    
     protected String image;
     protected String operationImage;
     
@@ -33,8 +33,6 @@ abstract public class VarValueBase extends VarBase {
         return operationImage;
     }
     
-    abstract public String getTypeString();
-    abstract public VarType getType();
 
     public String printString() {
         String ret = "<"+getTypeString()+":"+getString()+">";

@@ -60,12 +60,12 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <DEF :("DEF")>
 |
-  <ADD :("ADD")>
-|
+//  <ADD :("ADD")>
+//|
   <VARARRAY :("VARARRAY")>
 |
-  <KEYVALUE :("KEYVALUE")>
-|
+//  <KEYVALUE :("KEYVALUE")>
+//|
   <FILE :("FILE")>
 |
   <CLOSE :("CLOSE")>
@@ -90,8 +90,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <HASH :("HASH")>
 |
-  <SETDEF :("SETDEF")>
-|
+//  <SETDEF :("SETDEF")>
+//|
   <HASHLIST :("HASHLIST")>
 }
 
@@ -397,6 +397,8 @@ void Statement() :
 {
 	(
 		Print()
+        |
+        VarMethod()
 	)
 	<SEMI>
 }
@@ -407,6 +409,19 @@ void Print() #RcdPrint :
 {
 	<PRINT>
     { jjtThis.setToken(token); }
+	<OBRA>
+	Expr()
+	<CBRA>
+}
+
+void VarMethod() #RcdVarMethod :
+{
+}
+{
+	Var()
+    { jjtThis.setToken(token); }
+    <PERIOD>
+    Id()
 	<OBRA>
 	Expr()
 	<CBRA>

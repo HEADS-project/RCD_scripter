@@ -20,9 +20,10 @@ public class ASTRcdVar extends ASTRcdBase {
         if (executeChildren(ctx) == 0) {
             ctx.pushVar(vb);
         } else {
-            ctx.pushVar(vb.fetchFromIndex(this, ctx.popVar()));
+            VarBase idx = ctx.popVar(this);
+            VarBase elem = vb.fetchFromIndex(this, idx);
+            ctx.pushVar(elem);
         };
     }
     
-
 }

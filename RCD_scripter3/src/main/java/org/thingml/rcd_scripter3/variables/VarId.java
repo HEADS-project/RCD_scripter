@@ -27,6 +27,11 @@ public class VarId extends VarBase {
     }
 
     @Override
+    public VarType getType() {
+        return VarType.ID;
+    }
+    
+    @Override
     public String printString(){
         String ret = "Id: " + id;
         return ret;

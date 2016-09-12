@@ -660,6 +660,8 @@ void Statement() :
 {
 	(
 		Print()
+        |
+        VarMethod()
 	)
 	<SEMI>
 }
@@ -676,6 +678,45 @@ void Print()           :
 /*@egen*/
 	<PRINT>
     { jjtn000.setToken(token); }
+	<OBRA>
+	Expr()
+	<CBRA>/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void VarMethod()               :
+{/*@bgen(jjtree) RcdVarMethod */
+  ASTRcdVarMethod jjtn000 = new ASTRcdVarMethod(JJTRCDVARMETHOD);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) RcdVarMethod */
+        try {
+/*@egen*/
+	Var()
+    { jjtn000.setToken(token); }
+    <PERIOD>
+    Id()
 	<OBRA>
 	Expr()
 	<CBRA>/*@bgen(jjtree)*/

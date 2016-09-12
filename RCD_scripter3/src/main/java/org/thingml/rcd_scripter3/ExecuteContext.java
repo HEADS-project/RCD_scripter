@@ -58,8 +58,16 @@ public class ExecuteContext {
         varStack.push(v);
     }
     
-    public VarBase popVar() {
-        return varStack.pop();
+    public VarBase popVar(ASTRcdBase b)  throws ExecuteException {
+        VarBase var = null;
+        try {
+            var = varStack.pop();
+        } catch (Exception ex) {
+            if (b != null) {
+                throw b.generateExecuteException("Error popVar failed : No value on stack.\n" + ex);
+            }
+        }
+        return var;
     }
     
     public VarBase peekVar() {
@@ -93,7 +101,7 @@ public class ExecuteContext {
     public VarBase getVarBase(ASTRcdBase b, String name)  throws ExecuteException {
         VarBase var = varList.get(name);
         if (var == null) {
-            throw b.generateExecuteException("Warning variable <"+name+"> is not defined");
+            throw b.generateExecuteException("Error variable <"+name+"> is not defined");
         }
         return var;
     }
@@ -103,44 +111,28 @@ public class ExecuteContext {
         return var;
     }
     
-    public <T> T popVarX(ASTRcdBase b) throws ExecuteException {
+    public <T> T popVarX(ASTRcdBase b, Class test) throws ExecuteException {
         VarBase var = null;
-        T ret = null;
         
-        try {
-            var = popVar();
-        } catch (Exception ex) {
-            if (b != null) {
-                throw b.generateExecuteException("Error popVarX failed : No value on stack.\n" + ex);
-            }
-        }
+        var = popVar(b);
 
         if (var != null) {
-            try {
-                ret = (T) var;
-            } catch (Exception ex) {
-                if (b != null) {
-                    throw b.generateExecuteException("Error popVarX failed : Got " + var.getClass().getName() + " expected " + ret.getClass().getName());
-                }
+            if (!test.isAssignableFrom(var.getClass())) {
+                throw b.generateExecuteException("Error popVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName());
             }
         }
-        return ret;
+        return (T)var;
     }
 
-    public <T> T getVarX(ASTRcdBase b, String name) throws ExecuteException {
+    public <T> T getVarX(ASTRcdBase b, String name, Class test) throws ExecuteException {
         VarBase var = getVarBase(b, name);
-        T ret = null;
 
         if (var != null) {
-            try {
-                ret = (T) var;
-            } catch (Exception ex) {
-                if (b != null) {
-                    throw b.generateExecuteException("Error popVarX failed : Got " + var.getClass().getName() + " expected " + ret.getClass().getName());
-                }
+            if (!test.isAssignableFrom(var.getClass())) {
+                throw b.generateExecuteException("Error getVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName());
             }
         }
-        return ret;
+        return (T)var;
     }
 
     public String printStringAll() {

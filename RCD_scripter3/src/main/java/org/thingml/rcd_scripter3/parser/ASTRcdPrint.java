@@ -17,7 +17,7 @@ public class ASTRcdPrint extends ASTRcdBase {
     @Override
     public void execute(ExecuteContext ctx) throws ExecuteException {
         executeChildren(ctx);
-        VarBase text = ctx.popVarX(this);
+        VarBase text = ctx.popVar(this);
         String printString = text.getString();
         System.out.print("PRINT:"+printString);
     }
