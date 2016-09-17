@@ -60,12 +60,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <DEF :("DEF")>
 |
-//  <ADD :("ADD")>
-//|
   <VARARRAY :("VARARRAY")>
 |
-//  <KEYVALUE :("KEYVALUE")>
-//|
   <FILE :("FILE")>
 |
   <CLOSE :("CLOSE")>
@@ -90,8 +86,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <HASH :("HASH")>
 |
-//  <SETDEF :("SETDEF")>
-//|
   <HASHLIST :("HASHLIST")>
 }
 

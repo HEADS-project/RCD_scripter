@@ -22,21 +22,8 @@ abstract public class VarBase {
     abstract public String getTypeString();
     abstract public VarType getType();
     
-    public void setDefault(ASTRcdBase b, VarBase var) throws ExecuteException {
-        throw b.generateExecuteException("ERROR method setDefault() not supported for "+getTypeString());
-    }
-    
     public VarBase fetchFromIndex(ASTRcdBase b, VarBase var) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
-    
-    public void add(ASTRcdBase b, VarBase var) throws ExecuteException {
-        throw b.generateExecuteException("ERROR method add() not supported for "+getTypeString());
-    }
-    
-    public void print(ASTRcdBase b) throws ExecuteException {
-        throw b.generateExecuteException("ERROR method print() not supported for "+getTypeString());
-    }
-    
     
 }

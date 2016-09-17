@@ -64,11 +64,7 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <DEF :("DEF")>
 |
-  <ADD :("ADD")>
-|
   <VARARRAY :("VARARRAY")>
-|
-  <KEYVALUE :("KEYVALUE")>
 |
   <FILE :("FILE")>
 |
@@ -94,8 +90,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <HASH :("HASH")>
 |
-  <SETDEF :("SETDEF")>
-|
+//  <SETDEF :("SETDEF")>
+//|
   <HASHLIST :("HASHLIST")>
 }
 

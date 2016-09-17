@@ -35,7 +35,7 @@ public class VarHash extends VarBase {
         return hash.get(key);
     }    
     
-    void addHash(VarHash hash_add) {
+    public void addHash(VarHash hash_add) {
         hash.putAll(hash_add.hash);
     }
 
@@ -82,14 +82,6 @@ public class VarHash extends VarBase {
     @Override
     public VarType getType() {
         return VarType.HASH;
-    }
-    
-    public void add(ASTRcdBase b, VarBase var) throws ExecuteException {
-        if (var instanceof VarHash) {
-            addHash((VarHash) var);
-        } else {
-            throw b.generateExecuteException("ERROR method add() VarHash cannot add <"+var.getType()+">)");
-        }
     }
     
 }

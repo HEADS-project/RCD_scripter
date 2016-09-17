@@ -54,6 +54,10 @@ public class ExecuteContext {
         return executingTokenStack.peek();
     }
     
+    public int getVarStackSize() {
+        return varStack.size();
+    }
+    
     public void pushVar(VarBase v) {
         varStack.push(v);
     }

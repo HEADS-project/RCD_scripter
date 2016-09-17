@@ -7,6 +7,8 @@ package org.thingml.rcd_scripter3.variables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
  *
@@ -53,7 +55,7 @@ public class VarHashList extends VarBase {
     }
     
     
-    public void add(VarHash newHash) {
+    public void addHash(VarHash newHash) {
         
         // Assure that all default cells not defined in new row are included
         VarHash tmpHash = new VarHash(defaultHash); // Start with default cells
