@@ -58,27 +58,23 @@ TOKEN [IGNORE_CASE]: /* Commands */
 {
   <INCLUDE :("INCLUDE")>
 |
-  <DEF :("DEF")>
+  <VALARRAY :("VALARRAY")>
 |
-  <VARARRAY :("VARARRAY")>
+  <VALUE :("VALUE")>
 |
   <FILE :("FILE")>
 |
   <CLOSE :("CLOSE")>
 |
-  <FOR_EACH :("FOR_EACH")>
+  <FOR :("FOR")>
 |
   <HAS :("HAS")>
 |
   <IF:("IF")>
 |
-  <IF_ROW:("IF_ROW")>
-|
   <ELSE:("ELSE")>
 |
   <IN :("IN")>
-|
-  <INT :("INT")>
 |
   <PRINT :("PRINT")>
 |
@@ -96,9 +92,9 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: (["+","-"])? (<DIGIT>)+ >
+  < DEC_LITERAL: (<DIGIT>)+ >
 |
-  < FLOAT_LITERAL: (["+","-"])? (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
+  < FLOAT_LITERAL: (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
 |
   < #DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
@@ -234,38 +230,33 @@ void Include() :
 // ************* Def xxx ***************
 void Def() : 
 {
-    Token t;
 }
 {
-    <DEF>
-    t = <VAR_LITERAL>
-    <ASSIGN>
     (
-        DefHashList(t)
+        DefHashList()
         |
-        DefHash(t)
-//        |
-//        DefKeyValue()
-//        |
-//        DefValue(jobList, TId_defVarName)
+        DefHash()
         |
-        DefVarArray(t)
+        DefFile()
         |
-        DefFile(t)
+        DefValue()
+        |
+        DefValArray()
     )
     <SEMI>
 }
 
-void DefHashList(Token t) #RcdDefHashList :
+void DefHashList() #RcdDefHashList :
 {
+    Token t;
 }
 {
     <HASHLIST>
-    <OBRA>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Var()
     )?
-    <CBRA>
     {
 	    jjtThis.setName(t.image);
         jjtThis.setToken(token);
@@ -273,48 +264,63 @@ void DefHashList(Token t) #RcdDefHashList :
 }
 
 
-void DefHash(Token t) #RcdDefHash :
+void DefHash() #RcdDefHash :
 {
+    Token t;
 }
 {
     <HASH>
-    <OBRA>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Expr()
     )?
-    <CBRA>
     {
 	    jjtThis.setName(t.image);
         jjtThis.setToken(token);
 	}
 }
 
-void DefVarArray(Token t) #RcdDefVarArray :
+void DefFile() #RcdDefFile :
 {
-}
-{
-    <VARARRAY>
-    <OBRA>
-    (
-        Expr()
-    )?
-    <CBRA>
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-void DefFile(Token t) #RcdDefFile :
-{
+    Token t;
 }
 {
     <FILE>
-    <OBRA>
+    t = <VAR_LITERAL>
+    {
+	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
+	}
+}
+
+void DefValue() #RcdDefValue :
+{
+    Token t;
+}
+{
+    <VALUE>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Expr()
     )?
-    <CBRA>
+    {
+	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
+	}
+}
+
+void DefValArray() #RcdDefValArray :
+{
+    Token t;
+}
+{
+    <VALARRAY>
+    t = <VAR_LITERAL>
+    (
+        Var()
+    )?
     {
 	    jjtThis.setName(t.image);
         jjtThis.setToken(token);
@@ -329,7 +335,7 @@ void Block() :
 {
 	IfBlock()
 	|
-	ForEachBlock()
+	ForBlock()
 }
 
 void IfBlock() #RcdIfBlock :
@@ -353,15 +359,20 @@ void IfBlock() #RcdIfBlock :
 }
 
 
-void ForEachBlock() #RcdForEachBlock :
+void ForBlock() #RcdForBlock :
 {
 }
 {
-	<FOR_EACH>
+	<FOR>
     { jjtThis.setToken(token); }
 	<OBRA>
+    (
+        <HASH>
+        |
+        <VALUE>
+    )
 	Var()
-	<IN>
+	<COLON>
     Var()
 	<CBRA>
 	<OCBRA>

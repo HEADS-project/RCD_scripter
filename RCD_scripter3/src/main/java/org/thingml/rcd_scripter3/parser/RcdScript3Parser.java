@@ -243,7 +243,7 @@ if (jjtc000) {
   }
 
   final public void DefVarArray(Token t) throws ParseException {/*@bgen(jjtree) RcdDefVarArray */
-  ASTRcdDefVarArray jjtn000 = new ASTRcdDefVarArray(JJTRCDDEFVARARRAY);
+  ASTRcdDefValArray jjtn000 = new ASTRcdDefValArray(JJTRCDDEFVARARRAY);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -406,7 +406,7 @@ if (jjtc000) {
   }
 
   final public void ForEachBlock() throws ParseException {/*@bgen(jjtree) RcdForEachBlock */
-  ASTRcdForEachBlock jjtn000 = new ASTRcdForEachBlock(JJTRCDFOREACHBLOCK);
+  ASTRcdForBlock jjtn000 = new ASTRcdForBlock(JJTRCDFOREACHBLOCK);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
