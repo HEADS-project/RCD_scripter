@@ -21,7 +21,7 @@ public class VarValueInt extends VarValueBase {
     
     @Override
     public String getTypeString() {
-        return "VarValueInt";
+        return "ValueInt";
     }
     
     @Override

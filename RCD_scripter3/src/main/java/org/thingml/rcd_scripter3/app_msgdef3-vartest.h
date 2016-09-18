@@ -50,16 +50,16 @@ print("Tekst:" + 10 + 20 + "\n");
 RCD_SCRIPT_START
 
 
-DEF $VarHash0 = HASH({ One:1, Two:2});
-DEF $VarHash1 = HASH($VarHash0);
+HASH $VarHash0 = { One:1, Two:2};
+HASH $VarHash1 = $VarHash0;
 $VarHash1.add({ Ny:"New"});
 
-DEF $VarHashList1 = HASHLIST();
+HASHLIST $VarHashList1;
 $VarHashList1.add($VarHash0);
 $VarHashList1.add($VarHash1);
 $VarHashList1.add({ Fersk:"Fresh"});
 
-DEF $VarHashList2 = HASHLIST($VarHashList1);
+HASHLIST $VarHashList2 = $VarHashList1;
 $VarHashList2.add({ Nyest:"Newest"});
 $VarHashList2.setdef({ Default:"Default"});
 $VarHashList2.add({ NyRad:"NewRow"});

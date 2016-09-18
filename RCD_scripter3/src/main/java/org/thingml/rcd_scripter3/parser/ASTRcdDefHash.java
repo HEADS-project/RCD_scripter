@@ -1,7 +1,6 @@
 
 package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarHash;
 
 public class ASTRcdDefHash extends ASTRcdBase {

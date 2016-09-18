@@ -66,7 +66,7 @@ public class VarHashList extends VarBase {
 
     @Override
     public String printString(){
-        String ret = "<VarHashList: Default hash: "+defaultHash.printString()+"\n";
+        String ret = "<HashList: Default hash: "+defaultHash.printString()+"\n";
         ret += getString();
         return ret;
     }
@@ -88,7 +88,7 @@ public class VarHashList extends VarBase {
 
     @Override
     public String getTypeString() {
-        return "VarHashList";
+        return "HashList";
     }
 
     @Override

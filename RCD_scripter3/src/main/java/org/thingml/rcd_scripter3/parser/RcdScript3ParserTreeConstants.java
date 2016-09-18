@@ -7,22 +7,23 @@ public interface RcdScript3ParserTreeConstants
   public int JJTVOID = 1;
   public int JJTRCDDEFHASHLIST = 2;
   public int JJTRCDDEFHASH = 3;
-  public int JJTRCDDEFVARARRAY = 4;
-  public int JJTRCDDEFFILE = 5;
-  public int JJTRCDIFBLOCK = 6;
-  public int JJTRCDFOREACHBLOCK = 7;
-  public int JJTRCDTRUESCRIPT = 8;
-  public int JJTRCDFALSESCRIPT = 9;
-  public int JJTRCDPRINT = 10;
-  public int JJTRCDVARMETHOD = 11;
-  public int JJTRCDOPEXPR = 12;
-  public int JJTRCDVAR = 13;
-  public int JJTRCDID = 14;
-  public int JJTRCDSTRING = 15;
-  public int JJTRCDINTNUM = 16;
-  public int JJTRCDFLOATNUM = 17;
-  public int JJTRCDHASH = 18;
-  public int JJTRCDTUPL = 19;
+  public int JJTRCDDEFFILE = 4;
+  public int JJTRCDDEFVALUE = 5;
+  public int JJTRCDDEFVALARRAY = 6;
+  public int JJTRCDIFBLOCK = 7;
+  public int JJTRCDFORBLOCK = 8;
+  public int JJTRCDTRUESCRIPT = 9;
+  public int JJTRCDFALSESCRIPT = 10;
+  public int JJTRCDPRINT = 11;
+  public int JJTRCDVARMETHOD = 12;
+  public int JJTRCDOPEXPR = 13;
+  public int JJTRCDVAR = 14;
+  public int JJTRCDID = 15;
+  public int JJTRCDSTRING = 16;
+  public int JJTRCDINTNUM = 17;
+  public int JJTRCDFLOATNUM = 18;
+  public int JJTRCDHASH = 19;
+  public int JJTRCDTUPL = 20;
 
 
   public String[] jjtNodeName = {
@@ -30,10 +31,11 @@ public interface RcdScript3ParserTreeConstants
     "void",
     "RcdDefHashList",
     "RcdDefHash",
-    "RcdDefVarArray",
     "RcdDefFile",
+    "RcdDefValue",
+    "RcdDefValArray",
     "RcdIfBlock",
-    "RcdForEachBlock",
+    "RcdForBlock",
     "RcdTrueScript",
     "RcdFalseScript",
     "RcdPrint",
@@ -48,4 +50,4 @@ public interface RcdScript3ParserTreeConstants
     "RcdTupl",
   };
 }
-/* JavaCC - OriginalChecksum=90fbf702027dae9a46cd8e2361924a11 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4c3c40e50e144cfc5fa7e68ffbdf7674 (do not edit this line) */

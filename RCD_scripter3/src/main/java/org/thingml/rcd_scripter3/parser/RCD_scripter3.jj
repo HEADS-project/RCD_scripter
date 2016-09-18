@@ -62,27 +62,23 @@ TOKEN [IGNORE_CASE]: /* Commands */
 {
   <INCLUDE :("INCLUDE")>
 |
-  <DEF :("DEF")>
+  <VALARRAY :("VALARRAY")>
 |
-  <VARARRAY :("VARARRAY")>
+  <VALUE :("VALUE")>
 |
   <FILE :("FILE")>
 |
   <CLOSE :("CLOSE")>
 |
-  <FOR_EACH :("FOR_EACH")>
+  <FOR :("FOR")>
 |
   <HAS :("HAS")>
 |
   <IF:("IF")>
 |
-  <IF_ROW:("IF_ROW")>
-|
   <ELSE:("ELSE")>
 |
   <IN :("IN")>
-|
-  <INT :("INT")>
 |
   <PRINT :("PRINT")>
 |
@@ -90,8 +86,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <HASH :("HASH")>
 |
-//  <SETDEF :("SETDEF")>
-//|
   <HASHLIST :("HASHLIST")>
 }
 
@@ -102,9 +96,9 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: (["+","-"])? (<DIGIT>)+ >
+  < DEC_LITERAL: (<DIGIT>)+ >
 |
-  < FLOAT_LITERAL: (["+","-"])? (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
+  < FLOAT_LITERAL: (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
 |
   < #DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 |
@@ -271,44 +265,39 @@ void Include() :
 // ************* Def xxx ***************
 void Def() : 
 {
-    Token t;
 }
 {
-    <DEF>
-    t = <VAR_LITERAL>
-    <ASSIGN>
     (
-        DefHashList(t)
+        DefHashList()
         |
-        DefHash(t)
-//        |
-//        DefKeyValue()
-//        |
-//        DefValue(jobList, TId_defVarName)
+        DefHash()
         |
-        DefVarArray(t)
+        DefFile()
         |
-        DefFile(t)
+        DefValue()
+        |
+        DefValArray()
     )
     <SEMI>
 }
 
-void DefHashList(Token t)                 :
+void DefHashList()                 :
 {/*@bgen(jjtree) RcdDefHashList */
-  ASTRcdDefHashList jjtn000 = new ASTRcdDefHashList(JJTRCDDEFHASHLIST);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+    ASTRcdDefHashList jjtn000 = new ASTRcdDefHashList(JJTRCDDEFHASHLIST);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
 /*@egen*/
+    Token t;
 }
 {/*@bgen(jjtree) RcdDefHashList */
     try {
 /*@egen*/
     <HASHLIST>
-    <OBRA>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Var()
-    )?
-    <CBRA>/*@bgen(jjtree)*/
+    )?/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -341,22 +330,23 @@ void DefHashList(Token t)                 :
 }
 
 
-void DefHash(Token t)             :
+void DefHash()             :
 {/*@bgen(jjtree) RcdDefHash */
-  ASTRcdDefHash jjtn000 = new ASTRcdDefHash(JJTRCDDEFHASH);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+    ASTRcdDefHash jjtn000 = new ASTRcdDefHash(JJTRCDDEFHASH);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
 /*@egen*/
+    Token t;
 }
 {/*@bgen(jjtree) RcdDefHash */
     try {
 /*@egen*/
     <HASH>
-    <OBRA>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Expr()
-    )?
-    <CBRA>/*@bgen(jjtree)*/
+    )?/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -388,69 +378,100 @@ void DefHash(Token t)             :
 /*@egen*/
 }
 
-void DefVarArray(Token t)                 :
-{/*@bgen(jjtree) RcdDefVarArray */
-  ASTRcdDefVarArray jjtn000 = new ASTRcdDefVarArray(JJTRCDDEFVARARRAY);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/
-}
-{/*@bgen(jjtree) RcdDefVarArray */
-    try {
-/*@egen*/
-    <VARARRAY>
-    <OBRA>
-    (
-        Expr()
-    )?
-    <CBRA>/*@bgen(jjtree)*/
-    {
-      jjtree.closeNodeScope(jjtn000, true);
-      jjtc000 = false;
-    }
-/*@egen*/
-    {
-	    jjtn000.setName(t.image);
-        jjtn000.setToken(token);
-	}/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-/*@egen*/
-}
-
-void DefFile(Token t)             :
+void DefFile()             :
 {/*@bgen(jjtree) RcdDefFile */
-  ASTRcdDefFile jjtn000 = new ASTRcdDefFile(JJTRCDDEFFILE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+    ASTRcdDefFile jjtn000 = new ASTRcdDefFile(JJTRCDDEFFILE);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
 /*@egen*/
+    Token t;
 }
 {/*@bgen(jjtree) RcdDefFile */
     try {
 /*@egen*/
     <FILE>
-    <OBRA>
+    t = <VAR_LITERAL>/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	    jjtn000.setName(t.image);
+        jjtn000.setToken(token);
+	}/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void DefValue()              :
+{/*@bgen(jjtree) RcdDefValue */
+    ASTRcdDefValue jjtn000 = new ASTRcdDefValue(JJTRCDDEFVALUE);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdDefValue */
+    try {
+/*@egen*/
+    <VALUE>
+    t = <VAR_LITERAL>
     (
+        <ASSIGN>
         Expr()
-    )?
-    <CBRA>/*@bgen(jjtree)*/
+    )?/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	    jjtn000.setName(t.image);
+        jjtn000.setToken(token);
+	}/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void DefValArray()                 :
+{/*@bgen(jjtree) RcdDefValArray */
+    ASTRcdDefValArray jjtn000 = new ASTRcdDefValArray(JJTRCDDEFVALARRAY);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdDefValArray */
+    try {
+/*@egen*/
+    <VALARRAY>
+    t = <VAR_LITERAL>
+    (
+        Var()
+    )?/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -490,7 +511,7 @@ void Block() :
 {
 	IfBlock()
 	|
-	ForEachBlock()
+	ForBlock()
 }
 
 void IfBlock()             :
@@ -540,21 +561,26 @@ void IfBlock()             :
 }
 
 
-void ForEachBlock()                  :
-{/*@bgen(jjtree) RcdForEachBlock */
-  ASTRcdForEachBlock jjtn000 = new ASTRcdForEachBlock(JJTRCDFOREACHBLOCK);
+void ForBlock()              :
+{/*@bgen(jjtree) RcdForBlock */
+  ASTRcdForBlock jjtn000 = new ASTRcdForBlock(JJTRCDFORBLOCK);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
 }
-{/*@bgen(jjtree) RcdForEachBlock */
+{/*@bgen(jjtree) RcdForBlock */
         try {
 /*@egen*/
-	<FOR_EACH>
+	<FOR>
     { jjtn000.setToken(token); }
 	<OBRA>
+    (
+        <HASH>
+        |
+        <VALUE>
+    )
 	Var()
-	<IN>
+	<COLON>
     Var()
 	<CBRA>
 	<OCBRA>

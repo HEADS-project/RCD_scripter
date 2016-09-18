@@ -54,7 +54,7 @@ public class VarHash extends VarBase {
         
     @Override
     public String printString(){
-        String ret = "VarHash: " + getString();
+        String ret = "Hash: " + getString();
         return ret;
     }
 

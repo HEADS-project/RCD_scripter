@@ -23,7 +23,7 @@ public class VarId extends VarBase {
     
     @Override
     public String getTypeString() {
-        return "VarId";
+        return "Id";
     }
 
     @Override
