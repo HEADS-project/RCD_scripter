@@ -4,13 +4,13 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 import org.thingml.rcd_scripter3.variables.VarValueString;
 
-public class ASTRcdDefValue extends ASTRcdBase {
+public class ASTRcdDeclValue extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdDefValue(int id) {
+    public ASTRcdDeclValue(int id) {
       super(id);
     }
 
@@ -24,7 +24,7 @@ public class ASTRcdDefValue extends ASTRcdBase {
         } else {
             newValue = new VarValueString("NULL("+name+")");
         }
-        ctx.addVar(name, newValue);
+        ctx.declVar(this, name, newValue);
     }
 
 }

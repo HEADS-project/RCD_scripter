@@ -24,8 +24,8 @@ import org.thingml.rcd_scripter3.variables.*;
  * @author steffend
  */
 public class ExecuteContext {
-    private HashMap<String, VarBase> varList = new HashMap<String, VarBase>();
     private boolean trace = false;
+    private SymbolTable symTab = new SymbolTable();
     private Stack<Token> executingTokenStack = new Stack<Token>();
     private Stack<VarBase> varStack = new Stack<VarBase>();
 
@@ -37,21 +37,29 @@ public class ExecuteContext {
         this.trace = trace;
     }
     
-    public void printExecutingInfo() {
-        Token t = executingTokenStack.peek();
-        System.out.println("Executing line => Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn+"\n");
+//    public void printExecutingInfo() {
+//        Token t = executingTokenStack.peek();
+//        System.out.println("Executing line => Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn+"\n");
+//    }
+    
+//    public void pushExecutingToken(Token t) {
+//        executingTokenStack.push(t);
+//    }
+    
+//    public Token popExecutingToken() {
+//        return executingTokenStack.pop();
+//    }
+    
+//    public Token peekExecutingToken() {
+//        return executingTokenStack.peek();
+//    }
+    
+    public void blockStart() {
+        symTab = symTab.createSubTable();
     }
     
-    public void pushExecutingToken(Token t) {
-        executingTokenStack.push(t);
-    }
-    
-    public Token popExecutingToken() {
-        return executingTokenStack.pop();
-    }
-    
-    public Token peekExecutingToken() {
-        return executingTokenStack.peek();
+    public void blockEnd() {
+        symTab = symTab.discardSubTable();
     }
     
     public int getVarStackSize() {
@@ -78,32 +86,47 @@ public class ExecuteContext {
         return varStack.peek();
     }
     
-    public void addVar(String name, VarBase var) {
-        VarBase oldVar = varList.get(name);
+    public void declVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
+        VarBase oldVar = symTab.getVar(name);
         if (oldVar != null) {
-            System.out.println("Warning variable <"+name+"> is replaced");
+            throw b.generateExecuteException("Error variable <"+name+"> is already declared");
         }
-        varList.put(name, var);
+        symTab.declVar(name, newVar);
     }
     
-    public void addVarSilent(String name, VarBase var) {
-        varList.put(name, var);
+    public void assignVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
+        VarBase oldVar = symTab.getVar(name);
+        if (oldVar != null) {
+            if (oldVar.getType() == newVar.getType()) {
+                // Ok
+            } else {
+                // It is different types
+                if (oldVar instanceof VarValueBase) {
+                    if (newVar instanceof VarValueBase) {
+                        // Ok
+                    } else {
+                        throw b.generateExecuteException("ERROR Expression of type <"+newVar.getType()+"> cannot be assigned to Var <"+name+"> of type <VALUE>");
+                    }
+                } else {
+                    throw b.generateExecuteException("ERROR Expression of type <"+newVar.getType()+"> cannot be assigned to Var <"+name+"> of type <"+oldVar.getType()+">");
+                }
+            }
+        } else {
+            throw b.generateExecuteException("Error variable <"+name+"> is not declared");
+        }
+        symTab.assignVar(name, newVar);
     }
+    
+//    public void addVarSilent(String name, VarBase var) {
+//        varList.put(name, var);
+//    }
 
     public String getVarName(VarBase obj){
-        Iterator i = varList.entrySet().iterator();
-        while(i.hasNext()) {
-            HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarBase base = (VarBase)pair.getValue();
-            if (base == obj) {
-                return ""+pair.getKey();
-            }
-        }
-        return "???";
+        return symTab.getVarName(obj);
     }
     
     public VarBase getVarBase(ASTRcdBase b, String name)  throws ExecuteException {
-        VarBase var = varList.get(name);
+        VarBase var = symTab.getVar(name);
         if (var == null) {
             throw b.generateExecuteException("Error variable <"+name+"> is not defined");
         }
@@ -111,7 +134,7 @@ public class ExecuteContext {
     }
     
     public VarBase getVarBaseSilent(String name) {
-        VarBase var = varList.get(name);
+        VarBase var = symTab.getVar(name);
         return var;
     }
     
@@ -141,18 +164,9 @@ public class ExecuteContext {
 
     public String printStringAll() {
         String ret = "<ExecuteContext() \n";
-        Iterator i = varList.entrySet().iterator();
-        while(i.hasNext()) {
-            HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarBase base = (VarBase)pair.getValue();
-            ret += "<Content of id("+pair.getKey()+")\n";
-            if (base != null) {
-                ret += base.printString();
-            } else {
-                ret += "NULL_PTR";
-            }
-            ret += ">\n";
-        }
+        ret += symTab.printStringAll();
+        ret += ">\n";
+
         return ret;
     }
 }

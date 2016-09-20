@@ -3,13 +3,13 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarHash;
 
-public class ASTRcdDefHash extends ASTRcdBase {
+public class ASTRcdDeclHash extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdDefHash(int id) {
+    public ASTRcdDeclHash(int id) {
       super(id);
     }
 
@@ -23,7 +23,7 @@ public class ASTRcdDefHash extends ASTRcdBase {
         } else {
             newHash = new VarHash();
         }
-        ctx.addVar(name, newHash);
+        ctx.declVar(this, name, newHash);
     }
 
 }

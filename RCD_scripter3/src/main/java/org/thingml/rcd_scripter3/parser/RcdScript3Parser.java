@@ -161,7 +161,7 @@ fileName = t.image.substring(0, t.image.length()-1).substring(1); // Remove quot
   }
 
   final public void DefHashList() throws ParseException {/*@bgen(jjtree) RcdDefHashList */
-    ASTRcdDefHashList jjtn000 = new ASTRcdDefHashList(JJTRCDDEFHASHLIST);
+    ASTRcdDeclHashList jjtn000 = new ASTRcdDeclHashList(JJTRCDDEFHASHLIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -203,7 +203,7 @@ if (jjtc000) {
   }
 
   final public void DefHash() throws ParseException {/*@bgen(jjtree) RcdDefHash */
-    ASTRcdDefHash jjtn000 = new ASTRcdDefHash(JJTRCDDEFHASH);
+    ASTRcdDeclHash jjtn000 = new ASTRcdDeclHash(JJTRCDDEFHASH);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -245,7 +245,7 @@ if (jjtc000) {
   }
 
   final public void DefFile() throws ParseException {/*@bgen(jjtree) RcdDefFile */
-    ASTRcdDefFile jjtn000 = new ASTRcdDefFile(JJTRCDDEFFILE);
+    ASTRcdDeclFile jjtn000 = new ASTRcdDeclFile(JJTRCDDEFFILE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -263,7 +263,7 @@ if (jjtc000) {
   }
 
   final public void DefValue() throws ParseException {/*@bgen(jjtree) RcdDefValue */
-    ASTRcdDefValue jjtn000 = new ASTRcdDefValue(JJTRCDDEFVALUE);
+    ASTRcdDeclValue jjtn000 = new ASTRcdDeclValue(JJTRCDDEFVALUE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -305,7 +305,7 @@ if (jjtc000) {
   }
 
   final public void DefValArray() throws ParseException {/*@bgen(jjtree) RcdDefValArray */
-    ASTRcdDefValArray jjtn000 = new ASTRcdDefValArray(JJTRCDDEFVALARRAY);
+    ASTRcdDeclValArray jjtn000 = new ASTRcdDeclValArray(JJTRCDDEFVALARRAY);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -535,7 +535,7 @@ void Statement() throws ParseException {
   }
 
   final public void Print() throws ParseException {/*@bgen(jjtree) RcdPrint */
-  ASTRcdPrint jjtn000 = new ASTRcdPrint(JJTRCDPRINT);
+  ASTRcdCallProc jjtn000 = new ASTRcdCallProc(JJTRCDPRINT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -566,7 +566,7 @@ if (jjtc000) {
   }
 
   final public void VarMethod() throws ParseException {/*@bgen(jjtree) RcdVarMethod */
-  ASTRcdVarMethod jjtn000 = new ASTRcdVarMethod(JJTRCDVARMETHOD);
+  ASTRcdCallVarMethod jjtn000 = new ASTRcdCallVarMethod(JJTRCDVARMETHOD);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {

@@ -64,8 +64,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FILE :("FILE")>
 |
-  <CLOSE :("CLOSE")>
-|
   <FOR :("FOR")>
 |
   <HAS :("HAS")>
@@ -73,12 +71,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <IF:("IF")>
 |
   <ELSE:("ELSE")>
-|
-  <IN :("IN")>
-|
-  <PRINT :("PRINT")>
-|
-  <PRINTLN :("PRINTLN")>
 |
   <HASH :("HASH")>
 |
@@ -92,7 +84,7 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: (<DIGIT>)+ >
+  < DEC_LITERAL: (["+","-"])?(<DIGIT>)+ >
 |
   < FLOAT_LITERAL: (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
 |
@@ -183,7 +175,7 @@ void Script() : {}
     (
 		Include()
 		|
-        Def()
+        Decl()
         |
         Block()
         |
@@ -227,26 +219,26 @@ void Include() :
 	}
 }
 
-// ************* Def xxx ***************
-void Def() : 
+// ************* Decl xxx ***************
+void Decl() : 
 {
 }
 {
     (
-        DefHashList()
+        DeclHashList()
         |
-        DefHash()
+        DeclHash()
         |
-        DefFile()
+        DeclfFile()
         |
-        DefValue()
+        DeclValue()
         |
-        DefValArray()
+        DeclValArray()
     )
     <SEMI>
 }
 
-void DefHashList() #RcdDefHashList :
+void DeclHashList() #RcdDeclHashList :
 {
     Token t;
 }
@@ -264,7 +256,7 @@ void DefHashList() #RcdDefHashList :
 }
 
 
-void DefHash() #RcdDefHash :
+void DeclHash() #RcdDeclHash :
 {
     Token t;
 }
@@ -281,7 +273,7 @@ void DefHash() #RcdDefHash :
 	}
 }
 
-void DefFile() #RcdDefFile :
+void DeclFile() #RcdDeclFile :
 {
     Token t;
 }
@@ -294,7 +286,7 @@ void DefFile() #RcdDefFile :
 	}
 }
 
-void DefValue() #RcdDefValue :
+void DeclValue() #RcdDeclValue :
 {
     Token t;
 }
@@ -311,7 +303,7 @@ void DefValue() #RcdDefValue :
 	}
 }
 
-void DefValArray() #RcdDefValArray :
+void DeclValArray() #RcdDeclValArray :
 {
     Token t;
 }
@@ -345,7 +337,7 @@ void IfBlock() #RcdIfBlock :
 	<IF>
     { jjtThis.setToken(token); }
 	<OBRA>
-	CompExpr()
+	CmpExpr()
 	<CBRA>
     <OCBRA>
 	TrueScript()
@@ -401,25 +393,27 @@ void Statement() :
 }
 {
 	(
-		Print()
+		CallProc()
         |
-        VarMethod()
+        CallVarMethod()
+        |
+        VarAssign()
 	)
 	<SEMI>
 }
 
-void Print() #RcdPrint :
+void CallProc() #RcdCallProc :
 {
 }
 {
-	<PRINT>
+	Id()
     { jjtThis.setToken(token); }
 	<OBRA>
 	Expr()
 	<CBRA>
 }
 
-void VarMethod() #RcdVarMethod :
+void CallVarMethod() #RcdCallVarMethod :
 {
 }
 {
@@ -432,10 +426,30 @@ void VarMethod() #RcdVarMethod :
 	<CBRA>
 }
 
+void VarAssign() #RcdVarAssign :
+{
+    Token t;
+}
+{
+    (
+        t = <VAR_LITERAL>
+	    (
+    		<OABRA>
+			Expr()
+	    	<CABRA>
+    	)?
+        {
+            jjtThis.setName(t.image);
+            jjtThis.setToken(t); 
+        }
+    ) 
+	<ASSIGN>
+	Expr()
+}
 
 // ************* Comparison grammar ***************
 
-void CompExpr() #RcdOpExpr : 
+void CmpExpr() #RcdOpExpr : 
 {
     Token t;
 }
@@ -531,8 +545,8 @@ void Factor() : {}
   String()
   |
   IntNum()
-  |
-  FloatNum()
+//  |
+//  FloatNum()
   |
   Hash()
 }

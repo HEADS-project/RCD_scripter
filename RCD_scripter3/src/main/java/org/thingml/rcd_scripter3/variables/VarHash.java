@@ -40,18 +40,28 @@ public class VarHash extends VarBase {
     }
 
     @Override
-    public VarBase fetchFromIndex(ASTRcdBase b, VarBase var) throws ExecuteException {
-        VarKeyValue kv = getKeyValue(var.getString());
+    public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
+        VarKeyValue kv = getKeyValue(idx.getString());
         VarBase ret = null;
         if (kv != null) {
             ret = kv.getValue();
         } else {
-            throw b.generateExecuteException("ERROR "+b.getName()+"["+var.getString()+"] is not defined");
+            throw b.generateExecuteException("ERROR "+b.getName()+"["+idx.getString()+"] is not defined");
         }
-        
         return ret;
     }
-        
+
+    @Override
+    public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
+        if (expr instanceof VarValueBase) {
+            VarKeyValue kv = new VarKeyValue(idx.getString(), (VarValueBase)expr);
+            addKeyValue(kv);
+        } else {
+            throw b.generateExecuteException("ERROR value of type <"+expr.getTypeString()+"> cannot be added to a HASH");
+        }
+    }
+    
+    
     @Override
     public String printString(){
         String ret = "Hash: " + getString();

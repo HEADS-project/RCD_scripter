@@ -35,11 +35,29 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         } else if (image.contentEquals("/")==true) {
             operation = VarValueBase.Operation.DIV;
             
+        } else if (image.contentEquals("==")==true) {
+            operation = VarValueBase.Operation.EQUAL;
+            
+        } else if (image.contentEquals(">")==true) {
+            operation = VarValueBase.Operation.GT;
+            
+        } else if (image.contentEquals("<")==true) {
+            operation = VarValueBase.Operation.LT;
+            
+        } else if (image.contentEquals(">=")==true) {
+            operation = VarValueBase.Operation.GTE;
+            
+        } else if (image.contentEquals("LTE")==true) {
+            operation = VarValueBase.Operation.LTE;
+            
+        } else if (image.contentEquals("!=")==true) {
+            operation = VarValueBase.Operation.NOTEQUAL;
+            
         } else {
             throw generateExecuteException("Operation <"+image+"> is not supported on Values");
         }
         
-        VarValueBase result = VarValueBase.doOperation(leftValue, operation, rightValue);
+        VarValueBase result = VarValueBase.doOperation(this, leftValue, operation, rightValue);
         ctx.pushVar(result);
     }
     

@@ -4,13 +4,13 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarValArray;
 
-public class ASTRcdDefValArray extends ASTRcdBase {
+public class ASTRcdDeclValArray extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdDefValArray(int id) {
+    public ASTRcdDeclValArray(int id) {
       super(id);
     }
 
@@ -24,7 +24,7 @@ public class ASTRcdDefValArray extends ASTRcdBase {
         } else {
             newValArray = new VarValArray();
         }
-        ctx.addVar(name, newValArray);
+        ctx.declVar(this, name, newValArray);
     }
 
 }

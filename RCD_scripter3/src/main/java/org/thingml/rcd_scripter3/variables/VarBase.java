@@ -22,7 +22,11 @@ abstract public class VarBase {
     abstract public String getTypeString();
     abstract public VarType getType();
     
-    public VarBase fetchFromIndex(ASTRcdBase b, VarBase var) throws ExecuteException {
+    public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
+        throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
+    }
+    
+    public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
     

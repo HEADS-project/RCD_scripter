@@ -12,13 +12,13 @@ import org.thingml.rcd_scripter3.variables.VarValueBase;
 import org.thingml.rcd_scripter3.variables.VarValueInt;
 import org.thingml.rcd_scripter3.variables.VarValueString;
 
-public class ASTRcdVarMethod extends ASTRcdBase {
+public class ASTRcdCallVarMethod extends ASTRcdBase {
 
   /**
    * Constructor.
    * @param id the id
    */
-  public ASTRcdVarMethod(int id) {
+  public ASTRcdCallVarMethod(int id) {
     super(id);
   }
 
@@ -173,5 +173,4 @@ public class ASTRcdVarMethod extends ASTRcdBase {
             throw generateExecuteException("ERROR method <"+method+"> is not defined for "+var.getTypeString());
         }
     }
-			
 }
