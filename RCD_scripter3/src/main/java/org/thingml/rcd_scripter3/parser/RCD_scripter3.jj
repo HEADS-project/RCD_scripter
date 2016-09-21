@@ -68,8 +68,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FILE :("FILE")>
 |
-  <CLOSE :("CLOSE")>
-|
   <FOR :("FOR")>
 |
   <HAS :("HAS")>
@@ -78,15 +76,13 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <ELSE:("ELSE")>
 |
-  <IN :("IN")>
-|
-  <PRINT :("PRINT")>
-|
-  <PRINTLN :("PRINTLN")>
-|
   <HASH :("HASH")>
 |
   <HASHLIST :("HASHLIST")>
+|
+  <TRUE:("TRUE")>
+|
+  <FALSE:("FALSE")>
 }
 
 
@@ -96,7 +92,7 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: (<DIGIT>)+ >
+  < DEC_LITERAL: (["+","-"])?(<DIGIT>)+ >
 |
   < FLOAT_LITERAL: (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
 |
@@ -218,7 +214,7 @@ void Script() : {}
     (
 		Include()
 		|
-        Def()
+        Decl()
         |
         Block()
         |
@@ -262,34 +258,34 @@ void Include() :
 	}
 }
 
-// ************* Def xxx ***************
-void Def() : 
+// ************* Decl xxx ***************
+void Decl() : 
 {
 }
 {
     (
-        DefHashList()
+        DeclHashList()
         |
-        DefHash()
+        DeclHash()
         |
-        DefFile()
+        DeclFile()
         |
-        DefValue()
+        DeclValue()
         |
-        DefValArray()
+        DeclValArray()
     )
     <SEMI>
 }
 
-void DefHashList()                 :
-{/*@bgen(jjtree) RcdDefHashList */
-    ASTRcdDefHashList jjtn000 = new ASTRcdDefHashList(JJTRCDDEFHASHLIST);
+void DeclHashList()                  :
+{/*@bgen(jjtree) RcdDeclHashList */
+    ASTRcdDeclHashList jjtn000 = new ASTRcdDeclHashList(JJTRCDDECLHASHLIST);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t;
 }
-{/*@bgen(jjtree) RcdDefHashList */
+{/*@bgen(jjtree) RcdDeclHashList */
     try {
 /*@egen*/
     <HASHLIST>
@@ -330,15 +326,15 @@ void DefHashList()                 :
 }
 
 
-void DefHash()             :
-{/*@bgen(jjtree) RcdDefHash */
-    ASTRcdDefHash jjtn000 = new ASTRcdDefHash(JJTRCDDEFHASH);
+void DeclHash()              :
+{/*@bgen(jjtree) RcdDeclHash */
+    ASTRcdDeclHash jjtn000 = new ASTRcdDeclHash(JJTRCDDECLHASH);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t;
 }
-{/*@bgen(jjtree) RcdDefHash */
+{/*@bgen(jjtree) RcdDeclHash */
     try {
 /*@egen*/
     <HASH>
@@ -378,15 +374,15 @@ void DefHash()             :
 /*@egen*/
 }
 
-void DefFile()             :
-{/*@bgen(jjtree) RcdDefFile */
-    ASTRcdDefFile jjtn000 = new ASTRcdDefFile(JJTRCDDEFFILE);
+void DeclFile()              :
+{/*@bgen(jjtree) RcdDeclFile */
+    ASTRcdDeclFile jjtn000 = new ASTRcdDeclFile(JJTRCDDECLFILE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t;
 }
-{/*@bgen(jjtree) RcdDefFile */
+{/*@bgen(jjtree) RcdDeclFile */
     try {
 /*@egen*/
     <FILE>
@@ -408,15 +404,15 @@ void DefFile()             :
 /*@egen*/
 }
 
-void DefValue()              :
-{/*@bgen(jjtree) RcdDefValue */
-    ASTRcdDefValue jjtn000 = new ASTRcdDefValue(JJTRCDDEFVALUE);
+void DeclValue()               :
+{/*@bgen(jjtree) RcdDeclValue */
+    ASTRcdDeclValue jjtn000 = new ASTRcdDeclValue(JJTRCDDECLVALUE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t;
 }
-{/*@bgen(jjtree) RcdDefValue */
+{/*@bgen(jjtree) RcdDeclValue */
     try {
 /*@egen*/
     <VALUE>
@@ -456,15 +452,15 @@ void DefValue()              :
 /*@egen*/
 }
 
-void DefValArray()                 :
-{/*@bgen(jjtree) RcdDefValArray */
-    ASTRcdDefValArray jjtn000 = new ASTRcdDefValArray(JJTRCDDEFVALARRAY);
+void DeclValArray()                  :
+{/*@bgen(jjtree) RcdDeclValArray */
+    ASTRcdDeclValArray jjtn000 = new ASTRcdDeclValArray(JJTRCDDECLVALARRAY);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t;
 }
-{/*@bgen(jjtree) RcdDefValArray */
+{/*@bgen(jjtree) RcdDeclValArray */
     try {
 /*@egen*/
     <VALARRAY>
@@ -527,7 +523,7 @@ void IfBlock()             :
 	<IF>
     { jjtn000.setToken(token); }
 	<OBRA>
-	CompExpr()
+	CmpExpr()
 	<CBRA>
     <OCBRA>
 	TrueScript()
@@ -681,24 +677,26 @@ void Statement() :
 }
 {
 	(
-		Print()
+		CallProc()
         |
-        VarMethod()
+        CallVarMethod()
+        |
+        VarAssign()
 	)
 	<SEMI>
 }
 
-void Print()           :
-{/*@bgen(jjtree) RcdPrint */
-  ASTRcdPrint jjtn000 = new ASTRcdPrint(JJTRCDPRINT);
+void CallProc()              :
+{/*@bgen(jjtree) RcdCallProc */
+  ASTRcdCallProc jjtn000 = new ASTRcdCallProc(JJTRCDCALLPROC);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
 }
-{/*@bgen(jjtree) RcdPrint */
+{/*@bgen(jjtree) RcdCallProc */
         try {
 /*@egen*/
-	<PRINT>
+	Id()
     { jjtn000.setToken(token); }
 	<OBRA>
 	Expr()
@@ -725,14 +723,14 @@ void Print()           :
 /*@egen*/
 }
 
-void VarMethod()               :
-{/*@bgen(jjtree) RcdVarMethod */
-  ASTRcdVarMethod jjtn000 = new ASTRcdVarMethod(JJTRCDVARMETHOD);
+void CallVarMethod()                   :
+{/*@bgen(jjtree) RcdCallVarMethod */
+  ASTRcdCallVarMethod jjtn000 = new ASTRcdCallVarMethod(JJTRCDCALLVARMETHOD);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/
 }
-{/*@bgen(jjtree) RcdVarMethod */
+{/*@bgen(jjtree) RcdCallVarMethod */
         try {
 /*@egen*/
 	Var()
@@ -764,10 +762,56 @@ void VarMethod()               :
 /*@egen*/
 }
 
+void VarAssign()               :
+{/*@bgen(jjtree) RcdVarAssign */
+    ASTRcdVarAssign jjtn000 = new ASTRcdVarAssign(JJTRCDVARASSIGN);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdVarAssign */
+    try {
+/*@egen*/
+    (
+        t = <VAR_LITERAL>
+	    (
+    		<OABRA>
+			Expr()
+	    	<CABRA>
+    	)?
+        {
+            jjtn000.setName(t.image);
+            jjtn000.setToken(t); 
+        }
+    ) 
+	<ASSIGN>
+	Expr()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
 
 // ************* Comparison grammar ***************
 
-void CompExpr()            : 
+void CmpExpr()            : 
 {/*@bgen(jjtree) RcdOpExpr */
     ASTRcdOpExpr jjtn000 = new ASTRcdOpExpr(JJTRCDOPEXPR);
     boolean jjtc000 = true;
@@ -957,7 +1001,9 @@ void Factor() : {}
   |
   IntNum()
   |
-  FloatNum()
+  Bool()
+//  |
+//  FloatNum()
   |
   Hash()
 }
@@ -1085,6 +1131,39 @@ void IntNum()            :
         t = <DEC_LITERAL>
 		|
         t = <HEX_LITERAL>
+	)/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+        jjtn000.setName(t.image);
+        jjtn000.setToken(t); 
+    }/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void Bool()          :
+{/*@bgen(jjtree) RcdBool */
+    ASTRcdBool jjtn000 = new ASTRcdBool(JJTRCDBOOL);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdBool */
+    try {
+/*@egen*/
+    (
+        t = <TRUE>
+        |
+        t = <FALSE>
 	)/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);

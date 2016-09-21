@@ -5,49 +5,53 @@ public interface RcdScript3ParserTreeConstants
 {
   public int JJTRCDSTART = 0;
   public int JJTVOID = 1;
-  public int JJTRCDDEFHASHLIST = 2;
-  public int JJTRCDDEFHASH = 3;
-  public int JJTRCDDEFFILE = 4;
-  public int JJTRCDDEFVALUE = 5;
-  public int JJTRCDDEFVALARRAY = 6;
+  public int JJTRCDDECLHASHLIST = 2;
+  public int JJTRCDDECLHASH = 3;
+  public int JJTRCDDECLFILE = 4;
+  public int JJTRCDDECLVALUE = 5;
+  public int JJTRCDDECLVALARRAY = 6;
   public int JJTRCDIFBLOCK = 7;
   public int JJTRCDFORBLOCK = 8;
   public int JJTRCDTRUESCRIPT = 9;
   public int JJTRCDFALSESCRIPT = 10;
-  public int JJTRCDPRINT = 11;
-  public int JJTRCDVARMETHOD = 12;
-  public int JJTRCDOPEXPR = 13;
-  public int JJTRCDVAR = 14;
-  public int JJTRCDID = 15;
-  public int JJTRCDSTRING = 16;
-  public int JJTRCDINTNUM = 17;
-  public int JJTRCDFLOATNUM = 18;
-  public int JJTRCDHASH = 19;
-  public int JJTRCDTUPL = 20;
+  public int JJTRCDCALLPROC = 11;
+  public int JJTRCDCALLVARMETHOD = 12;
+  public int JJTRCDVARASSIGN = 13;
+  public int JJTRCDOPEXPR = 14;
+  public int JJTRCDVAR = 15;
+  public int JJTRCDID = 16;
+  public int JJTRCDSTRING = 17;
+  public int JJTRCDINTNUM = 18;
+  public int JJTRCDBOOL = 19;
+  public int JJTRCDFLOATNUM = 20;
+  public int JJTRCDHASH = 21;
+  public int JJTRCDTUPL = 22;
 
 
   public String[] jjtNodeName = {
     "RcdStart",
     "void",
-    "RcdDefHashList",
-    "RcdDefHash",
-    "RcdDefFile",
-    "RcdDefValue",
-    "RcdDefValArray",
+    "RcdDeclHashList",
+    "RcdDeclHash",
+    "RcdDeclFile",
+    "RcdDeclValue",
+    "RcdDeclValArray",
     "RcdIfBlock",
     "RcdForBlock",
     "RcdTrueScript",
     "RcdFalseScript",
-    "RcdPrint",
-    "RcdVarMethod",
+    "RcdCallProc",
+    "RcdCallVarMethod",
+    "RcdVarAssign",
     "RcdOpExpr",
     "RcdVar",
     "RcdId",
     "RcdString",
     "RcdIntNum",
+    "RcdBool",
     "RcdFloatNum",
     "RcdHash",
     "RcdTupl",
   };
 }
-/* JavaCC - OriginalChecksum=4c3c40e50e144cfc5fa7e68ffbdf7674 (do not edit this line) */
+/* JavaCC - OriginalChecksum=8e8e0133b720dd0604ef0234380cfcd8 (do not edit this line) */

@@ -68,10 +68,16 @@ abstract public class VarValueBase extends VarBase {
 
         switch (op) {
             case PLUS:
-                newValue = doOperationPLUS(b, varLeft, varRight);
+                newValue = doOperationVarPLUS(varLeft, varRight);
                 break;
             case MINUS:
-                newValue = doOperationMINUS(b, varLeft, varRight);
+                newValue = doOperationVarMINUS(varLeft, varRight);
+                break;
+            case EQUAL:
+                newValue = doOperationVarEQUAL(varLeft, varRight);
+                break;
+            case NOTEQUAL:
+                newValue = doOperationVarNOTEQUAL(varLeft, varRight);
                 break;
             default:
                 try {
@@ -79,28 +85,22 @@ abstract public class VarValueBase extends VarBase {
                     VarValueBase valueRight = (VarValueBase)varRight;
                     switch (op) {
                         case MUL:
-                            newValue = doOperationMUL(b, valueLeft, valueRight);
+                            newValue = doOperationValMUL(valueLeft, valueRight);
                             break;
                         case DIV:
-                            newValue = doOperationDIV(b, valueLeft, valueRight);
-                            break;
-                        case EQUAL:
-                            newValue = doOperationEQUAL(b, valueLeft, valueRight);
+                            newValue = doOperationValDIV(valueLeft, valueRight);
                             break;
                         case GT:
-                            newValue = doOperationGT(b, valueLeft, valueRight);
+                            newValue = doOperationValGT(valueLeft, valueRight);
                             break;
                         case LT:
-                            newValue = doOperationLT(b, valueLeft, valueRight);
+                            newValue = doOperationValLT(valueLeft, valueRight);
                             break;
                         case GTE:
-                            newValue = doOperationGTE(b, valueLeft, valueRight);
+                            newValue = doOperationValGTE(valueLeft, valueRight);
                             break;
                         case LTE:
-                            newValue = doOperationLTE(b, valueLeft, valueRight);
-                            break;
-                        case NOTEQUAL:
-                            newValue = doOperationNOTEQUAL(b, valueLeft, valueRight);
+                            newValue = doOperationValLTE(valueLeft, valueRight);
                             break;
                         default:
                             throw b.generateExecuteException("ERROR operation<"+op+"> is not supported");
@@ -116,7 +116,7 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
 
-    private static VarValueBase doOperationStringPLUS(ASTRcdBase b, String valueLeft, String valueRight) throws ExecuteException {
+    private static VarValueBase doOperationStringPLUS(String valueLeft, String valueRight) {
 
         //Any + Any -> String
         if (valueLeft == null) return null;
@@ -134,7 +134,7 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
 
-    private static VarValueBase doOperationStringMINUS(ASTRcdBase b, String valueLeft, String valueRight) throws ExecuteException {
+    private static VarValueBase doOperationStringMINUS(String valueLeft, String valueRight) {
 
         //Any - Any -> String
         if (valueLeft == null) return null;
@@ -153,7 +153,19 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
 
-    private static VarValueBase doOperationPLUS(ASTRcdBase b, VarBase varLeft, VarBase varRight) throws ExecuteException {
+    private static VarValueBase doOperationStringEQUAL(String valueLeft, String valueRight) {
+
+        //Any == Any -> Bool
+        if (valueLeft == null) return null;
+        if (valueRight == null) return null;
+        Boolean result = valueLeft.contentEquals(valueRight);
+        
+        VarValueBase newValue = new VarValueBool(""+result);
+        
+        return newValue;
+    }
+
+    private static VarValueBase doOperationVarPLUS(VarBase varLeft, VarBase varRight) {
         VarValueBase newValue = null;
 
         try {
@@ -170,7 +182,8 @@ abstract public class VarValueBase extends VarBase {
                 }
                 if (valueLeft.getType() == VarType.STRING) {
                     //String + String -> String
-                    newValue =  doOperationStringPLUS(b, valueLeft.getString(), valueRight.getString());
+                    newValue =  doOperationStringPLUS(valueLeft.getString(), valueRight.getString());
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")+("+valueRight.getOperationImage()+")");
                     //String result = valueLeft.getString() + valueRight.getString();
                     //newValue = new VarValueString(result);
                 }
@@ -181,12 +194,12 @@ abstract public class VarValueBase extends VarBase {
         
         if (newValue == null) {
             //Any - Any -> String
-            newValue =  doOperationStringPLUS(b, varLeft.getString(), varRight.getString());
+            newValue =  doOperationStringPLUS(varLeft.getString(), varRight.getString());
         }
         return newValue;
     }
 
-    private static VarValueBase doOperationMINUS(ASTRcdBase b, VarBase varLeft, VarBase varRight) throws ExecuteException {
+    private static VarValueBase doOperationVarMINUS(VarBase varLeft, VarBase varRight) {
         VarValueBase newValue = null;
 
         try {
@@ -202,7 +215,8 @@ abstract public class VarValueBase extends VarBase {
                 }
                 if (valueLeft.getType() == VarType.STRING) {
                     //String - String -> String
-                    newValue =  doOperationStringMINUS(b, valueLeft.getString(), valueRight.getString());
+                    newValue =  doOperationStringMINUS(valueLeft.getString(), valueRight.getString());
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")-("+valueRight.getOperationImage()+")");
                 }
             }
         } catch (Exception x) {
@@ -211,14 +225,61 @@ abstract public class VarValueBase extends VarBase {
         
         if (newValue == null) {
             //Any - Any -> String
-            newValue =  doOperationStringMINUS(b, varLeft.getString(), varRight.getString());
+            newValue =  doOperationStringMINUS(varLeft.getString(), varRight.getString());
         }
 
         return newValue;
         
     }
 
-    private static VarValueBase doOperationMUL(ASTRcdBase b, VarValueBase valueLeft, VarValueBase valueRight) throws ExecuteException {
+    private static VarValueBase doOperationVarEQUAL(VarBase varLeft, VarBase varRight) {
+        VarValueBase newValue = null;
+        boolean equal;
+
+        try {
+            VarValueBase valueLeft = (VarValueBase)varLeft; 
+            VarValueBase valueRight = (VarValueBase)varRight;
+            boolean sameType = valueLeft.getType() == valueRight.getType();
+
+            if (sameType) {
+                if (valueLeft.getType() == VarType.INT) {
+                    equal = ((VarValueInt) valueLeft).getInt() == ((VarValueInt) valueRight).getInt();
+                    newValue = new VarValueBool(""+equal);
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                }
+                if (valueLeft.getType() == VarType.STRING) {
+                    equal = valueLeft.getString().contentEquals(valueRight.getString());
+                    newValue = new VarValueBool(""+equal);
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                }
+                if (valueLeft.getType() == VarType.BOOL) {
+                    equal = ((VarValueBool) valueLeft).getBool() == ((VarValueBool) valueRight).getBool();
+                    newValue = new VarValueBool(""+equal);
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                }
+            }
+        } catch (Exception x) {
+            // Nothing to do 
+        }
+        
+        if (newValue == null) {
+            //Any == Any -> Bool
+            newValue =  doOperationStringEQUAL(varLeft.getString(), varRight.getString());
+        }
+
+        return newValue;
+    }
+    
+    private static VarValueBase doOperationVarNOTEQUAL(VarBase varLeft, VarBase varRight) {
+        VarValueBase equalValue = doOperationVarEQUAL(varLeft, varRight);
+        boolean notEqual = !((VarValueBool)equalValue).getBool();
+        VarValueBase newValue = new VarValueBool(""+notEqual);
+        newValue.setOperationImage("NOT("+equalValue.getOperationImage()+")");
+        
+        return newValue;
+    }
+    
+    private static VarValueBase doOperationValMUL(VarValueBase valueLeft, VarValueBase valueRight) {
         VarValueBase newValue = null;
 
         boolean sameType = valueLeft.getType() == valueRight.getType();
@@ -236,7 +297,7 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
 
-    private static VarValueBase doOperationDIV(ASTRcdBase b, VarValueBase valueLeft, VarValueBase valueRight) throws ExecuteException {
+    private static VarValueBase doOperationValDIV(VarValueBase valueLeft, VarValueBase valueRight) {
         VarValueBase newValue = null;
 
         boolean sameType = valueLeft.getType() == valueRight.getType();
@@ -251,29 +312,95 @@ abstract public class VarValueBase extends VarBase {
         return newValue;
     }
     
-    private static VarValueBase doOperationEQUAL(ASTRcdBase b, VarValueBase valueLeft, VarValueBase valueRight) throws ExecuteException {
+    private static VarValueBase doOperationValGT(VarValueBase valueLeft, VarValueBase valueRight) {
         VarValueBase newValue = null;
-        boolean equal = false;
+        boolean gt = false;
 
         boolean sameType = valueLeft.getType() == valueRight.getType();
 
         if (sameType) {
             if (valueLeft.getType() == VarType.INT) {
-                equal = ((VarValueInt) valueLeft).getInt() == ((VarValueInt) valueRight).getInt();
-                newValue = new VarValueBool(equal);
-                newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                gt = ((VarValueInt) valueLeft).getInt() > ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueBool(""+gt);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")>("+valueRight.getOperationImage()+")");
             }
             if (valueLeft.getType() == VarType.STRING) {
-                equal = valueLeft.getString().contentEquals(valueRight.getString());
-                newValue = new VarValueBool(equal);
-                newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                int relation = valueLeft.getString().compareTo(valueRight.getString());
+                gt = relation > 0;
+                newValue = new VarValueBool(""+gt);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")>("+valueRight.getOperationImage()+")");
             }
         }
         
-        if (newValue == null) {
-            newValue = new VarValueBool(false);
-            newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+        return newValue;
+    }
+    
+    private static VarValueBase doOperationValGTE(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean gte = false;
+
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                gte = ((VarValueInt) valueLeft).getInt() >= ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueBool(""+gte);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")>=("+valueRight.getOperationImage()+")");
+            }
+            if (valueLeft.getType() == VarType.STRING) {
+                int relation = valueLeft.getString().compareTo(valueRight.getString());
+                gte = relation >= 0;
+                newValue = new VarValueBool(""+gte);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")>=("+valueRight.getOperationImage()+")");
+            }
         }
+        
+        return newValue;
+    }
+
+    private static VarValueBase doOperationValLT(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean lt = false;
+
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                lt = ((VarValueInt) valueLeft).getInt() < ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueBool(""+lt);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")<("+valueRight.getOperationImage()+")");
+            }
+            if (valueLeft.getType() == VarType.STRING) {
+                int relation = valueLeft.getString().compareTo(valueRight.getString());
+                lt = relation < 0;
+                newValue = new VarValueBool(""+lt);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")<("+valueRight.getOperationImage()+")");
+            }
+        }
+        
+        return newValue;
+    }
+    
+    private static VarValueBase doOperationValLTE(VarValueBase valueLeft, VarValueBase valueRight) {
+        VarValueBase newValue = null;
+        boolean lte = false;
+
+        boolean sameType = valueLeft.getType() == valueRight.getType();
+
+        if (sameType) {
+            if (valueLeft.getType() == VarType.INT) {
+                lte = ((VarValueInt) valueLeft).getInt() <= ((VarValueInt) valueRight).getInt();
+                newValue = new VarValueBool(""+lte);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")<=("+valueRight.getOperationImage()+")");
+            }
+            if (valueLeft.getType() == VarType.STRING) {
+                int relation = valueLeft.getString().compareTo(valueRight.getString());
+                lte = relation <= 0;
+                newValue = new VarValueBool(""+lte);
+                newValue.setOperationImage("("+valueLeft.getOperationImage()+")<=("+valueRight.getOperationImage()+")");
+            }
+        }
+        
         return newValue;
     }
 }

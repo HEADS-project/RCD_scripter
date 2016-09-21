@@ -75,6 +75,10 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <HASH :("HASH")>
 |
   <HASHLIST :("HASHLIST")>
+|
+  <TRUE:("TRUE")>
+|
+  <FALSE:("FALSE")>
 }
 
 
@@ -229,7 +233,7 @@ void Decl() :
         |
         DeclHash()
         |
-        DeclfFile()
+        DeclFile()
         |
         DeclValue()
         |
@@ -545,6 +549,8 @@ void Factor() : {}
   String()
   |
   IntNum()
+  |
+  Bool()
 //  |
 //  FloatNum()
   |
@@ -603,6 +609,22 @@ void IntNum() #RcdIntNum :
         t = <DEC_LITERAL>
 		|
         t = <HEX_LITERAL>
+	)
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+}
+
+void Bool() #RcdBool :
+{
+    Token t;
+}
+{
+    (
+        t = <TRUE>
+        |
+        t = <FALSE>
 	)
     {
         jjtThis.setName(t.image);
