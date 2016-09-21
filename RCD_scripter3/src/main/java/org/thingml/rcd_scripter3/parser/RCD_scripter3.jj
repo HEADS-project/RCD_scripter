@@ -679,8 +679,10 @@ void Statement() :
 	(
 		CallProc()
         |
+        LOOKAHEAD(3)
         CallVarMethod()
         |
+        LOOKAHEAD(3)
         VarAssign()
 	)
 	<SEMI>
