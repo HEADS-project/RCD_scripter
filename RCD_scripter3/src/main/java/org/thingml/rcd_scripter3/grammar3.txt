@@ -1,0 +1,74 @@
+
+Script -> (Include | Decl | Statement | Block)*
+
+Include -> <INCLUDE><(> String <)><;>
+
+Decl -> (DeclHashList | DeclHash | DeclFile | DeclVal | DeclValArray)<;>
+
+DeclHashList -> <HASHLIST> Var (<=> VarHashList)? 
+DeclHash     -> <HASH> Var (<=>  HashList | VarHash)? 
+DeclFile     -> <FILE> Var 
+DeclValue    -> <VALUE> Var (<=>  Expr | VarValue )?
+DeclValArray -> <VALARRAY> Var (<=>  VarValArray )? 
+
+
+Block -> ForBlock | IfBlock
+ForBlock -> <FOR> <(> (<HASH> | <VALUE> ) Var <:> (VarHashList | VarValArray) <)> <{> Script <}>
+
+
+IfBlock -> <IF> <(> Cmp <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+Cmp -> CmpExpr | CmpHas
+CmpExpr -> Expr CmpOp Expr 
+CmpOp -> ["==",">","<",">=","<=","!="]
+CmpHas -> VarHash <HAS> Expr 
+
+Statement ->  (VarAssign | VarIndexAssign | CallVarMethod | CallProc)<;>
+
+VarAssign -> Var <=> Expr
+VarIndexAssign -> VarIndex <=> Expr
+
+CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
+// VarHashList <.> SETDEF <(> HashList | VarHash <)> 
+// VarHashList <.> ADD <(> HashList | VarHash <)>
+
+// VarHash <.> ADD <(> Hash | VarHash <)>
+
+// VarFile <.> Open <(> Expr <)> 
+// VarFile <.> PRINT <(> Expr <)> 
+// VarFile <.> PRINTLN <(> Expr <)> 
+// VarFile <.> CLOSE <(><)> 
+
+// VarValArray <.> SETSIZE_DEFAULT <(> VarInt, VarValue <)> 
+
+CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
+// PRINT<(> Expr <)> 
+// PRINTLN<(> Expr <)> 
+
+Hash -> <{>KeyValue (<,> KeyValue)* <}>
+KeyValue -> Tupl | VarHash 
+Tupl -> Expr <:> Expr
+
+Expr -> Term ( AddOp Term )*
+AddOp -> ["+","-"]
+
+Term -> Factor (MulOp Factor)*
+MulOp -> ["*","/"]
+
+Factor -> <(> Expr <)> |  Var | VarIndex | Id | String | IntNum | Hash
+
+IntNum -> Dec | Hex
+Dec -> Digit+
+Hex -> "0" ["x","X"] (HexDigit)+ 
+
+VarHashList -> Var
+VarHash -> Var
+VarFile -> Var
+VarValue -> Var
+VarValArray -> Var
+
+VarIndex -> Var <[> Expr <]> 
+Var -> <$>Id
+Id -> Letter+
+String -> "...."
+
+
