@@ -87,7 +87,7 @@ public class ExecuteContext {
     }
     
     public void declVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
-        VarBase oldVar = symTab.getVar(name);
+        VarBase oldVar = symTab.getVarCheckThisLevel(name);
         if (oldVar != null) {
             throw b.generateExecuteException("Error variable <"+name+"> is already declared");
         }
@@ -95,7 +95,7 @@ public class ExecuteContext {
     }
     
     public void assignVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
-        VarBase oldVar = symTab.getVar(name);
+        VarBase oldVar = symTab.getVarCheckAllLevels(name);
         if (oldVar != null) {
             if (oldVar.getType() == newVar.getType()) {
                 // Ok
@@ -126,7 +126,7 @@ public class ExecuteContext {
     }
     
     public VarBase getVarBase(ASTRcdBase b, String name)  throws ExecuteException {
-        VarBase var = symTab.getVar(name);
+        VarBase var = symTab.getVarCheckAllLevels(name);
         if (var == null) {
             throw b.generateExecuteException("Error variable <"+name+"> is not defined");
         }
@@ -134,7 +134,7 @@ public class ExecuteContext {
     }
     
     public VarBase getVarBaseSilent(String name) {
-        VarBase var = symTab.getVar(name);
+        VarBase var = symTab.getVarCheckAllLevels(name);
         return var;
     }
     
@@ -145,7 +145,7 @@ public class ExecuteContext {
 
         if (var != null) {
             if (!test.isAssignableFrom(var.getClass())) {
-                throw b.generateExecuteException("Error popVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName());
+                throw b.generateExecuteException("Error popVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
             }
         }
         return (T)var;
@@ -156,7 +156,7 @@ public class ExecuteContext {
 
         if (var != null) {
             if (!test.isAssignableFrom(var.getClass())) {
-                throw b.generateExecuteException("Error getVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName());
+                throw b.generateExecuteException("Error getVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
             }
         }
         return (T)var;

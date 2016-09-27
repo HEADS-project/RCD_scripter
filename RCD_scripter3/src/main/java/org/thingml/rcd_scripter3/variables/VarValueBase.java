@@ -252,6 +252,11 @@ abstract public class VarValueBase extends VarBase {
                     newValue = new VarValueBool(""+equal);
                     newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
                 }
+                if (valueLeft.getType() == VarType.ID) {
+                    equal = valueLeft.getString().contentEquals(valueRight.getString());
+                    newValue = new VarValueBool(""+equal);
+                    newValue.setOperationImage("("+valueLeft.getOperationImage()+")==("+valueRight.getOperationImage()+")");
+                }
                 if (valueLeft.getType() == VarType.BOOL) {
                     equal = ((VarValueBool) valueLeft).getBool() == ((VarValueBool) valueRight).getBool();
                     newValue = new VarValueBool(""+equal);

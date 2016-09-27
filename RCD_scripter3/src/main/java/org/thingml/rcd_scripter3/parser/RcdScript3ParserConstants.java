@@ -39,69 +39,71 @@ public interface RcdScript3ParserConstants {
   /** RegularExpression Id. */
   int FALSE = 25;
   /** RegularExpression Id. */
-  int VAR_LITERAL = 26;
+  int RCD_SCRIPT_END = 26;
   /** RegularExpression Id. */
-  int ID_LITERAL = 27;
+  int VAR_LITERAL = 27;
   /** RegularExpression Id. */
-  int DEC_LITERAL = 28;
+  int ID_LITERAL = 28;
   /** RegularExpression Id. */
-  int FLOAT_LITERAL = 29;
+  int DEC_LITERAL = 29;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 30;
+  int FLOAT_LITERAL = 30;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 31;
+  int DECIMAL_EXPONENT = 31;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 32;
+  int HEX_LITERAL = 32;
   /** RegularExpression Id. */
-  int LETTER = 33;
+  int STRING_LITERAL = 33;
   /** RegularExpression Id. */
-  int DIGIT = 34;
+  int LETTER = 34;
   /** RegularExpression Id. */
-  int HEX_DIGIT = 35;
+  int DIGIT = 35;
   /** RegularExpression Id. */
-  int OBRA = 36;
+  int HEX_DIGIT = 36;
   /** RegularExpression Id. */
-  int CBRA = 37;
+  int OBRA = 37;
   /** RegularExpression Id. */
-  int OCBRA = 38;
+  int CBRA = 38;
   /** RegularExpression Id. */
-  int CCBRA = 39;
+  int OCBRA = 39;
   /** RegularExpression Id. */
-  int OABRA = 40;
+  int CCBRA = 40;
   /** RegularExpression Id. */
-  int CABRA = 41;
+  int OABRA = 41;
   /** RegularExpression Id. */
-  int COMMA = 42;
+  int CABRA = 42;
   /** RegularExpression Id. */
-  int PERIOD = 43;
+  int COMMA = 43;
   /** RegularExpression Id. */
-  int SEMI = 44;
+  int PERIOD = 44;
   /** RegularExpression Id. */
-  int COLON = 45;
+  int SEMI = 45;
   /** RegularExpression Id. */
-  int ASSIGN = 46;
+  int COLON = 46;
   /** RegularExpression Id. */
-  int EQUAL = 47;
+  int ASSIGN = 47;
   /** RegularExpression Id. */
-  int GT = 48;
+  int EQUAL = 48;
   /** RegularExpression Id. */
-  int LT = 49;
+  int GT = 49;
   /** RegularExpression Id. */
-  int GTE = 50;
+  int LT = 50;
   /** RegularExpression Id. */
-  int LTE = 51;
+  int GTE = 51;
   /** RegularExpression Id. */
-  int NOTEQUAL = 52;
+  int LTE = 52;
   /** RegularExpression Id. */
-  int DOLLAR = 53;
+  int NOTEQUAL = 53;
   /** RegularExpression Id. */
-  int PLUS = 54;
+  int DOLLAR = 54;
   /** RegularExpression Id. */
-  int MINUS = 55;
+  int PLUS = 55;
   /** RegularExpression Id. */
-  int MUL = 56;
+  int MINUS = 56;
   /** RegularExpression Id. */
-  int DIV = 57;
+  int MUL = 57;
+  /** RegularExpression Id. */
+  int DIV = 58;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -136,6 +138,7 @@ public interface RcdScript3ParserConstants {
     "\"HASHLIST\"",
     "\"TRUE\"",
     "\"FALSE\"",
+    "\"RCD_SCRIPT_END\"",
     "<VAR_LITERAL>",
     "<ID_LITERAL>",
     "<DEC_LITERAL>",

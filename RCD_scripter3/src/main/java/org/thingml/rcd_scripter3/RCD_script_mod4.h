@@ -13,7 +13,7 @@ RCD_SCRIPT_START
 
 VALUE $MsgIdPrefix = MSGID_;
 HASHLIST $MsgDef ;
-$MsgDef.SetDef( MSGC : MSGC_U16, MSGID : NONE, TRACE : yes,        COMMENT : "Default row");
+$MsgDef.SetDef({ MSGC : MSGC_U16, MSGID : NONE, TRACE : yes,        COMMENT : "Default row"});
 ## A rowlist contains variable number of fields
 ## Following fields are in use for $MsgDef
 ## MSGID    - Message id used in emum msg_id_t and other related structures 
@@ -39,8 +39,6 @@ FOR (HASH $Row : $MsgDef) {
 	$Row.ADD({ TRACE_NAME : $Row[MSGID]-$MsgIdPrefix });
 }
 PRINTLN($MsgDef);
-
-RCD_SCRIPT_STOP
 
 
 ############## CODER definitions ##############
@@ -82,7 +80,7 @@ static inline void APP_MSGC_decomp_NONE (msgc_t *mc_ptr)
 }
 ";
 
-$CoderDef.Add({MSGC, MSGC_NONE}, 
+$CoderDef.Add({MSGC: MSGC_NONE, 
               ENUM_VAL : 0x00, 
               APARAM : "", 
               ENCODE_FPARAM : "", 
@@ -99,7 +97,8 @@ $CoderDef.Add({MSGC, MSGC_NONE},
 FOR (HASH $Row : $CoderDef) {
 	$Row.ADD({MSGC_BASE : $Row[MSGC]-$CoderPrefix});
 }
-##PRINTLN(""+$CoderDef);
+
+PRINTLN($CoderDef);
 
 VALUE $EncoderFparams = "(msg_t *msg_ptr, const uint32_t portnum, const msgc_t *mc_ptr)";
 VALUE $DecoderFparams = "(const msg_t *msg_ptr, msgc_t *mc_ptr)";
@@ -112,6 +111,8 @@ VALUE $AutogenWarning = "
 // *********************************************************
 ";
 
+
+
 ##################### Script code for generation - DO NOT EDIT ##########################
 
 ############## Joint coder and message information into a new rowlist named "$CombinedDef" ##############
@@ -119,9 +120,9 @@ VALUE $AutogenWarning = "
 ##############      Collect coders in use in a new ROWLIST $CoderInUseDef ##############
 HASHLIST $CombinedDef;
 FOR (HASH $MsgRow : $MsgDef) {
-    FOR (HAHS $CoderRow : $CoderDef) {
+    FOR (HASH $CoderRow : $CoderDef) {
         IF ($MsgRow[MSGC] == $CoderRow[MSGC]) {
-            $CoderRow.[IN_USE] = yes);
+            $CoderRow[IN_USE] = yes;
             HASH $NewRow;
             $NewRow.ADD($MsgRow);
             $NewRow.ADD($CoderRow);
@@ -140,19 +141,20 @@ FOR(HASH $CoderRow : $CoderDef) {
 
 PRINTLN("****** CoderInUseDef:\n"+$CoderInUseDef);
 
+
 ############## Create a look-up table to find coder based on message tag ##############
 VALARRAY $MsgArray;
 $MsgArray.SETSIZE_DEFAULT(256, MSGC_NONE);
-VALUE $Counter = 0;
 FOR (HASH $LoopRow : $MsgDef) {
-	$Counter = $Counter + 1;
 	$MsgArray[$LoopRow[ENUM_VAL]] = $LoopRow[MSGC];
 }
 
 ##################### Generating file "app_msg_gen.h" ##########################
 
+PRINTLN("****** MsgArray:\n"+$MsgArray);
 
-FILE $GenFile 
+
+FILE $GenFile;
 $GenFile.OPEN("app_msg_gen.h");
 $GenFile.PRINTLN($AutogenWarning);
 
@@ -192,6 +194,7 @@ $GenFile.PRINTLN("");
 $GenFile.PRINTLN("#endif");
 $GenFile.PRINTLN("// END OF FILE");
 $GenFile.CLOSE();
+
 
 ##################### Generating file "app_msg_gen.c" ##########################
 
@@ -279,7 +282,7 @@ FOR(HASH $CoderRow : $CoderInUseDef) {
 $GenFile.PRINTLN("");
 
 $GenFile.PRINTLN("typedef union {");
-FOR_EACH($CoderRow in $CoderInUseDef) {
+FOR(HASH $CoderRow : $CoderInUseDef) {
     $GenFile.PRINTLN("    "+$CoderRow[MSGC_TYPENAME]+"\t"+$CoderRow[MSGC_BASE]+";");
 }
 $GenFile.PRINTLN("    "+"msg_t   MsgTypeStruct;");
@@ -299,6 +302,8 @@ VALUE $ArraySize = 0;
 FOR(VALUE $Value : $MsgArray) {
 	$ArraySize = $ArraySize + 1;
 }
+PRINTLN("********** $ArraySize : " + $ArraySize);
+
 
 $GenFile.PRINTLN("");
 $GenFile.PRINTLN("/*********************************************************************"+"/");
@@ -318,7 +323,7 @@ FOR(HASH $Row : $CoderInUseDef) {
 	$GenFile.PRINTLN("");
 }
 
-FOR_EACH(HASH $Row : $CombinedDef) {
+FOR(HASH $Row : $CombinedDef) {
 	$GenFile.PRINTLN("static inline void APP_MSGC_comp_" + $Row[MSGID] + "( msgc_t *mc_ptr" + $Row[ENCODE_FPARAM] + " ) {");
 	$GenFile.PRINTLN("APP_MSGC_comp" +  "_" + $Row[MSGC_BASE] + "( mc_ptr, " + $Row[MSGID] +$Row[APARAM] + ");");
 	$GenFile.PRINTLN("}");
@@ -338,6 +343,7 @@ $GenFile.PRINTLN("#endif");
 $GenFile.PRINTLN("// END OF FILE");
 $GenFile.CLOSE();
 
+
 ##################### Generating file app_msgcarr_gen.c ##########################
 
 $GenFile.OPEN("app_msgcarr_gen.c");
@@ -352,7 +358,9 @@ $GenFile.PRINTLN("const uint8_t APP_MSGC_CoderTypeArr["+$ArraySize+"] = {");
 VALUE $Counter = 0;
 VALUE $LineCounter = 0;
 VALUE $EntriesPerRow = 8;
-FOR(VALUE $Value IN $MsgArray) {
+VALUE $First = 0;
+VALUE $Last = 0;
+FOR(VALUE $Value : $MsgArray) {
 	$GenFile.PRINT($Value+",\t");
 	$Counter = $Counter + 1;
 	$LineCounter = $LineCounter + 1;
@@ -426,5 +434,7 @@ $GenFile.PRINTLN("#endif");
 $GenFile.PRINTLN("// END OF FILE");
 $GenFile.CLOSE();
 
+RCD_SCRIPT_STOP
+RCD_SCRIPT_START
 
 */

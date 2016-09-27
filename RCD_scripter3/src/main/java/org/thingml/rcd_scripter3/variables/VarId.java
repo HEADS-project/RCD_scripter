@@ -9,18 +9,12 @@ package org.thingml.rcd_scripter3.variables;
  *
  * @author steffend
  */
-public class VarId extends VarBase {
+public class VarId extends VarValueBase {
 
-    private String id;
-    
     public VarId(String id) {
-        this.id = id;
+        super(id);
     }
 
-    public String getString() {
-        return id;
-    }
-    
     @Override
     public String getTypeString() {
         return "Id";
@@ -29,12 +23,6 @@ public class VarId extends VarBase {
     @Override
     public VarType getType() {
         return VarType.ID;
-    }
-    
-    @Override
-    public String printString(){
-        String ret = "Id: " + id;
-        return ret;
     }
     
 }

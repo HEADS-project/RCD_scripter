@@ -18,7 +18,8 @@ public class RCD_scripterTest {
         ExecuteContext jobContext = new ExecuteContext();
         ASTRcdStart ast;
         
-        String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/RCD_script_mod4.h";
+        String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/RCD_script.h";
+        //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/RCD_script_mod4.h";
         //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/app_msgdef3-vartest.h";
         //String inputfile = "RCD_script.h";
         

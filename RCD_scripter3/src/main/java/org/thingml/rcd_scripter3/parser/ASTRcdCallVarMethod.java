@@ -114,7 +114,7 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
                     if (arg instanceof VarBase) {
                         varFile.write(this, arg.getString());
                     } else {
-                        throw generateExecuteException("ERROR method File.print() cannot add <"+arg.getType()+">");
+                        throw generateExecuteException("ERROR method File.print() cannot print <"+arg.getType()+">");
                     }
                 } else {
                     throw generateExecuteException("ERROR method File.print() accepts 1 arg given "+argNum+" arg(s)");
@@ -128,8 +128,10 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
                     if (arg instanceof VarBase) {
                         varFile.write(this, arg.getString()+"\n");
                     } else {
-                        throw generateExecuteException("ERROR method File.println() cannot add <"+arg.getType()+">");
+                        throw generateExecuteException("ERROR method File.println() cannot print <"+arg.getType()+">");
                     }
+                } else if (argNum == 0) {
+                    varFile.write(this, "\n");
                 } else {
                     throw generateExecuteException("ERROR method File.println() accepts 1 arg given "+argNum+" arg(s)");
                 }

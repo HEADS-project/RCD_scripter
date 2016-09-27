@@ -47,6 +47,8 @@ public class ASTRcdCallProc extends ASTRcdBase {
             if (argNum == 1) {
                 VarBase arg = args[0];
                 System.out.println(arg.getString());
+            } else if (argNum == 0) {
+                System.out.println();
             } else {
                 throw generateExecuteException("ERROR method println() accepts 1 arg given "+argNum+" arg(s)");
             }

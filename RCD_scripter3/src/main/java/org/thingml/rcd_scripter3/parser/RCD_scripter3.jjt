@@ -79,6 +79,9 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <TRUE:("TRUE")>
 |
   <FALSE:("FALSE")>
+|
+  <RCD_SCRIPT_END: ("RCD_SCRIPT_END")>
+
 }
 
 
@@ -170,7 +173,7 @@ TOKEN:  /* Separators */
 ASTRcdStart Start() #RcdStart : {}
 {
 	Script()
-    <EOF>
+    <RCD_SCRIPT_END>
     {return jjtThis;}
 }
 
@@ -399,10 +402,9 @@ void Statement() :
 	(
 		CallProc()
         |
-        LOOKAHEAD(3)
+        LOOKAHEAD(Var() <PERIOD>) 
         CallVarMethod()
         |
-        LOOKAHEAD(3)
         VarAssign()
 	)
 	<SEMI>
@@ -428,7 +430,13 @@ void CallVarMethod() #RcdCallVarMethod :
     <PERIOD>
     Id()
 	<OBRA>
-	Expr()
+        (
+            Expr()
+            (
+                <COMMA>
+                Expr()
+            )*
+        )?
 	<CBRA>
 }
 

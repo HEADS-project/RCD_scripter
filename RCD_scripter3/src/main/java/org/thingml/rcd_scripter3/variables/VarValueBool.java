@@ -16,7 +16,7 @@ public class VarValueBool extends VarValueBase {
     
     public VarValueBool(String image) {
         super(image);
-        boolValue = Boolean.getBoolean(image.toLowerCase());
+        if (image.toLowerCase().contentEquals("true")) boolValue = true;;
     }
     
     @Override

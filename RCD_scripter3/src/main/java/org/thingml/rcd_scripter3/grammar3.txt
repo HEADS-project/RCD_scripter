@@ -1,4 +1,5 @@
 
+Program -> Script <RCD_SCRIPT_END>
 Script -> (Include | Decl | Statement | Block)*
 
 Include -> <INCLUDE><(> String <)><;>

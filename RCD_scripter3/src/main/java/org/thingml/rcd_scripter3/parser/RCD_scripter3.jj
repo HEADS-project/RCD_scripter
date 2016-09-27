@@ -83,6 +83,9 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <TRUE:("TRUE")>
 |
   <FALSE:("FALSE")>
+|
+  <RCD_SCRIPT_END: ("RCD_SCRIPT_END")>
+
 }
 
 
@@ -180,7 +183,7 @@ ASTRcdStart Start()           : {/*@bgen(jjtree) RcdStart */
         try {
 /*@egen*/
 	Script()
-    <EOF>/*@bgen(jjtree)*/
+    <RCD_SCRIPT_END>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -679,10 +682,9 @@ void Statement() :
 	(
 		CallProc()
         |
-        LOOKAHEAD(3)
+        LOOKAHEAD(Var() <PERIOD>) 
         CallVarMethod()
         |
-        LOOKAHEAD(3)
         VarAssign()
 	)
 	<SEMI>
@@ -740,7 +742,13 @@ void CallVarMethod()                   :
     <PERIOD>
     Id()
 	<OBRA>
-	Expr()
+        (
+            Expr()
+            (
+                <COMMA>
+                Expr()
+            )*
+        )?
 	<CBRA>/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {

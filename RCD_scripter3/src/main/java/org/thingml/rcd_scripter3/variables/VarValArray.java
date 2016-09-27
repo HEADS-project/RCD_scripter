@@ -7,6 +7,8 @@ package org.thingml.rcd_scripter3.variables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
  *
@@ -66,6 +68,20 @@ public class VarValArray extends VarBase {
     
     public int size() {
         return (maxIndex+1);
+    }
+    
+    @Override
+    public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
+        if (!(idx instanceof VarValueInt)) throw b.generateExecuteException("ERROR index must be INT got <"+idx.getTypeString()+">");
+        VarBase ret = getValue(((VarValueInt)idx).getInt());
+        return ret;
+    }
+
+    @Override
+    public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
+        if (!(idx instanceof VarValueInt)) throw b.generateExecuteException("ERROR index must be INT got <"+idx.getTypeString()+">");
+        if (!(expr instanceof VarValueBase)) throw b.generateExecuteException("ERROR value of type <"+expr.getTypeString()+"> cannot be added to VALARRAY");
+        setValue(((VarValueInt)idx).getInt(), (VarValueBase)expr);
     }
     
     

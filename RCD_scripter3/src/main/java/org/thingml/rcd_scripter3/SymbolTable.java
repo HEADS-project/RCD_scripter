@@ -35,16 +35,22 @@ public class SymbolTable {
         return ret;
     }
     
-    public VarBase getVar(String name) {
+    public VarBase getVarCheckAllLevels(String name) {
         // Search the hierarchy of symbol tables
         VarBase ret = varList.get(name);
         if (ret == null) {
             // Not found in current table
             if (parentTable != null) {
                 // Search parent
-                ret = parentTable.getVar(name);
+                ret = parentTable.getVarCheckAllLevels(name);
             }
         }
+        return ret;
+    }    
+
+    public VarBase getVarCheckThisLevel(String name) {
+        // Search the hierarchy of symbol tables
+        VarBase ret = varList.get(name);
         return ret;
     }    
 
@@ -56,7 +62,7 @@ public class SymbolTable {
     public void assignVar(String name, VarBase newVar) {
         // Store in symbol table where it is declared
         VarBase currVal = varList.get(name);
-        if (currVal == null) {
+        if (currVal != null) {
             varList.put(name, newVar);
         } else {
             // Not found in current table
