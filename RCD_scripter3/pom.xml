@@ -3,6 +3,27 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.thingml</groupId>
     <artifactId>RCD_scripter3</artifactId>
+    
+    <developers>
+        <developer>
+            <name>Steffen Dalgard</name>
+            <email>steffen.dalgard@sintef.no</email>
+        </developer>
+    </developers>
+  
+    <organization>
+        <name>SINTEF</name>
+        <url>http://www.sintef.no</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>LGPL</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+  
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
@@ -10,4 +31,71 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+				<inherited>false</inherited>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <basedir>${basedir}</basedir>
+                    <header>${basedir}/HEADER</header>
+                    <strictCheck>true</strictCheck>
+                    <properties>
+                        <owner>SINTEF</owner>
+                        <year>2016</year>
+                        <email>steffen.dalgard@sintef.no</email>
+                    </properties>
+                    <excludes>
+                        <exclude>
+                        **/*.cs
+                        </exclude>   
+                        <exclude>
+                        **/test_out/**/*.*
+                        </exclude>   
+                        <exclude>
+                        **/resources/**/**.*
+                        </exclude>   
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.thingml.rcd_scripter.RCD_scripterTest</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+
 </project>
