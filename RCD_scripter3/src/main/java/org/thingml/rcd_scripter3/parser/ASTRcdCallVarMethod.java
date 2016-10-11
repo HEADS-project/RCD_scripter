@@ -122,6 +122,25 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
                 }
             }
 
+            if (method.equalsIgnoreCase("insert")) {
+                found = true;
+                if (argNum == 2) {
+                    VarBase arg1 = args[0];
+                    VarBase arg2 = args[1];
+                    if (arg1 instanceof VarValueString) {
+                        if (arg2 instanceof VarValueString) {
+                            varFile.insert(this, arg1.getString(), arg2.getString());
+                        } else {
+                            throw generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
+                        }
+                    } else {
+                        throw generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
+                    }
+                } else {
+                    throw generateExecuteException("ERROR method File.insert() accepts 2 arg given "+argNum+" arg(s)");
+                }
+            }
+
             if (method.equalsIgnoreCase("print")) {
                 found = true;
                 if (argNum == 1) {

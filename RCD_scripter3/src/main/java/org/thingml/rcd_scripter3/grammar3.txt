@@ -50,7 +50,8 @@ CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
 
 // VarHash <.> ADD <(> Hash | VarHash <)>
 
-// VarFile <.> Open <(> Expr <)> 
+// VarFile <.> Open <(> ExprFilename <)> 
+// VarFile <.> Insert <(> ExprFilename, ExprTagbase <)> 
 // VarFile <.> PRINT <(> Expr <)> 
 // VarFile <.> PRINTLN <(> Expr <)> 
 // VarFile <.> CLOSE <(><)> 

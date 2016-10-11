@@ -20,9 +20,16 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
@@ -34,41 +41,129 @@ import org.thingml.rcd_scripter3.parser.ExecuteException;
  */
 public class VarFile extends VarBase {
  
-    private String name = "";
+    private String fileName = "";
+    private String keyword = "";
+    private boolean modeInsert = false;
+    private List<String> originalInsertFileLines = null;
+    private String contentToInsert = "";
+    private int keywordStartLine = -1;
+    private int keywordEndLine = -1;
+    private BufferedReader bufferedReader = null;
     private BufferedWriter bufferedWriter = null;
     private boolean isOpen = false;
     
     public VarFile() {
     }
 
-    public void open(ASTRcdBase b, String name) throws ExecuteException {
-        this.name = name;
+    public void open(ASTRcdBase b, String fileName) throws ExecuteException {
+        this.fileName = fileName;
+        modeInsert = false;
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(this.name));
+            bufferedWriter = new BufferedWriter(new FileWriter(this.fileName));
         } catch (IOException ex) {
-            b.generateExecuteException("ERROR opening file <"+name+">\n"+ex);
+            b.generateExecuteException("ERROR opening file <"+fileName+">\n"+ex);
+        }
+        isOpen = true;
+    }
+
+    public void insert(ASTRcdBase b, String fileName, String keyword) throws ExecuteException {
+        this.fileName = fileName;
+        this.keyword = keyword;
+        modeInsert = true;
+        try {
+            List<String> originalInsertFileLines = Files.readAllLines(Paths.get(this.fileName), Charset.defaultCharset());
+
+            int bakNum = -1;
+            try {
+                // Find next unused backup filename
+                File sFolder;
+                do {
+                    bakNum++;
+                    sFolder = new File(this.fileName+"."+bakNum+".sbak");
+                } while (sFolder.exists());
+                
+                // Make backup and search for keyword
+                bufferedWriter = new BufferedWriter(new FileWriter(this.fileName+"."+bakNum+".sbak"));
+                for (int i=0; i<originalInsertFileLines.size(); i++){
+                    String line = originalInsertFileLines.get(i);
+                    bufferedWriter.write(line+"\n");
+                    if (line.contains(keyword+"_start")) {
+                        if (keywordStartLine == -1) {
+                            keywordStartLine = i;  
+                        } else {
+                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_start"+"> at line "+keywordStartLine+" and "+i+"\n");
+                        }
+                    }
+                    if (line.contains(keyword+"_end")) {
+                        if (keywordEndLine == -1) {
+                            keywordEndLine = i;  
+                        } else {
+                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_end"+"> at line "+keywordEndLine+" and "+i+"\n");
+                        }
+                    }
+                }
+                bufferedWriter.close();
+                try {
+                    bufferedWriter = new BufferedWriter(new FileWriter(this.fileName));
+                } catch (IOException ex) {
+                    b.generateExecuteException("ERROR opening file <"+fileName+">\n"+ex);
+                }
+            } catch (IOException ex) {
+                b.generateExecuteException("ERROR writing file <"+fileName+"."+bakNum+".sbak"+">\n"+ex);
+            }
+
+            bufferedWriter = new BufferedWriter(new FileWriter(this.fileName));
+        } catch (IOException ex) {
+            b.generateExecuteException("ERROR reading file <"+fileName+">\n"+ex);
         }
         isOpen = true;
     }
 
     public void close(ASTRcdBase b) throws ExecuteException {
+        if (modeInsert) {
+            if (isOpen) {
+                try {
+                    boolean contentToBeWritten = true;
+                    for (int i=0; i<originalInsertFileLines.size(); i++){
+                        String line = originalInsertFileLines.get(i);
+                        if ((i <= keywordStartLine) || (i >= keywordEndLine)) {
+                            bufferedWriter.write(line+"\n");
+                        } else {
+                            if (contentToBeWritten) {
+                                contentToBeWritten = false;
+                                bufferedWriter.write(contentToInsert);
+                            }
+                        }
+                    }
+                } catch (IOException ex) {
+                    b.generateExecuteException("ERROR writing to file <"+fileName+">\n"+ex);
+                }
+            } else {
+                b.generateExecuteException("ERROR writing to closed file <"+fileName+">\n");
+            }
+        }
+        
         try {
             bufferedWriter.close();
         } catch (IOException ex) {
-            b.generateExecuteException("ERROR closing file <"+name+">\n"+ex);
+            b.generateExecuteException("ERROR closing file <"+fileName+">\n"+ex);
         }
         isOpen = false;
     }
     
     public void write(ASTRcdBase b, String txt) throws ExecuteException {
         if (isOpen) {
-            try {
-                bufferedWriter.write(txt);
-            } catch (IOException ex) {
-                b.generateExecuteException("ERROR writing to file <"+name+">\n"+ex);
+            if (modeInsert) {
+                txt = contentToInsert+txt;
+            } else {
+                try {
+                    bufferedWriter.write(txt);
+                } catch (IOException ex) {
+                    b.generateExecuteException("ERROR writing to file <"+fileName+">\n"+ex);
+                }
             }
         } else {
-            b.generateExecuteException("ERROR writing to closed file <"+name+">\n");
+            b.generateExecuteException("ERROR writing to closed file <"+fileName+">\n");
         }
     }
     
@@ -90,7 +185,7 @@ public class VarFile extends VarBase {
     
     @Override
     public String getString() {
-        return name;
+        return fileName;
     }
 
 }
