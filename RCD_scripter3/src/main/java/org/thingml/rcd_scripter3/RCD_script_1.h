@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 /*
-INSERT_START
-Denne teksten skal fjernes
-INSERT_END
-
 RCD_SCRIPT_START
 
 ## This file is specifying how to generate c-code files with declarations messages with attributes and MSGC coders with attributes
@@ -791,15 +787,6 @@ $GenFile.PRINTLN("};");
 
 $GenFile.PRINTLN("#endif");
 $GenFile.PRINTLN("// END OF FILE");
-$GenFile.CLOSE();
-
-
-$GenFile.INSERT("insert_test.c", "INSERT");
-$GenFile.PRINTLN("Another text 2");
-$GenFile.CLOSE();
-
-$GenFile.OPEN("test.c");
-$GenFile.PRINTLN("Another text 2");
 $GenFile.CLOSE();
 
 RCD_SCRIPT_END

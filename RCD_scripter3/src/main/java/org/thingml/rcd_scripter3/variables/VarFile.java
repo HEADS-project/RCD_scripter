@@ -70,8 +70,15 @@ public class VarFile extends VarBase {
         this.fileName = fileName;
         this.keyword = keyword;
         modeInsert = true;
+        originalInsertFileLines = null;
+        contentToInsert = "";
+        keywordStartLine = -1;
+        keywordEndLine = -1;
+        bufferedReader = null;
+        bufferedWriter = null;
+        
         try {
-            List<String> originalInsertFileLines = Files.readAllLines(Paths.get(this.fileName), Charset.defaultCharset());
+            originalInsertFileLines = Files.readAllLines(Paths.get(this.fileName), Charset.defaultCharset());
 
             int bakNum = -1;
             try {
@@ -82,34 +89,42 @@ public class VarFile extends VarBase {
                     sFolder = new File(this.fileName+"."+bakNum+".sbak");
                 } while (sFolder.exists());
                 
-                // Make backup and search for keyword
-                bufferedWriter = new BufferedWriter(new FileWriter(this.fileName+"."+bakNum+".sbak"));
+                // Make backup 
+                Files.copy(Paths.get(this.fileName), Paths.get(this.fileName+"."+bakNum+".sbak"));                
+                
+                // Search for keywords
                 for (int i=0; i<originalInsertFileLines.size(); i++){
                     String line = originalInsertFileLines.get(i);
-                    bufferedWriter.write(line+"\n");
-                    if (line.contains(keyword+"_start")) {
+                    if (line.contains(keyword+"_START")) {
                         if (keywordStartLine == -1) {
                             keywordStartLine = i;  
                         } else {
-                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_start"+"> at line "+keywordStartLine+" and "+i+"\n");
+                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_START"+"> at line "+keywordStartLine+" and "+i+" in file <"+this.fileName+">\n");
                         }
                     }
-                    if (line.contains(keyword+"_end")) {
+                    if (line.contains(keyword+"_END")) {
                         if (keywordEndLine == -1) {
                             keywordEndLine = i;  
                         } else {
-                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_end"+"> at line "+keywordEndLine+" and "+i+"\n");
+                            b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_END"+"> at line "+keywordEndLine+" and "+i+" in file <"+this.fileName+">\n");
                         }
                     }
                 }
-                bufferedWriter.close();
+
+                if (keywordStartLine == -1) {
+                    b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_START"+"> in file <"+this.fileName+">\n");
+                }
+                if (keywordEndLine == -1) {
+                    b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_END"+"> in file <"+this.fileName+">\n");
+                }
+
                 try {
                     bufferedWriter = new BufferedWriter(new FileWriter(this.fileName));
                 } catch (IOException ex) {
-                    b.generateExecuteException("ERROR opening file <"+fileName+">\n"+ex);
+                    b.generateExecuteException("ERROR opening file <"+fileName+"> for writing\n"+ex);
                 }
             } catch (IOException ex) {
-                b.generateExecuteException("ERROR writing file <"+fileName+"."+bakNum+".sbak"+">\n"+ex);
+                b.generateExecuteException("ERROR making backup to file <"+fileName+"."+bakNum+".sbak"+">\n"+ex);
             }
 
             bufferedWriter = new BufferedWriter(new FileWriter(this.fileName));
@@ -123,16 +138,13 @@ public class VarFile extends VarBase {
         if (modeInsert) {
             if (isOpen) {
                 try {
-                    boolean contentToBeWritten = true;
                     for (int i=0; i<originalInsertFileLines.size(); i++){
                         String line = originalInsertFileLines.get(i);
                         if ((i <= keywordStartLine) || (i >= keywordEndLine)) {
                             bufferedWriter.write(line+"\n");
-                        } else {
-                            if (contentToBeWritten) {
-                                contentToBeWritten = false;
-                                bufferedWriter.write(contentToInsert);
-                            }
+                        }
+                        if (i == keywordStartLine) {
+                            bufferedWriter.write(contentToInsert);
                         }
                     }
                 } catch (IOException ex) {
@@ -154,7 +166,7 @@ public class VarFile extends VarBase {
     public void write(ASTRcdBase b, String txt) throws ExecuteException {
         if (isOpen) {
             if (modeInsert) {
-                txt = contentToInsert+txt;
+                contentToInsert = contentToInsert+txt;
             } else {
                 try {
                     bufferedWriter.write(txt);
