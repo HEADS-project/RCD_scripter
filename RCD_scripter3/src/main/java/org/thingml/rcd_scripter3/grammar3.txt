@@ -16,11 +16,11 @@
 
 
 Program -> Script <RCD_SCRIPT_END>
-Script -> (Include | Decl | Statement | Block)*
+Script -> (Include | Decl | DeclProc | Statement | Block)*
 
 Include -> <INCLUDE><(> String <)><;>
 
-Decl -> (DeclHashList | DeclHash | DeclFile | DeclVal | DeclValArray)<;>
+Decl -> (DeclHashList | DeclHash | DeclFile | DeclVal | DeclValArray) <;>
 
 DeclHashList -> <HASHLIST> Var (<=> VarHashList)? 
 DeclHash     -> <HASH> Var (<=>  HashList | VarHash)? 
@@ -28,10 +28,12 @@ DeclFile     -> <FILE> Var
 DeclValue    -> <VALUE> Var (<=>  Expr | VarValue )?
 DeclValArray -> <VALARRAY> Var (<=>  VarValArray )? 
 
+DeclProc -> RetType <PROC> Id <(> (ParamType Var (<,> ParamType Var)*)? <)> <{> Script <}>
+RetType -> <HASHLIST> | <HASH> | <FILE> | <VALUE> | <VALARRAY> | <VOID>
+ParamType -> <HASHLIST> | <HASH> | <FILE> | <VALUE> | <VALARRAY> 
 
-Block -> ForBlock | IfBlock
+Block ->  ProcBlock | ForBlock | IfBlock
 ForBlock -> <FOR> <(> (<HASH> | <VALUE> ) Var <:> (VarHashList | VarValArray) <)> <{> Script <}>
-
 
 IfBlock -> <IF> <(> Cmp <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
 Cmp -> CmpExpr | CmpHas
@@ -39,7 +41,7 @@ CmpExpr -> Expr CmpOp Expr
 CmpOp -> ["==",">","<",">=","<=","!="]
 CmpHas -> VarHash <HAS> Expr 
 
-Statement ->  (VarAssign | VarIndexAssign | CallVarMethod | CallProc)<;>
+Statement ->  (VarAssign | VarIndexAssign | CallVarMethod | CallProc | Return)<;>
 
 VarAssign -> Var <=> Expr
 VarIndexAssign -> VarIndex <=> Expr
@@ -61,6 +63,8 @@ CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
 CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
 // PRINT<(> Expr <)> 
 // PRINTLN<(> Expr <)> 
+
+Return -> <RETURN> <(> (Expr)?  <)>
 
 Hash -> <{>KeyValue (<,> KeyValue)* <}>
 KeyValue -> Tupl | VarHash 

@@ -68,6 +68,14 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FILE :("FILE")>
 |
+  <HASH :("HASH")>
+|
+  <HASHLIST :("HASHLIST")>
+|
+  <VOID :("VOID")>
+|
+  <PROC :("PROC")>
+|
   <FOR :("FOR")>
 |
   <HAS :("HAS")>
@@ -75,10 +83,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <IF:("IF")>
 |
   <ELSE:("ELSE")>
-|
-  <HASH :("HASH")>
-|
-  <HASHLIST :("HASHLIST")>
 |
   <TRUE:("TRUE")>
 |
@@ -267,17 +271,207 @@ void Decl() :
 }
 {
     (
-        DeclHashList()
+        LOOKAHEAD(RetType() <PROC>) 
+        DeclProc()
         |
-        DeclHash()
-        |
-        DeclFile()
-        |
-        DeclValue()
-        |
-        DeclValArray()
+        (
+            DeclHashList()
+            |
+            DeclHash()
+            |
+            DeclFile()
+            |
+            DeclValue()
+            |
+            DeclValArray()
+        )
+        <SEMI>
     )
-    <SEMI>
+}
+
+void DeclProc()              :
+{/*@bgen(jjtree) RcdDeclProc */
+    ASTRcdDeclProc jjtn000 = new ASTRcdDeclProc(JJTRCDDECLPROC);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdDeclProc */
+    try {
+/*@egen*/
+    (
+        RetType()
+        <PROC>
+        t = <VAR_LITERAL>
+        <OBRA>
+            (
+                Param()
+                (
+                    <COMMA>
+                    Param()
+                )*
+            )?
+        <CBRA>
+        <OCBRA>
+        TrueScript()
+        <CCBRA>
+    )/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	    jjtn000.setName(t.image);
+        jjtn000.setToken(token);
+	}/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void RetType()          :
+{/*@bgen(jjtree) RcdType */
+    ASTRcdType jjtn000 = new ASTRcdType(JJTRCDTYPE);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdType */
+    try {
+/*@egen*/
+    (
+        t = <HASHLIST>
+        |
+        t = <HASH>
+        |
+        t = <FILE>
+        |
+        t = <VALUE>
+        |
+        t = <VALARRAY>
+        |
+        t = <VOID>
+    )/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	    jjtn000.setName(t.image);
+        jjtn000.setToken(token);
+	}/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void Param()          :
+{/*@bgen(jjtree) RcdParam */
+    ASTRcdParam jjtn000 = new ASTRcdParam(JJTRCDPARAM);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdParam */
+    try {
+/*@egen*/
+    ParamType()
+    t = <VAR_LITERAL>/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+        jjtn000.setName(t.image);
+        jjtn000.setToken(t); 
+    }/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+void ParamType()          :
+{/*@bgen(jjtree) RcdType */
+    ASTRcdType jjtn000 = new ASTRcdType(JJTRCDTYPE);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+/*@egen*/
+    Token t;
+}
+{/*@bgen(jjtree) RcdType */
+    try {
+/*@egen*/
+    (
+        t = <HASHLIST>
+        |
+        t = <HASH>
+        |
+        t = <FILE>
+        |
+        t = <VALUE>
+        |
+        t = <VALARRAY>
+        |
+        t = <VOID>
+    )/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+	    jjtn000.setName(t.image);
+        jjtn000.setToken(token);
+	}/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
 }
 
 void DeclHashList()                  :

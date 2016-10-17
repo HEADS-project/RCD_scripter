@@ -20,32 +20,38 @@ public interface RcdScript3ParserTreeConstants
 {
   public int JJTRCDSTART = 0;
   public int JJTVOID = 1;
-  public int JJTRCDDECLHASHLIST = 2;
-  public int JJTRCDDECLHASH = 3;
-  public int JJTRCDDECLFILE = 4;
-  public int JJTRCDDECLVALUE = 5;
-  public int JJTRCDDECLVALARRAY = 6;
-  public int JJTRCDIFBLOCK = 7;
-  public int JJTRCDFORBLOCK = 8;
-  public int JJTRCDTRUESCRIPT = 9;
-  public int JJTRCDFALSESCRIPT = 10;
-  public int JJTRCDCALLPROC = 11;
-  public int JJTRCDCALLVARMETHOD = 12;
-  public int JJTRCDVARASSIGN = 13;
-  public int JJTRCDOPEXPR = 14;
-  public int JJTRCDVAR = 15;
-  public int JJTRCDID = 16;
-  public int JJTRCDSTRING = 17;
-  public int JJTRCDINTNUM = 18;
-  public int JJTRCDBOOL = 19;
-  public int JJTRCDFLOATNUM = 20;
-  public int JJTRCDHASH = 21;
-  public int JJTRCDTUPL = 22;
+  public int JJTRCDDECLPROC = 2;
+  public int JJTRCDTYPE = 3;
+  public int JJTRCDPARAM = 4;
+  public int JJTRCDDECLHASHLIST = 5;
+  public int JJTRCDDECLHASH = 6;
+  public int JJTRCDDECLFILE = 7;
+  public int JJTRCDDECLVALUE = 8;
+  public int JJTRCDDECLVALARRAY = 9;
+  public int JJTRCDIFBLOCK = 10;
+  public int JJTRCDFORBLOCK = 11;
+  public int JJTRCDTRUESCRIPT = 12;
+  public int JJTRCDFALSESCRIPT = 13;
+  public int JJTRCDCALLPROC = 14;
+  public int JJTRCDCALLVARMETHOD = 15;
+  public int JJTRCDVARASSIGN = 16;
+  public int JJTRCDOPEXPR = 17;
+  public int JJTRCDVAR = 18;
+  public int JJTRCDID = 19;
+  public int JJTRCDSTRING = 20;
+  public int JJTRCDINTNUM = 21;
+  public int JJTRCDBOOL = 22;
+  public int JJTRCDFLOATNUM = 23;
+  public int JJTRCDHASH = 24;
+  public int JJTRCDTUPL = 25;
 
 
   public String[] jjtNodeName = {
     "RcdStart",
     "void",
+    "RcdDeclProc",
+    "RcdType",
+    "RcdParam",
     "RcdDeclHashList",
     "RcdDeclHash",
     "RcdDeclFile",
@@ -69,4 +75,4 @@ public interface RcdScript3ParserTreeConstants
     "RcdTupl",
   };
 }
-/* JavaCC - OriginalChecksum=8e8e0133b720dd0604ef0234380cfcd8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4e4cc99b1a42e159b6b1b25bd12f5cbb (do not edit this line) */

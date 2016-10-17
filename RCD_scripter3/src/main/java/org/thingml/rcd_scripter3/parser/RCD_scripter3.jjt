@@ -64,6 +64,14 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FILE :("FILE")>
 |
+  <HASH :("HASH")>
+|
+  <HASHLIST :("HASHLIST")>
+|
+  <VOID :("VOID")>
+|
+  <PROC :("PROC")>
+|
   <FOR :("FOR")>
 |
   <HAS :("HAS")>
@@ -71,10 +79,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <IF:("IF")>
 |
   <ELSE:("ELSE")>
-|
-  <HASH :("HASH")>
-|
-  <HASHLIST :("HASHLIST")>
 |
   <TRUE:("TRUE")>
 |
@@ -232,17 +236,111 @@ void Decl() :
 }
 {
     (
-        DeclHashList()
+        LOOKAHEAD(RetType() <PROC>) 
+        DeclProc()
         |
-        DeclHash()
-        |
-        DeclFile()
-        |
-        DeclValue()
-        |
-        DeclValArray()
+        (
+            DeclHashList()
+            |
+            DeclHash()
+            |
+            DeclFile()
+            |
+            DeclValue()
+            |
+            DeclValArray()
+        )
+        <SEMI>
     )
-    <SEMI>
+}
+
+void DeclProc() #RcdDeclProc :
+{
+    Token t;
+}
+{
+    (
+        RetType()
+        <PROC>
+        t = <VAR_LITERAL>
+        <OBRA>
+            (
+                Param()
+                (
+                    <COMMA>
+                    Param()
+                )*
+            )?
+        <CBRA>
+        <OCBRA>
+        TrueScript()
+        <CCBRA>
+    )
+    {
+	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
+	}
+}
+
+void RetType() #RcdType :
+{
+    Token t;
+}
+{
+    (
+        t = <HASHLIST>
+        |
+        t = <HASH>
+        |
+        t = <FILE>
+        |
+        t = <VALUE>
+        |
+        t = <VALARRAY>
+        |
+        t = <VOID>
+    )
+    {
+	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
+	}
+}
+
+void Param() #RcdParam:
+{
+    Token t;
+}
+{
+    ParamType()
+    t = <VAR_LITERAL>
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+}
+
+void ParamType() #RcdType :
+{
+    Token t;
+}
+{
+    (
+        t = <HASHLIST>
+        |
+        t = <HASH>
+        |
+        t = <FILE>
+        |
+        t = <VALUE>
+        |
+        t = <VALARRAY>
+        |
+        t = <VOID>
+    )
+    {
+	    jjtThis.setName(t.image);
+        jjtThis.setToken(token);
+	}
 }
 
 void DeclHashList() #RcdDeclHashList :
