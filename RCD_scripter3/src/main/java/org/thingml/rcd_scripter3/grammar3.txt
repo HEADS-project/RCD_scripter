@@ -28,7 +28,7 @@ DeclFile     -> <FILE> Var
 DeclValue    -> <VALUE> Var (<=>  Expr | VarValue )?
 DeclValArray -> <VALARRAY> Var (<=>  VarValArray )? 
 
-DeclProc -> RetType <PROC> Id <(> (ParamType Var (<,> ParamType Var)*)? <)> <{> Script <}>
+DeclProc -> RetType Id <(> (ParamType Var (<,> ParamType Var)*)? <)> <{> Script <}>
 RetType -> <HASHLIST> | <HASH> | <FILE> | <VALUE> | <VALARRAY> | <VOID>
 ParamType -> <HASHLIST> | <HASH> | <FILE> | <VALUE> | <VALARRAY> 
 

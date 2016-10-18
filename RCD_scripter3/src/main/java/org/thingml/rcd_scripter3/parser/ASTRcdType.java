@@ -17,7 +17,13 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarFile;
+import org.thingml.rcd_scripter3.variables.VarHash;
+import org.thingml.rcd_scripter3.variables.VarHashList;
 import org.thingml.rcd_scripter3.variables.VarId;
+import org.thingml.rcd_scripter3.variables.VarValArray;
+import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdType extends ASTRcdBase {
 
@@ -25,10 +31,40 @@ public class ASTRcdType extends ASTRcdBase {
      * Constructor.
      * @param id the id
      */
+    Class typeClass;
+    boolean foundType = false;
+    
     public ASTRcdType(int id) {
       super(id);
     }
 
+    public Class getTypeClass() {
+        
+        if (!foundType) {
+            String image = getName().toLowerCase();
+            if (image.contentEquals("void")) {
+                typeClass = null;
+                foundType = true;
+            } else if (image.contentEquals("hashlist")) {
+                typeClass = VarHashList.class;
+                foundType = true;
+            } else if (image.contentEquals("hash")) {
+                typeClass = VarHash.class;
+                foundType = true;
+            } else if (image.contentEquals("file")) {
+                typeClass = VarFile.class;
+                foundType = true;
+            } else if (image.contentEquals("value")) {
+                typeClass = VarValueBase.class;
+                foundType = true;
+            } else if (image.contentEquals("valarray")) {
+                typeClass = VarValArray.class;
+                foundType = true;
+            }
+        }
+        return typeClass;
+    }
+    
     @Override
     public void execute(ExecuteContext ctx) throws ExecuteException {
     }

@@ -5,3 +5,13 @@
 /jjtree_ex3/target/
 /RCD_scripter3/target/
 *.sbak
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/RcdScript3ParserConstants.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/RCD_scripter3.jj
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/JJTRcdScript3ParserState.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/RcdScript3Parser.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/RcdScript3ParserTokenManager.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/ParseException.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/RcdScript3ParserTreeConstants.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/SimpleCharStream.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/Token.java
+RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/TokenMgrError.java

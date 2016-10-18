@@ -70,8 +70,6 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <VOID :("VOID")>
 |
-  <PROC :("PROC")>
-|
   <FOR :("FOR")>
 |
   <HAS :("HAS")>
@@ -236,7 +234,7 @@ void Decl() :
 }
 {
     (
-        LOOKAHEAD(RetType() <PROC>) 
+        LOOKAHEAD(RetType() <ID_LITERAL> <OBRA>) 
         DeclProc()
         |
         (
@@ -261,8 +259,7 @@ void DeclProc() #RcdDeclProc :
 {
     (
         RetType()
-        <PROC>
-        t = <VAR_LITERAL>
+        t = <ID_LITERAL>
         <OBRA>
             (
                 Param()
@@ -334,8 +331,6 @@ void ParamType() #RcdType :
         t = <VALUE>
         |
         t = <VALARRAY>
-        |
-        t = <VOID>
     )
     {
 	    jjtThis.setName(t.image);

@@ -16,10 +16,13 @@
 
 package org.thingml.rcd_scripter3.parser;
 
+import java.util.List;
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
+import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarId;
 
-public class ASTRcdDeclProc extends ASTRcdBase {
+public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
 
     /**
      * Constructor.
@@ -33,4 +36,18 @@ public class ASTRcdDeclProc extends ASTRcdBase {
     public void execute(ExecuteContext ctx) throws ExecuteException {
     }
 
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, List<VarBase> args) throws ExecuteException {
+        VarBase ret = null;
+
+        if (children == null) throw generateExecuteException("ERROR procedure declaration without parameters");
+        
+        // Fetch params and push into symtab
+        ctx.blockStart();
+        VarBase valueElem = varValArray.getValue(i);
+        ctx.declVar(this, loopVarName, valueElem);
+        script.execute(ctx);
+        ctx.blockEnd();
+        
+        return ret;
+    }
 }

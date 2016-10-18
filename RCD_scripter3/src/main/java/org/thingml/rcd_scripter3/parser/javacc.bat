@@ -14,5 +14,9 @@
 @REM limitations under the License.
 @REM
 
+del TokenMgrError.java
+del ParseException.java
+del Token.java
+del SimpleCharStream.java
 java -cp ..\..\..\..\..\..\..\..\javacc-6.1.2\target\javacc-6.1.2.jar jjtree  RCD_scripter3.jjt
 java -cp ..\..\..\..\..\..\..\..\javacc-6.1.2\target\javacc-6.1.2.jar javacc  RCD_scripter3.jj

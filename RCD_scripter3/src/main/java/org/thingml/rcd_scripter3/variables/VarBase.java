@@ -30,7 +30,7 @@ import org.thingml.rcd_scripter3.parser.Token;
  * @author steffend
  */
 abstract public class VarBase {
-    public enum VarType { KEYVALUE, HASHLIST, ID, HASH, INT, STRING, BOOL, FILE, VALARRAY };
+    public enum VarType { KEYVALUE, HASHLIST, ID, HASH, INT, STRING, BOOL, FILE, VALARRAY, VOID };
 
     abstract public String getString();
     abstract public String printString();

@@ -22,6 +22,9 @@ package org.thingml.rcd_scripter3;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
 
 /**
@@ -32,6 +35,7 @@ public class SymbolTable {
     private SymbolTable parentTable = null;
     private int level = 0;
     private HashMap<String, VarBase> varList = new HashMap<String, VarBase>();
+    private HashMap<String, ProcBaseIf> procList = new HashMap<String, ProcBaseIf>();
     
     public SymbolTable createSubTable() {
         SymbolTable newTable = new SymbolTable();
@@ -50,6 +54,26 @@ public class SymbolTable {
         return ret;
     }
     
+    public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc) throws ExecuteException {
+        // Store in top symbol table
+        if (parentTable == null) {
+            procList.put(name, newProc);
+        } else {
+            throw b.generateExecuteException("Error declProc failed : PROC can only be declared on top level\n");    
+        }
+    }
+
+    public ProcBaseIf getProcCheckTopLevel(String name) {
+        ProcBaseIf ret = null;
+        if (parentTable != null) {
+            // Search parent
+            ret = parentTable.getProcCheckTopLevel(name);
+        } else {
+            ret = procList.get(name);
+        }
+        return ret;
+    }    
+
     public VarBase getVarCheckAllLevels(String name) {
         // Search the hierarchy of symbol tables
         VarBase ret = varList.get(name);

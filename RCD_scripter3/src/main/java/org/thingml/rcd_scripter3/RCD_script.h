@@ -20,6 +20,10 @@ INSERT_END
 
 RCD_SCRIPT_START
 
+void my_func(value $in_val) {
+    println("Input value: " + $in_val);
+}
+
 ## This file is specifying how to generate c-code files with declarations messages with attributes and MSGC coders with attributes
 
 ## To run:
