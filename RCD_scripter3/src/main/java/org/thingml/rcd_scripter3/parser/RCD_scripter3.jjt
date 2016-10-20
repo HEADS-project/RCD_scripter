@@ -510,7 +510,13 @@ void CallProc() #RcdCallProc :
 	Id()
     { jjtThis.setToken(token); }
 	<OBRA>
-	Expr()
+        (
+            Expr()
+            (
+                <COMMA>
+                Expr()
+            )*
+        )?
 	<CBRA>
 }
 

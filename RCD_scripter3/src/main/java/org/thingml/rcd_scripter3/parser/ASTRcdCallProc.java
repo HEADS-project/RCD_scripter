@@ -17,6 +17,7 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarId;
 
@@ -45,9 +46,9 @@ public class ASTRcdCallProc extends ASTRcdBase {
         
         VarId id = ctx.popVarX(this, VarId.class);
         
-        String proc = id.getString();
+        String procId = id.getString();
 
-        if (proc.equalsIgnoreCase("print")) {
+        if (procId.equalsIgnoreCase("print")) {
             found = true;
             if (argNum == 1) {
                 VarBase arg = args[0];
@@ -55,9 +56,7 @@ public class ASTRcdCallProc extends ASTRcdBase {
             } else {
                 throw generateExecuteException("ERROR function print() accepts 1 arg given "+argNum+" arg(s)");
             }
-        }
-
-        if (proc.equalsIgnoreCase("println")) {
+        } else if (procId.equalsIgnoreCase("println")) {
             found = true;
             if (argNum == 1) {
                 VarBase arg = args[0];
@@ -67,10 +66,16 @@ public class ASTRcdCallProc extends ASTRcdBase {
             } else {
                 throw generateExecuteException("ERROR method println() accepts 1 arg given "+argNum+" arg(s)");
             }
+        } else {
+            ProcBaseIf proc = ctx.getProcBase(this, procId);
+            if (proc != null) {
+                found = true;
+                proc.executeProc(ctx, this, args);
+            }
         }
 
         if (!found) {
-            throw generateExecuteException("ERROR method <"+proc+"> is not defined");
+            throw generateExecuteException("ERROR method <"+procId+"> is not defined");
         }
     }
 }

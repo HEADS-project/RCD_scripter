@@ -54,23 +54,27 @@ public class SymbolTable {
         return ret;
     }
     
-    public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc) throws ExecuteException {
-        // Store in top symbol table
-        if (parentTable == null) {
-            procList.put(name, newProc);
-        } else {
-            throw b.generateExecuteException("Error declProc failed : PROC can only be declared on top level\n");    
-        }
+    public void declProc(String name, ProcBaseIf newProc) {
+        // Store in current symbol table
+        procList.put(name, newProc);
     }
 
-    public ProcBaseIf getProcCheckTopLevel(String name) {
-        ProcBaseIf ret = null;
-        if (parentTable != null) {
-            // Search parent
-            ret = parentTable.getProcCheckTopLevel(name);
-        } else {
-            ret = procList.get(name);
+    public ProcBaseIf getProcCheckAllLevels(String name) {
+        // Search the hierarchy of symbol tables
+        ProcBaseIf ret = procList.get(name);
+        if (ret == null) {
+            // Not found in current table
+            if (parentTable != null) {
+                // Search parent
+                ret = parentTable.getProcCheckAllLevels(name);
+            }
         }
+        return ret;
+    }    
+
+    public ProcBaseIf getProcCheckThisLevel(String name) {
+        // Search the hierarchy of symbol tables
+        ProcBaseIf ret = procList.get(name);
         return ret;
     }    
 

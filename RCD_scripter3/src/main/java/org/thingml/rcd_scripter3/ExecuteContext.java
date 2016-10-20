@@ -26,6 +26,7 @@ import java.util.Stack;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.parser.Token;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 //import org.thingml.rcd_scripter2.variables.VarArray;
 //import org.thingml.rcd_scripter2.variables.VarBase;
 //import org.thingml.rcd_scripter2.variables.VarCell;
@@ -41,8 +42,9 @@ import org.thingml.rcd_scripter3.variables.*;
 public class ExecuteContext {
     private boolean trace = false;
     private SymbolTable symTab = new SymbolTable();
-    private Stack<Token> executingTokenStack = new Stack<Token>();
+    //private Stack<Token> executingTokenStack = new Stack<Token>();
     private Stack<VarBase> varStack = new Stack<VarBase>();
+    private Stack<SymbolTable> symStack = new Stack<SymbolTable>();
 
     public boolean getTrace() {
         return trace;
@@ -69,12 +71,49 @@ public class ExecuteContext {
 //        return executingTokenStack.peek();
 //    }
     
+    public void pushSymTab(SymbolTable newSymTab) {
+        symStack.push(symTab);
+        symTab = newSymTab;
+    }
+    
+    public void popSymTab(ASTRcdBase b)  throws ExecuteException {
+        SymbolTable tmp = null;
+        try {
+            tmp = symStack.pop();
+        } catch (Exception ex) {
+            if (b != null) {
+                throw b.generateExecuteException("Error popSymTab failed : No value on stack.\n" + ex);
+            }
+        }
+        symTab = tmp;
+    }
+    
+    public SymbolTable getSymTab() {
+        return symTab;
+    }
+    
     public void blockStart() {
         symTab = symTab.createSubTable();
     }
     
     public void blockEnd() {
         symTab = symTab.discardSubTable();
+    }
+    
+    public ProcBaseIf getProcBase(ASTRcdBase b, String name)  throws ExecuteException {
+        ProcBaseIf proc = symTab.getProcCheckAllLevels(name);
+        if (proc == null) {
+            throw b.generateExecuteException("Error proc <"+name+"> is not defined");
+        }
+        return proc;
+    }
+    
+    public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc)  throws ExecuteException {
+        ProcBaseIf oldProc = symTab.getProcCheckThisLevel(name);
+        if (oldProc != null) {
+            throw b.generateExecuteException("Error proc <"+name+"> is already declared");
+        }
+        symTab.declProc(name, newProc);
     }
     
     public int getVarStackSize() {
