@@ -21,6 +21,8 @@
 package org.thingml.rcd_scripter3;
 import org.thingml.rcd_scripter3.parser.*;
 import java.io.FileReader;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
+import org.thingml.rcd_scripter3.proc.ProcPrint;
 
 /**
  *
@@ -45,7 +47,8 @@ public class RCD_scripterTest {
         System.out.println("RCD scripter START");
         try{
             //jobContext.setTrace(true);
-            
+            ProcBaseIf proc = new ProcPrint(jobContext);
+     
             System.out.println("Parser init using file <"+inputfile+">");
             System.out.println("<");
             parser = new RcdScript3Parser(new FileReader(inputfile)); 

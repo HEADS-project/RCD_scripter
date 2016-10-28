@@ -22,6 +22,7 @@ package org.thingml.rcd_scripter3.variables;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
@@ -132,4 +133,30 @@ public class VarValArray extends VarBase {
         return VarType.VALARRAY;
     }
 
+    @Override
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+        VarBase ret = null;
+        int argNum = args.length;
+
+        if (methodId.equalsIgnoreCase("setsize_default")) {
+            if (argNum == 2) {
+                VarBase arg1 = args[0];
+                VarBase arg2 = args[1];
+                if (arg1 instanceof VarValueInt) {
+                    if (arg2 instanceof VarValueBase) {
+                        setSizeAndDefaultValue(((VarValueInt)arg1).getInt(), (VarValueBase)arg2);
+                    } else {
+                        throw callersBase.generateExecuteException("ERROR method ValArray.setsize_default() cannot add <"+arg2.getType()+"> as second param");
+                    }
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method ValArray.setsize_default() cannot add <"+arg1.getType()+"> as first param");
+                }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method ValArray.setsize_default() accepts 2 arg given "+argNum+" arg(s)");
+            }
+        } else {
+            callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+        }
+        return ret;
+    }
 }

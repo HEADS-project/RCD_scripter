@@ -24,12 +24,13 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.parser.Token;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 
 /**
  *
  * @author steffend
  */
-abstract public class VarBase {
+abstract public class VarBase implements ProcBaseIf {
     public enum VarType { KEYVALUE, HASHLIST, ID, HASH, INT, STRING, BOOL, FILE, VALARRAY, VOID };
 
     abstract public String getString();
@@ -44,5 +45,10 @@ abstract public class VarBase {
     public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
-    
+
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+        VarBase ret = null;
+        callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+        return ret;
+    }
 }

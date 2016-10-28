@@ -31,5 +31,5 @@ import org.thingml.rcd_scripter3.variables.VarBase;
  * @author steffend
  */
 public interface ProcBaseIf {
-    VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, VarBase[] args) throws ExecuteException;
+    VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException;
 }

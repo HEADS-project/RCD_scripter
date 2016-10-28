@@ -17,11 +17,9 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarFile;
 import org.thingml.rcd_scripter3.variables.VarHash;
 import org.thingml.rcd_scripter3.variables.VarHashList;
-import org.thingml.rcd_scripter3.variables.VarId;
 import org.thingml.rcd_scripter3.variables.VarValArray;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 

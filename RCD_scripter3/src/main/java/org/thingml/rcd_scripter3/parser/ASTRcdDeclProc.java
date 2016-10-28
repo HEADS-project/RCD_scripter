@@ -16,13 +16,10 @@
 
 package org.thingml.rcd_scripter3.parser;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.SymbolTable;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarId;
 
 public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
 
@@ -71,9 +68,10 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
         }
     }
 
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, VarBase[] args) throws ExecuteException {
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException {
         VarBase ret = null;
         
+        if (!id.contentEquals(getName())) throw callersBase.generateExecuteException("ERROR procedure <"+id+"> is not defined expected <"+getName()+">");
         // Fetch params and push into symtab
         ctx.pushSymTab(mySymTab);
         ctx.blockStart();

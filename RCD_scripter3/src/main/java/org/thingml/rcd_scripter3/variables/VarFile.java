@@ -33,6 +33,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
@@ -268,4 +269,71 @@ public class VarFile extends VarBase {
         
     }
     
+    @Override
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+        VarBase ret = null;
+        int argNum = args.length;
+
+        if (methodId.equalsIgnoreCase("open")) {
+            if (argNum == 1) {
+                VarBase arg = args[0];
+                if (arg instanceof VarValueString) {
+                    open(callersBase, arg.getString());
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method File.open() cannot use <"+arg.getType()+">");
+                }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method File.open() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("insert")) {
+            if (argNum == 2) {
+                VarBase arg1 = args[0];
+                VarBase arg2 = args[1];
+                if (arg1 instanceof VarValueString) {
+                    if (arg2 instanceof VarValueString) {
+                        insert(callersBase, arg1.getString(), arg2.getString());
+                    } else {
+                        throw callersBase.generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
+                    }
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
+                }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method File.insert() accepts 2 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("print")) {
+            if (argNum == 1) {
+                VarBase arg = args[0];
+                if (arg instanceof VarBase) {
+                    write(callersBase, arg.getString());
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method File.print() cannot print <"+arg.getType()+">");
+                }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method File.print() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("println")) {
+            if (argNum == 1) {
+                VarBase arg = args[0];
+                if (arg instanceof VarBase) {
+                    write(callersBase, arg.getString()+"\n");
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method File.println() cannot print <"+arg.getType()+">");
+                }
+            } else if (argNum == 0) {
+                write(callersBase, "\n");
+            } else {
+                throw callersBase.generateExecuteException("ERROR method File.println() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("close")) {
+            if (argNum == 0) {
+                close(callersBase);
+            } else {
+                throw callersBase.generateExecuteException("ERROR method File.close() accepts 0 arg given "+argNum+" arg(s)");
+            }
+        } else {
+            callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+        }
+        return ret;
+    }
 }

@@ -22,6 +22,7 @@ package org.thingml.rcd_scripter3.variables;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
@@ -109,4 +110,26 @@ public class VarHash extends VarBase {
         return VarType.HASH;
     }
     
+    @Override
+    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+        VarBase ret = null;
+        int argNum = args.length;
+        
+        // Fetch params and push into symtab
+        if (methodId.equalsIgnoreCase("add")) {
+            if (argNum == 1) {
+                VarBase arg = args[0];
+                if (arg instanceof VarHash) {
+                    addHash((VarHash) arg);
+                } else {
+                    throw callersBase.generateExecuteException("ERROR method Hash.add() cannot add <"+arg.getType()+">");
+                }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method Hash.add() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else {
+            callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+        }
+        return ret;
+    }
 }

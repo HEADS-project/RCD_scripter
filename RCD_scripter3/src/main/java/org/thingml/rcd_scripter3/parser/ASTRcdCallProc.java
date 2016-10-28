@@ -33,7 +33,6 @@ public class ASTRcdCallProc extends ASTRcdBase {
 
     @Override
     public void execute(ExecuteContext ctx) throws ExecuteException {
-        boolean found = false;
         int baseStackSize = ctx.getVarStackSize();
         
         executeChildren(ctx);
@@ -48,33 +47,10 @@ public class ASTRcdCallProc extends ASTRcdBase {
         
         String procId = id.getString();
 
-        if (procId.equalsIgnoreCase("print")) {
-            found = true;
-            if (argNum == 1) {
-                VarBase arg = args[0];
-                System.out.print(arg.getString());
-            } else {
-                throw generateExecuteException("ERROR function print() accepts 1 arg given "+argNum+" arg(s)");
-            }
-        } else if (procId.equalsIgnoreCase("println")) {
-            found = true;
-            if (argNum == 1) {
-                VarBase arg = args[0];
-                System.out.println(arg.getString());
-            } else if (argNum == 0) {
-                System.out.println();
-            } else {
-                throw generateExecuteException("ERROR method println() accepts 1 arg given "+argNum+" arg(s)");
-            }
+        ProcBaseIf proc = ctx.getProcBase(this, procId);
+        if (proc != null) {
+            proc.executeProc(ctx, this, procId, args);
         } else {
-            ProcBaseIf proc = ctx.getProcBase(this, procId);
-            if (proc != null) {
-                found = true;
-                proc.executeProc(ctx, this, args);
-            }
-        }
-
-        if (!found) {
             throw generateExecuteException("ERROR method <"+procId+"> is not defined");
         }
     }
