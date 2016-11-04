@@ -49,6 +49,14 @@ public class VarValueInt extends VarValueBase {
     }
     
     @Override
+    public Object getValObj(){
+        Object ret;
+        
+        ret = getInt();
+        return ret;
+    }
+    
+    @Override
     protected boolean compareVal(VarValueBase value_other) {
         return intValue == ((VarValueInt)value_other).intValue;
     }

@@ -51,4 +51,11 @@ abstract public class VarBase implements ProcBaseIf {
         callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         return ret;
     }
+    
+    public Object getValObj(){
+        Object ret;
+        
+        ret = getString();
+        return ret;
+    }
 }

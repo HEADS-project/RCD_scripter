@@ -49,6 +49,14 @@ public class VarValueBool extends VarValueBase {
     }
     
     @Override
+    public Object getValObj(){
+        Object ret;
+        
+        ret = getBool();
+        return ret;
+    }
+    
+    @Override
     protected boolean compareVal(VarValueBase value_other) {
         return boolValue == ((VarValueBool)value_other).boolValue;
     }

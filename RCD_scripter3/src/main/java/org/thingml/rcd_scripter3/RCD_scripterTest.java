@@ -23,6 +23,7 @@ import org.thingml.rcd_scripter3.parser.*;
 import java.io.FileReader;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
+import org.thingml.rcd_scripter3.proc.ProcPrintf;
 
 /**
  *
@@ -48,6 +49,7 @@ public class RCD_scripterTest {
         try{
             //jobContext.setTrace(true);
             ProcBaseIf proc = new ProcPrint(jobContext);
+            proc = new ProcPrintf(jobContext);
      
             System.out.println("Parser init using file <"+inputfile+">");
             System.out.println("<");

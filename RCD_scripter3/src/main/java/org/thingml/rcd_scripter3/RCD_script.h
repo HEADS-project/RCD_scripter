@@ -20,12 +20,15 @@ INSERT_END
 
 RCD_SCRIPT_START
 
-void my_func(value $in_val1, value $in_val2) {
+void my_func(value $in_val1, value $in_val2, value $in_string) {
     println("Input value1: " + $in_val1);
     println("Input value2: " + $in_val2);
+    println("Input value3: " + $in_string);
+    printf("Input int1:%d int2:%d string<%s>\n", $in_val1, $in_val2, $in_string);
+    printf("Only text\n");
 }
 
-my_func(1 , 2);
+my_func(1 , 2, "Param tekst");
 
 ## This file is specifying how to generate c-code files with declarations messages with attributes and MSGC coders with attributes
 
@@ -803,10 +806,14 @@ $GenFile.CLOSE();
 
 $GenFile.INSERT("insert_test.c", "INSERT");
 $GenFile.PRINTLN("Another text 2");
+$GenFile.PRINTF("Int %d String <%s>\n", 42, "Min tekst");
+$GenFile.PRINTF("Only text\n");
 $GenFile.CLOSE();
 
 $GenFile.OPEN("test.c");
 $GenFile.PRINTLN("Another text 2");
+$GenFile.PRINTF("Int %d String <%s>\n", 42, "Min tekst");
+$GenFile.PRINTF("Only text\n");
 $GenFile.CLOSE();
 
 RCD_SCRIPT_END

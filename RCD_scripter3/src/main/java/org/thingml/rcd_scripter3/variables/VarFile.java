@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -53,8 +54,19 @@ public class VarFile extends VarBase {
     private int keywordEndLine = -1;
     private BufferedWriter bufferedWriterTmp = null;
     private boolean isOpen = false;
+    private Method method;
+
     
     public VarFile() {
+        try {
+            Class<?> c = Class.forName("java.lang.String");
+            Class[] cArg = new Class[2];
+            cArg[0] = java.lang.String.class;
+            cArg[1] = java.lang.Object[].class;
+            method = c.getMethod("format", cArg);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 
     public void open(ASTRcdBase b, String fileName) throws ExecuteException {
@@ -142,7 +154,7 @@ public class VarFile extends VarBase {
                             bufferedWriterTmp.write(line+"\n");
                         }
                         if (i == keywordStartLine) {
-                            bufferedWriterTmp.write(contentToInsert);
+                            bufferedWriterTmp.write(contentToInsert+"\n");
                         }
                     }
                 } catch (IOException ex) {
@@ -324,6 +336,25 @@ public class VarFile extends VarBase {
                 write(callersBase, "\n");
             } else {
                 throw callersBase.generateExecuteException("ERROR method File.println() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("printf")) {
+            if (argNum >= 1) {
+                Object[] baseArg = new Object[2];
+                Object[] varArg = new Object[argNum-1];
+                baseArg[0] = args[0].getValObj();
+                baseArg[1] = varArg;
+                for (int i = 1; i < args.length; i++) {
+                    varArg[i-1] = args[i].getValObj();
+                }
+                try {
+                    write(callersBase, (String) method.invoke(null, baseArg));
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                    throw callersBase.generateExecuteException("ERROR function printf() wring args <"+ex+">");
+                } 
+
+            } else {
+                throw callersBase.generateExecuteException("ERROR function printf() accepts >=1  arg given "+argNum+" arg(s)");
             }
         } else if (methodId.equalsIgnoreCase("close")) {
             if (argNum == 0) {

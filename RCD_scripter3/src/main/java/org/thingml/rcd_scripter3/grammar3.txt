@@ -56,6 +56,7 @@ CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
 // VarFile <.> Insert <(> ExprFilename, ExprTagbase <)> 
 // VarFile <.> PRINT <(> Expr <)> 
 // VarFile <.> PRINTLN <(> Expr <)> 
+// VarFile <.> PRINTF <(> Expr (<,> Expr)* <)> 
 // VarFile <.> CLOSE <(><)> 
 
 // VarValArray <.> SETSIZE_DEFAULT <(> VarInt, VarValue <)> 
@@ -63,6 +64,7 @@ CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
 CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
 // PRINT<(> Expr <)> 
 // PRINTLN<(> Expr <)> 
+// PRINTF <(> Expr (<,> Expr)* <)> 
 
 Return -> <RETURN> <(> (Expr)?  <)>
 
