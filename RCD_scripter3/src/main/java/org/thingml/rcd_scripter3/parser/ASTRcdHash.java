@@ -31,7 +31,8 @@ public class ASTRcdHash extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         VarHash hash = new VarHash();
         VarKeyValue kv;
         
@@ -45,6 +46,7 @@ public class ASTRcdHash extends ASTRcdBase {
         }
         
         ctx.pushVar(hash);
+        return execContinue;
     }
     
 

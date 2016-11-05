@@ -32,7 +32,8 @@ public class ASTRcdTupl extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         executeChildren(ctx);
         VarValueBase val = ctx.popVarX(this, VarValueBase.class);
         VarBase key = ctx.popVar(this);
@@ -40,6 +41,7 @@ public class ASTRcdTupl extends ASTRcdBase {
         VarKeyValue kv = new VarKeyValue(key.getString(), val);
         
         ctx.pushVar(kv);
+        return execContinue;
     }
   
     

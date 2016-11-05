@@ -29,16 +29,22 @@ import org.thingml.rcd_scripter3.variables.VarValueString;
 
 public class ASTRcdCallVarMethod extends ASTRcdBase {
 
-  /**
-   * Constructor.
-   * @param id the id
-   */
-  public ASTRcdCallVarMethod(int id) {
-    super(id);
-  }
+    private boolean returnValue = false;
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    public ASTRcdCallVarMethod(int id) {
+      super(id);
+    }
 
+    public void setReturnValue(boolean val) {
+        returnValue = val;
+    }
+    
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         int baseStackSize = ctx.getVarStackSize();
         
         executeChildren(ctx);
@@ -54,6 +60,9 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
         
         String methodId = id.getString();
 
-        var.executeProc(ctx, this, methodId, args);
+        VarBase ret;
+        ret = var.executeProc(ctx, this, methodId, args);
+        if (returnValue) ctx.pushVar(ret);
+        return execContinue;
     }
 }

@@ -30,8 +30,10 @@ public class ASTRcdDeclHashList extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
-        int children = executeChildren(ctx);
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
+        int children = numChildren();
+        executeChildren(ctx);
         VarHashList newHashList;
         if (children > 0) {
             VarHashList initHashList = ctx.popVarX(this, VarHashList.class);
@@ -40,5 +42,6 @@ public class ASTRcdDeclHashList extends ASTRcdBase {
             newHashList = new VarHashList();
         }
         ctx.declVar(this, name, newHashList);
+        return execContinue;
     }
 }

@@ -121,9 +121,19 @@ public class VarHash extends VarBase {
                 VarBase arg = args[0];
                 if (arg instanceof VarHash) {
                     addHash((VarHash) arg);
+                    ret = this;
                 } else {
                     throw callersBase.generateExecuteException("ERROR method Hash.add() cannot add <"+arg.getType()+">");
                 }
+            } else {
+                throw callersBase.generateExecuteException("ERROR method Hash.add() accepts 1 arg given "+argNum+" arg(s)");
+            }
+        } else if (methodId.equalsIgnoreCase("has")) {
+            if (argNum == 1) {
+                VarBase arg = args[0];
+                VarBase test = getKeyValue(arg.getString()); // Fetch key from HASH
+                boolean has = test != null;
+                ret = new VarValueBool(""+has);
             } else {
                 throw callersBase.generateExecuteException("ERROR method Hash.add() accepts 1 arg given "+argNum+" arg(s)");
             }

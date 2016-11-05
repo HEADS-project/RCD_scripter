@@ -35,7 +35,8 @@ public class ASTRcdForBlock extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         // FOR ( loopVar : sourceVar ) script
         if (children == null) throw generateExecuteException("ERROR ForBlock without parameters");
 
@@ -78,6 +79,6 @@ public class ASTRcdForBlock extends ASTRcdBase {
             throw this.generateExecuteException("ERROR ForBlock cannot iterate over var type <"+sourceVar.getTypeString()+">");
         }
         
-        return ;
+        return execContinue;
     }
 }

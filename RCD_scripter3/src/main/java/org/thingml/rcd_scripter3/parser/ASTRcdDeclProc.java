@@ -46,7 +46,8 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         mySymTab = ctx.getSymTab();
         ctx.declProc(this, getName(), this);
         
@@ -66,6 +67,7 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
             if (!(t instanceof ASTRcdType))  throw generateExecuteException("ERROR procedure declaration cannot find param type got <"+p.getClass().getName()+">");
             myParams[i-1] = new Param(p.getName(), ((ASTRcdType) t).getTypeClass());
         }
+        return execContinue;
     }
 
     public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException {
@@ -84,6 +86,7 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
         }
 
         script.execute(ctx);
+        ret = ctx.getVarBaseSilent("returnVal");
         ctx.blockEnd();
         ctx.popSymTab(this);
         return ret;

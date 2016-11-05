@@ -54,22 +54,29 @@ public class ASTRcdBase extends SimpleNode {
     token = t;
   }
 
-    public int executeChildren(ExecuteContext ctx) throws ExecuteException {
+    public int numChildren(){
         int ret = 0;
         if (children != null) {
             ret = children.length;
-            for (int i = 0; i < children.length; ++i) {
-                ASTRcdBase c = (ASTRcdBase) children[i];
-                c.execute(ctx);
-            }
         }
         return ret;
     }
     
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean executeChildren(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
+        if (children != null) {
+            for (int i = 0; i < children.length; ++i) {
+                ASTRcdBase c = (ASTRcdBase) children[i];
+                execContinue = c.execute(ctx);
+                if (execContinue == false) return execContinue;
+            }
+        }
+        return execContinue;
+    }
+    
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
         String nodeName = super.toString();  
         throw generateExecuteException(nodeName+".execute() is not implemented");
-        //executeChildren(ctx);
     }
 			
     /** Generate ExecuteException. */

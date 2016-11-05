@@ -17,36 +17,30 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarValueString;
+import org.thingml.rcd_scripter3.variables.VarBase;
 
-public class ASTRcdString extends ASTRcdBase {
-    private final String CR = "\r";
-    private final String NL = "\n";
-    private final String TAB = "\t";
-    private final String QUOTE = "\"";
+public class ASTRcdReturnStmt extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdString(int id) {
+    public ASTRcdReturnStmt(int id) {
       super(id);
     }
-
+    
     @Override
     public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
-        String image = getName();
-
-        image = image.substring(0, image.length()-1).substring(1);
-        image = image.replace("\\r", CR);
-        image = image.replace("\\n", NL);
-        image = image.replace("\\t", TAB);
-        image = image.replace("\\\"", QUOTE);
-        
-        ctx.pushVar(new VarValueString(image));
+        boolean execContinue = false;
+        //VarBase vb = ctx.getVarBase( this, name);
+        if (numChildren() == 0) {
+            // Nothing to return
+        } else {
+            executeChildren(ctx);
+            VarBase retVal = ctx.popVar(this);
+            ctx.declVar(this, "returnVal", retVal);
+        }
         return execContinue;
     }
-
-
+    
 }

@@ -30,8 +30,10 @@ public class ASTRcdDeclValue extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
-        int children = executeChildren(ctx);
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
+        int children = numChildren();
+        executeChildren(ctx);
         VarValueBase newValue;
         if (children > 0) {
             VarValueBase initVarValue = ctx.popVarX(this, VarValueBase.class);
@@ -40,6 +42,7 @@ public class ASTRcdDeclValue extends ASTRcdBase {
             newValue = new VarValueString("NULL("+name+")");
         }
         ctx.declVar(this, name, newValue);
+        return execContinue;
     }
 
 }

@@ -31,7 +31,8 @@ public class ASTRcdOpExpr extends ASTRcdBase {
   }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         executeChildren(ctx);
         VarBase rightValue = ctx.popVar(this);
         VarBase leftValue = ctx.popVar(this);
@@ -74,6 +75,7 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         
         VarValueBase result = VarValueBase.doOperation(this, leftValue, operation, rightValue);
         ctx.pushVar(result);
+        return execContinue;
     }
     
     

@@ -35,11 +35,10 @@ ParamType -> <HASHLIST> | <HASH> | <FILE> | <VALUE> | <VALARRAY>
 Block ->  ProcBlock | ForBlock | IfBlock
 ForBlock -> <FOR> <(> (<HASH> | <VALUE> ) Var <:> (VarHashList | VarValArray) <)> <{> Script <}>
 
-IfBlock -> <IF> <(> Cmp <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
-Cmp -> CmpExpr | CmpHas
-CmpExpr -> Expr CmpOp Expr 
+IfBlock -> <IF> <(> CmpExpr <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+
+CmpExpr -> Expr ( CmpOp Expr)?
 CmpOp -> ["==",">","<",">=","<=","!="]
-CmpHas -> VarHash <HAS> Expr 
 
 Statement ->  (VarAssign | VarIndexAssign | CallVarMethod | CallProc | Return)<;>
 
@@ -51,6 +50,7 @@ CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
 // VarHashList <.> ADD <(> HashList | VarHash <)>
 
 // VarHash <.> ADD <(> Hash | VarHash <)>
+// VarHash <.> HAS <(> Expr <)>
 
 // VarFile <.> Open <(> ExprFilename <)> 
 // VarFile <.> Insert <(> ExprFilename, ExprTagbase <)> 
@@ -78,7 +78,7 @@ AddOp -> ["+","-"]
 Term -> Factor (MulOp Factor)*
 MulOp -> ["*","/"]
 
-Factor -> <(> Expr <)> |  Var | VarIndex | Id | String | IntNum | Hash
+Factor -> <(> Expr <)> |  Var | VarIndex | Id | String | IntNum | Hash | CallVarMethod | CallProc
 
 IntNum -> Dec | Hex
 Dec -> Digit+

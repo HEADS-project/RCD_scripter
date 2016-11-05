@@ -32,8 +32,8 @@ public class ASTRcdStart extends ASTRcdBase {
       super(p, id);
     }
 
-    public void execute(ExecuteContext ctx) throws ExecuteException {
-        executeChildren(ctx);
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        return executeChildren(ctx);
     }
 			
 

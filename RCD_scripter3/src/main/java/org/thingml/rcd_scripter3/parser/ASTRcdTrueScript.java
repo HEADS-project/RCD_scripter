@@ -28,8 +28,8 @@ public class ASTRcdTrueScript extends ASTRcdBase {
       super(id);
     }
 
-    public void execute(ExecuteContext ctx) throws ExecuteException {
-        executeChildren(ctx);
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        return executeChildren(ctx);
     }
 
 }

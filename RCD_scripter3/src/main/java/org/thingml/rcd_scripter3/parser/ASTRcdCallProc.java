@@ -23,6 +23,7 @@ import org.thingml.rcd_scripter3.variables.VarId;
 
 public class ASTRcdCallProc extends ASTRcdBase {
 
+    private boolean returnValue = false;
     /**
      * Constructor.
      * @param id the id
@@ -31,8 +32,13 @@ public class ASTRcdCallProc extends ASTRcdBase {
       super(id);
     }
 
+    public void setReturnValue(boolean val) {
+        returnValue = val;
+    }
+    
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         int baseStackSize = ctx.getVarStackSize();
         
         executeChildren(ctx);
@@ -49,9 +55,12 @@ public class ASTRcdCallProc extends ASTRcdBase {
 
         ProcBaseIf proc = ctx.getProcBase(this, procId);
         if (proc != null) {
-            proc.executeProc(ctx, this, procId, args);
+            VarBase ret;
+            ret = proc.executeProc(ctx, this, procId, args);
+            if (returnValue) ctx.pushVar(ret);
         } else {
             throw generateExecuteException("ERROR method <"+procId+"> is not defined");
         }
+        return execContinue;
     }
 }

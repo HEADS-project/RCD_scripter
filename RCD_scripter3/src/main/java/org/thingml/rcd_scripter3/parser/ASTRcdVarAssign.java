@@ -31,7 +31,8 @@ public class ASTRcdVarAssign extends ASTRcdBase {
     }
     
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         VarBase expr;
 
         int baseStackSize = ctx.getVarStackSize();
@@ -52,5 +53,6 @@ public class ASTRcdVarAssign extends ASTRcdBase {
             default:
                 throw generateExecuteException("ERROR VarAssign statement got <"+addedStackElems+"> expressions, expected 1 or 2.");
         }
+        return execContinue;
     }
 }

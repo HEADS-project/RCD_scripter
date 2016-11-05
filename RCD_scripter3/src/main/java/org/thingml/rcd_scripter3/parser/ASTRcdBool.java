@@ -30,10 +30,12 @@ public class ASTRcdBool extends ASTRcdBase {
     }
 
     @Override
-    public void execute(ExecuteContext ctx) throws ExecuteException {
+    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+        boolean execContinue = true;
         String image = getName();
 
         ctx.pushVar(new VarValueBool(image));
+        return execContinue;
     }
   
 }

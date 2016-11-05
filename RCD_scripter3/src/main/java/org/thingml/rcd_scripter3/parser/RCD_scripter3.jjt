@@ -72,7 +72,7 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <FOR :("FOR")>
 |
-  <HAS :("HAS")>
+  <RETURN :("RETURN")>
 |
   <IF:("IF")>
 |
@@ -450,7 +450,6 @@ void IfBlock() #RcdIfBlock :
 	)?
 }
 
-
 void ForBlock() #RcdForBlock :
 {
 }
@@ -499,6 +498,8 @@ void Statement() :
         CallVarMethod()
         |
         VarAssign()
+        |
+        ReturnStmt()
 	)
 	<SEMI>
 }
@@ -560,15 +561,35 @@ void VarAssign() #RcdVarAssign :
 	Expr()
 }
 
+void ReturnStmt() #RcdReturnStmt :
+{
+}
+{
+	<RETURN>
+    { jjtThis.setToken(token); }
+	<OBRA>
+    (
+        CmpExpr()
+    )?
+}
+
 // ************* Comparison grammar ***************
 
-void CmpExpr() #RcdOpExpr : 
+void CmpExpr() : 
+{
+}
+{
+    Expr() 
+	( 
+		CmpExprFollow() 
+	)*
+}
+
+void CmpExprFollow() #RcdOpExpr : 
 {
     Token t;
 }
 {
-  (
-    Expr() 
 	( 
 		t = <EQUAL>
 		|
@@ -587,9 +608,7 @@ void CmpExpr() #RcdOpExpr :
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
-  ) 
 }
-
 
 // ************* Expression grammar ***************
 
