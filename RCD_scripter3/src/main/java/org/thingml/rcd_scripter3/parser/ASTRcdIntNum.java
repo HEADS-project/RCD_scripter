@@ -30,12 +30,11 @@ public class ASTRcdIntNum extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
         ctx.pushVar(new VarValueInt(image));
-        return execContinue;
+        return ExecResult.NORMAL;
     }
   
 }

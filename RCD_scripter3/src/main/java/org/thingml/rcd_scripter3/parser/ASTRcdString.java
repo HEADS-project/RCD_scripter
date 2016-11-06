@@ -34,8 +34,7 @@ public class ASTRcdString extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
         image = image.substring(0, image.length()-1).substring(1);
@@ -45,7 +44,7 @@ public class ASTRcdString extends ASTRcdBase {
         image = image.replace("\\\"", QUOTE);
         
         ctx.pushVar(new VarValueString(image));
-        return execContinue;
+        return ExecResult.NORMAL;
     }
 
 

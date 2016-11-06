@@ -30,17 +30,18 @@ public class ASTRcdReturnStmt extends ASTRcdBase {
     }
     
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = false;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         //VarBase vb = ctx.getVarBase( this, name);
         if (numChildren() == 0) {
             // Nothing to return
-        } else {
+        } else if (numChildren() == 1){
             executeChildren(ctx);
             VarBase retVal = ctx.popVar(this);
-            ctx.declVar(this, "returnVal", retVal);
+            ctx.assignVar(this, "returnVal", retVal);
+        } else {
+          throw generateExecuteException("ERROR return() got <"+numChildren()+"> params expected 0 or 1");  
         }
-        return execContinue;
+        return ExecResult.RETURN_PROC;
     }
     
 }

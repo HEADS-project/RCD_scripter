@@ -74,6 +74,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <RETURN :("RETURN")>
 |
+  <EXIT :("EXIT")>
+|
   <IF:("IF")>
 |
   <ELSE:("ELSE")>
@@ -270,7 +272,7 @@ void DeclProc() #RcdDeclProc :
             )?
         <CBRA>
         <OCBRA>
-        TrueScript()
+        ScriptNode("ProcScript")
         <CCBRA>
     )
     {
@@ -437,15 +439,15 @@ void IfBlock() #RcdIfBlock :
 	<IF>
     { jjtThis.setToken(token); }
 	<OBRA>
-	CmpExpr()
+	CmpExprNode()
 	<CBRA>
     <OCBRA>
-	TrueScript()
+	ScriptNode("TrueScript")
     <CCBRA>
 	(
 		<ELSE>
         <OCBRA>
-		FalseScript()
+		ScriptNode("FalseScript")
         <CCBRA>
 	)?
 }
@@ -467,21 +469,15 @@ void ForBlock() #RcdForBlock :
     Var()
 	<CBRA>
 	<OCBRA>
-	TrueScript()
+	ScriptNode("ForScript")
     <CCBRA>
 }
 
-void TrueScript() #RcdTrueScript :
+void ScriptNode(String nodeName) #RcdNode :
 {
 }
 {
-	Script()
-}
-
-void FalseScript() #RcdFalseScript :
-{
-}
-{
+    { jjtThis.setName(nodeName); }
 	Script()
 }
 
@@ -492,24 +488,29 @@ void Statement() :
 }
 {
 	(
-		CallProc()
+		CallProc(false)
         |
         LOOKAHEAD(Var() <PERIOD>) 
-        CallVarMethod()
+        CallVarMethod(false)
         |
         VarAssign()
         |
         ReturnStmt()
+        |
+        ExitStmt()
 	)
 	<SEMI>
 }
 
-void CallProc() #RcdCallProc :
+void CallProc(boolean returnValue) #RcdCallProc :
 {
 }
 {
 	Id()
-    { jjtThis.setToken(token); }
+    { 
+        jjtThis.setToken(token); 
+        jjtThis.setReturnValue(returnValue);
+    }
 	<OBRA>
         (
             Expr()
@@ -521,12 +522,15 @@ void CallProc() #RcdCallProc :
 	<CBRA>
 }
 
-void CallVarMethod() #RcdCallVarMethod :
+void CallVarMethod(boolean returnValue) #RcdCallVarMethod :
 {
 }
 {
 	Var()
-    { jjtThis.setToken(token); }
+    { 
+        jjtThis.setToken(token); 
+        jjtThis.setReturnValue(returnValue);
+    }
     <PERIOD>
     Id()
 	<OBRA>
@@ -569,11 +573,31 @@ void ReturnStmt() #RcdReturnStmt :
     { jjtThis.setToken(token); }
 	<OBRA>
     (
-        CmpExpr()
+        CmpExprNode()
+    )?
+}
+
+void ExitStmt() #RcdExitStmt :
+{
+}
+{
+	<EXIT>
+    { jjtThis.setToken(token); }
+	<OBRA>
+    (
+        CmpExprNode()
     )?
 }
 
 // ************* Comparison grammar ***************
+
+void CmpExprNode() #RcdNode :
+{
+}
+{
+    { jjtThis.setName("CmpExprNode"); }
+	CmpExpr()
+}
 
 void CmpExpr() : 
 {
@@ -582,7 +606,7 @@ void CmpExpr() :
     Expr() 
 	( 
 		CmpExprFollow() 
-	)*
+	)?
 }
 
 void CmpExprFollow() #RcdOpExpr : 
@@ -611,6 +635,14 @@ void CmpExprFollow() #RcdOpExpr :
 }
 
 // ************* Expression grammar ***************
+
+void ExprNode() #RcdNode :
+{
+}
+{
+    { jjtThis.setName("ExprNode"); }
+	Expr()
+}
 
 void Expr() : 
 {
@@ -669,6 +701,12 @@ void TermExprFollow() #RcdOpExpr:
 void Factor() : {}
 {
   <OBRA> Expr() <CBRA> 
+  |
+  LOOKAHEAD(Id() <OBRA>) 
+  CallProc(true)
+  |
+  LOOKAHEAD(Var() <PERIOD>) 
+  CallVarMethod(true)
   |
   Var() 
   | 

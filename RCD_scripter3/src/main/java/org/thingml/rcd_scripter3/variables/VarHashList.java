@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
@@ -113,8 +114,7 @@ public class VarHashList extends VarBase {
     }
     
     @Override
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
         int argNum = args.length;
         
         if (methodId.equalsIgnoreCase("add")) {
@@ -122,6 +122,7 @@ public class VarHashList extends VarBase {
                 VarBase arg = args[0];
                 if (arg instanceof VarHash) {
                     addHash((VarHash) arg);
+                    ctx.pushVar(this); // Return value
                 } else {
                     throw callersBase.generateExecuteException("ERROR method HashList.add() cannot add <"+arg.getType()+">");
                 }
@@ -142,6 +143,6 @@ public class VarHashList extends VarBase {
         } else {
             callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         }
-        return ret;
+        return ExecResult.NORMAL;
     }
 }

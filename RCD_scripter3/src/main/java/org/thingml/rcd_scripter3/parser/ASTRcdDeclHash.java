@@ -29,10 +29,10 @@ public class ASTRcdDeclHash extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret;
         int children = numChildren();
-        executeChildren(ctx);
+        ret = executeChildren(ctx);
         VarHash newHash;
         if (children > 0) {
             VarHash initHash = ctx.popVarX(this, VarHash.class);
@@ -41,7 +41,8 @@ public class ASTRcdDeclHash extends ASTRcdBase {
             newHash = new VarHash();
         }
         ctx.declVar(this, name, newHash);
-        return execContinue;
+        
+        return ret;
     }
 
 }

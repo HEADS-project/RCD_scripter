@@ -43,11 +43,12 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
     }
     
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret;
         int baseStackSize = ctx.getVarStackSize();
         
-        executeChildren(ctx);
+        ret = executeChildren(ctx);
+        
         int addedStackElems = ctx.getVarStackSize() - baseStackSize;
         int argNum = addedStackElems-2;
         VarBase[] args = new VarBase[argNum];
@@ -58,11 +59,19 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
         VarId id = ctx.popVarX(this, VarId.class);
         VarBase var = ctx.popVar(this);
         
+        if (ret != ExecResult.NORMAL) return ret;
+
         String methodId = id.getString();
 
-        VarBase ret;
+        baseStackSize = ctx.getVarStackSize();
         ret = var.executeProc(ctx, this, methodId, args);
-        if (returnValue) ctx.pushVar(ret);
-        return execContinue;
+        int retStackElems = ctx.getVarStackSize() - baseStackSize; // Does the proc return value
+        if (returnValue) {
+            if (retStackElems == 0) throw generateExecuteException("ERROR CallVarMethod expected return value");
+        } else {
+            if (retStackElems > 0) ctx.popVar(this); // Remove from stack if not used by caller
+        }
+
+        return ret;
     }
 }

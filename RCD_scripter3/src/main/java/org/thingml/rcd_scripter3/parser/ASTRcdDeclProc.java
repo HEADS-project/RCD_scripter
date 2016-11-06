@@ -38,7 +38,7 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
      */
     private SymbolTable mySymTab = null;
     private Param[] myParams = null;
-    private Class retType = null;
+    private VarBase retType = null;
     private ASTRcdBase script = null;
     
     public ASTRcdDeclProc(int id) {
@@ -46,8 +46,8 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        
         mySymTab = ctx.getSymTab();
         ctx.declProc(this, getName(), this);
         
@@ -55,9 +55,9 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
         if (children == null) throw generateExecuteException("ERROR procedure declaration without children");
         int len = children.length;
         if (len < 2) throw generateExecuteException("ERROR procedure declaration with <"+len+"> children expected at least 2");
-        retType = ((ASTRcdType) children[0]).getTypeClass();
+        retType = ((ASTRcdType) children[0]).getTypeInstance();
         script = (ASTRcdBase) children[len-1];
-        if (!(script instanceof ASTRcdTrueScript)) throw generateExecuteException("ERROR procedure declaration cannot find script got <"+script.getClass().getName()+">");
+        if (!(script.getName().contentEquals("ProcScript"))) throw generateExecuteException("ERROR procedure declaration cannot find script got <"+script.getName()+"><"+script.getClass().getName()+">");
         myParams = new Param[len-2];
         for (int i = 1; i < len-1; ++i) {
             ASTRcdBase p = (ASTRcdBase) children[i];
@@ -67,16 +67,16 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
             if (!(t instanceof ASTRcdType))  throw generateExecuteException("ERROR procedure declaration cannot find param type got <"+p.getClass().getName()+">");
             myParams[i-1] = new Param(p.getName(), ((ASTRcdType) t).getTypeClass());
         }
-        return execContinue;
+        return ExecResult.NORMAL;
     }
 
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
-        
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException {
+        ExecResult ret;
         if (!id.contentEquals(getName())) throw callersBase.generateExecuteException("ERROR procedure <"+id+"> is not defined expected <"+getName()+">");
         // Fetch params and push into symtab
         ctx.pushSymTab(mySymTab);
         ctx.blockStart();
+        ctx.declVar(this, "returnVal", retType);
         
         if (args.length != myParams.length) throw callersBase.generateExecuteException("ERROR procedure <"+getName()+"> called with <"+args.length+"> params expected <"+myParams.length+">");
         for( int i = 0; i < args.length; i++) {
@@ -85,10 +85,22 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
             ctx.declVar(this, p.id, args[i]);
         }
 
-        script.execute(ctx);
-        ret = ctx.getVarBaseSilent("returnVal");
+        ret = script.execute(ctx);
+        VarBase retVal = ctx.getVarBaseSilent("returnVal");
+        if(retVal != null) ctx.pushVar(retVal);
+        
         ctx.blockEnd();
         ctx.popSymTab(this);
+        
+        switch (ret) {
+            case BREAK_LOOP:
+                throw callersBase.generateExecuteException("ERROR procedure <"+getName()+"> ended with unpaired break() statement");
+            case CONTINUE_LOOP:
+                throw callersBase.generateExecuteException("ERROR procedure <"+getName()+"> ended with unpaired continue() statement");
+            case RETURN_PROC:
+                ret = ExecResult.NORMAL;
+                break;
+        }
         return ret;
     }
 }

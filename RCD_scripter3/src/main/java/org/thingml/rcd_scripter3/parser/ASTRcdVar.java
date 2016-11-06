@@ -30,18 +30,19 @@ public class ASTRcdVar extends ASTRcdBase {
     }
     
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret = ExecResult.NORMAL;
+        
         VarBase vb = ctx.getVarBase( this, name);
         if (numChildren() == 0) {
             ctx.pushVar(vb);
         } else {
-            executeChildren(ctx);
+            ret = executeChildren(ctx);
             VarBase idx = ctx.popVar(this);
             VarBase elem = vb.fetchFromIndex(this, idx);
             ctx.pushVar(elem);
         }
-        return execContinue;
+        return ret;
     }
     
 }

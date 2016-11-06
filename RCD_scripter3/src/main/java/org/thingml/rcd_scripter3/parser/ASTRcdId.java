@@ -30,12 +30,11 @@ public class ASTRcdId extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
         ctx.pushVar(new VarId(image));
-        return execContinue;
+        return ExecResult.NORMAL;
     }
 
 }

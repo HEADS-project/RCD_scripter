@@ -21,6 +21,7 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 public class ASTRcdBase extends SimpleNode {
     public String name = "";
     public Token token = null;
+    public enum ExecResult {NORMAL, RETURN_PROC, BREAK_LOOP, CONTINUE_LOOP, EXIT_PROGRAM};
 
     /**
      * Constructor.
@@ -62,19 +63,19 @@ public class ASTRcdBase extends SimpleNode {
         return ret;
     }
     
-    public boolean executeChildren(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult executeChildren(ExecuteContext ctx) throws ExecuteException {
+        ExecResult result;
         if (children != null) {
             for (int i = 0; i < children.length; ++i) {
                 ASTRcdBase c = (ASTRcdBase) children[i];
-                execContinue = c.execute(ctx);
-                if (execContinue == false) return execContinue;
+                result = c.execute(ctx);
+                if (result != ExecResult.NORMAL) return result;
             }
         }
-        return execContinue;
+        return ExecResult.NORMAL;
     }
     
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String nodeName = super.toString();  
         throw generateExecuteException(nodeName+".execute() is not implemented");
     }

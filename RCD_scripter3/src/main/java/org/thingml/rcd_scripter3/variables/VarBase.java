@@ -22,6 +22,7 @@ package org.thingml.rcd_scripter3.variables;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.parser.Token;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
@@ -46,10 +47,8 @@ abstract public class VarBase implements ProcBaseIf {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
 
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
-        callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
-        return ret;
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+        throw callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
     }
     
     public Object getValObj(){

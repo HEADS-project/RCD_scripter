@@ -30,11 +30,11 @@ public class ASTRcdDeclFile extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         VarFile newFile = new VarFile();
         ctx.declVar(this, name, newFile);
-        return execContinue;
+
+        return ExecResult.NORMAL;
     }
 
 

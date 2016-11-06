@@ -30,8 +30,8 @@ public class ASTRcdIfBlock extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret = ExecResult.NORMAL;
         ASTRcdBase c = null;
         VarValueBool test;
         if (children != null) {
@@ -42,12 +42,12 @@ public class ASTRcdIfBlock extends ASTRcdBase {
                     test = ctx.popVarX(this, VarValueBool.class);
                     if (test.getBool()) {
                         c = (ASTRcdBase) children[1];
-                        if (c instanceof ASTRcdTrueScript) {
+                        if (c.getName().contentEquals("TrueScript")) {
                             ctx.blockStart();
-                            c.execute(ctx);
+                            ret = c.execute(ctx);
                             ctx.blockEnd();
                         } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getClass().getName()+">");
+                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
                         }
                     }
                     break;
@@ -57,21 +57,21 @@ public class ASTRcdIfBlock extends ASTRcdBase {
                     test = ctx.popVarX(this, VarValueBool.class);
                     if (test.getBool()) {
                         c = (ASTRcdBase) children[1];
-                        if (c instanceof ASTRcdTrueScript) {
+                        if (c.getName().contentEquals("TrueScript")) {
                             ctx.blockStart();
-                            c.execute(ctx);
+                            ret = c.execute(ctx);
                             ctx.blockEnd();
                         } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getClass().getName()+">");
+                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
                         }
                     } else {
                         c = (ASTRcdBase) children[2];
-                        if (c instanceof ASTRcdFalseScript) {
+                        if (c.getName().contentEquals("FalseScript")) {
                             ctx.blockStart();
-                            c.execute(ctx);
+                            ret = c.execute(ctx);
                             ctx.blockEnd();
                         } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find false-script got <"+c.getClass().getName()+">");
+                            throw generateExecuteException("ERROR IfBlock cannot find false-script got <"+c.getName()+"><"+c.getClass().getName()+">");
                         }
                     }
                     break;
@@ -81,6 +81,6 @@ public class ASTRcdIfBlock extends ASTRcdBase {
         } else {
             throw generateExecuteException("ERROR IfBlock without parameters");
         }
-        return execContinue;
+        return ret;
     }
 }

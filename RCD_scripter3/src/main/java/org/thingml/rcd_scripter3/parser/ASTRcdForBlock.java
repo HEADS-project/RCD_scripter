@@ -35,9 +35,10 @@ public class ASTRcdForBlock extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
-        // FOR ( loopVar : sourceVar ) script
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult scriptRet;
+        ExecResult execRet = ExecResult.NORMAL;
+
         if (children == null) throw generateExecuteException("ERROR ForBlock without parameters");
 
         if(children.length != 3) throw this.generateExecuteException("ERROR ForBlock with <"+children.length+"> child nodes");
@@ -48,7 +49,7 @@ public class ASTRcdForBlock extends ASTRcdBase {
         VarBase     sourceVar = ctx.popVar(this);
         
         ASTRcdBase script = (ASTRcdBase) children[2];
-        if (!(script instanceof ASTRcdTrueScript)) throw this.generateExecuteException("ERROR ForBlock cannot find script got <"+script.getClass().getName()+">");
+        if (!(script.getName().contentEquals("ForScript"))) throw generateExecuteException("ERROR ForBlock cannot find script got <"+script.getName()+"><"+script.getClass().getName()+">");
 
         if (sourceVar instanceof VarHashList) { // Iterate over HASH in HASHLIST
             VarHashList varHashList = (VarHashList) sourceVar;
@@ -59,9 +60,12 @@ public class ASTRcdForBlock extends ASTRcdBase {
                 ctx.blockStart();
                 VarHash hash = (VarHash)i.next();
                 ctx.declVar(this, loopVarName, hash);
-                script.execute(ctx);
+                scriptRet = script.execute(ctx);
                 ctx.blockEnd();
                 n++;
+                if (scriptRet == ExecResult.BREAK_LOOP) break;
+                if (scriptRet == ExecResult.RETURN_PROC) { execRet = scriptRet; break;}
+                if (scriptRet == ExecResult.EXIT_PROGRAM) { execRet = scriptRet; break;}
             }
             
         } else if (sourceVar instanceof VarValArray) { // Iterate over VALUE in VALARRAY
@@ -71,14 +75,17 @@ public class ASTRcdForBlock extends ASTRcdBase {
                 ctx.blockStart();
                 VarBase valueElem = varValArray.getValue(i);
                 ctx.declVar(this, loopVarName, valueElem);
-                script.execute(ctx);
+                scriptRet = script.execute(ctx);
                 ctx.blockEnd();
+                if (scriptRet == ExecResult.BREAK_LOOP) break;
+                if (scriptRet == ExecResult.RETURN_PROC) { execRet = scriptRet; break;}
+                if (scriptRet == ExecResult.EXIT_PROGRAM) { execRet = scriptRet; break;}
             }
             
         } else {
             throw this.generateExecuteException("ERROR ForBlock cannot iterate over var type <"+sourceVar.getTypeString()+">");
         }
         
-        return execContinue;
+        return execRet;
     }
 }

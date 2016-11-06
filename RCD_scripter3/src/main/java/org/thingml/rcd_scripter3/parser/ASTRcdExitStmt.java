@@ -17,20 +17,32 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarValueInt;
 
-public class ASTRcdFalseScript extends ASTRcdBase {
+public class ASTRcdExitStmt extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdFalseScript(int id) {
+    public ASTRcdExitStmt(int id) {
       super(id);
     }
-
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        return executeChildren(ctx);
+    
+    @Override
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        //VarBase vb = ctx.getVarBase( this, name);
+        if (numChildren() == 0) {
+            // Nothing to return
+        } else if (numChildren() == 1){
+            executeChildren(ctx);
+            VarBase exitVal = ctx.popVarX(this, VarValueInt.class);
+            ctx.assignVar(this, "exitVal", exitVal);
+        } else {
+          throw generateExecuteException("ERROR exit() got <"+numChildren()+"> params expected 0 or 1");  
+        }
+        return ExecResult.EXIT_PROGRAM;
     }
-			
-
+    
 }

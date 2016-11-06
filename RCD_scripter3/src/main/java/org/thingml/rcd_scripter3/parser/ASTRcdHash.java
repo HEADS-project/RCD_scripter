@@ -31,22 +31,24 @@ public class ASTRcdHash extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret = ExecResult.NORMAL;
         VarHash hash = new VarHash();
         VarKeyValue kv;
         
         if (children != null) {
             for (int i = 0; i < children.length; ++i) {
                 ASTRcdBase c = (ASTRcdBase) children[i];
-                c.execute(ctx);
+                ret = c.execute(ctx);
                 kv = ctx.popVarX(this, VarKeyValue.class);
                 hash.addKeyValue(kv);
+                
+                if (ret != ExecResult.NORMAL) break;
             }
         }
         
         ctx.pushVar(hash);
-        return execContinue;
+        return ret;
     }
     
 

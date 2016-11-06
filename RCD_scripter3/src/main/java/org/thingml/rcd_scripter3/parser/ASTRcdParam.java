@@ -30,9 +30,8 @@ public class ASTRcdParam extends ASTRcdBase {
     }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
-        return execContinue;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        return ExecResult.NORMAL;
     }
 
 }

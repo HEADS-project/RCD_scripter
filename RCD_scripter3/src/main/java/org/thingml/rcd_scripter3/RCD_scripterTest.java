@@ -63,7 +63,7 @@ public class RCD_scripterTest {
           
             ast.dump("Main: ");
             
-            ast.execute(jobContext);
+            ast.run(jobContext);
         } 
         catch (Exception ex) 
         {

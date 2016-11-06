@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
 
@@ -55,8 +56,7 @@ public class ProcPrintf implements ProcBaseIf {
         }
     }
     
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarBase[] args) throws ExecuteException {
         int argNum = args.length;
         
         // Fetch params and push into symtab
@@ -82,7 +82,7 @@ public class ProcPrintf implements ProcBaseIf {
         } else {
             callersBase.generateExecuteException("ERROR procedure <"+procId+"> is not defined expected <printf>");
         }
-        return ret;
+        return ExecResult.NORMAL;
     }
     
 }

@@ -37,11 +37,12 @@ public class ASTRcdCallProc extends ASTRcdBase {
     }
     
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret;
         int baseStackSize = ctx.getVarStackSize();
         
-        executeChildren(ctx);
+        ret = executeChildren(ctx);
+        
         int addedStackElems = ctx.getVarStackSize() - baseStackSize;
         int argNum = addedStackElems-1;
         VarBase[] args = new VarBase[argNum];
@@ -50,17 +51,24 @@ public class ASTRcdCallProc extends ASTRcdBase {
         }
         
         VarId id = ctx.popVarX(this, VarId.class);
+
+        if (ret != ExecResult.NORMAL) return ret;
         
         String procId = id.getString();
 
         ProcBaseIf proc = ctx.getProcBase(this, procId);
         if (proc != null) {
-            VarBase ret;
+            baseStackSize = ctx.getVarStackSize();
             ret = proc.executeProc(ctx, this, procId, args);
-            if (returnValue) ctx.pushVar(ret);
+            int retStackElems = ctx.getVarStackSize() - baseStackSize; // Does the proc return value
+            if (returnValue) {
+                if (retStackElems == 0) throw generateExecuteException("ERROR CallProc expected return value");
+            } else {
+                if (retStackElems > 0) ctx.popVar(this); // Remove from stack if not used by caller
+            }
         } else {
             throw generateExecuteException("ERROR method <"+procId+"> is not defined");
         }
-        return execContinue;
+        return ret;
     }
 }

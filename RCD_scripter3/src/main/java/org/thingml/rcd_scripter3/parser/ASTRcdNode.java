@@ -18,18 +18,19 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 
-public class ASTRcdTrueScript extends ASTRcdBase {
+public class ASTRcdNode extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdTrueScript(int id) {
+    public ASTRcdNode(int id) {
       super(id);
     }
 
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         return executeChildren(ctx);
     }
+			
 
 }

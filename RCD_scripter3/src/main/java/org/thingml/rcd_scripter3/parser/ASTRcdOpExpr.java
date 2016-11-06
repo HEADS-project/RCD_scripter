@@ -22,60 +22,69 @@ import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdOpExpr extends ASTRcdBase {
 
-  /**
-   * Constructor.
-   * @param id the id
-   */
-  public ASTRcdOpExpr(int id) {
-    super(id);
-  }
+    private VarValueBase.Operation operation = null;
+    
+    /**
+     * Constructor.
+     * @param id the id
+     */
+    public ASTRcdOpExpr(int id) {
+        super(id);
+    }
+    
+    private void calcOperation (){
+
+        if (operation == null) {
+            String image = getName();
+            if (image.contentEquals("+")==true) {
+                operation = VarValueBase.Operation.PLUS;
+
+            } else if (image.contentEquals("-")==true) {
+                operation = VarValueBase.Operation.MINUS;
+
+            } else if (image.contentEquals("*")==true) {
+                operation = VarValueBase.Operation.MUL;
+
+            } else if (image.contentEquals("/")==true) {
+                operation = VarValueBase.Operation.DIV;
+
+            } else if (image.contentEquals("==")==true) {
+                operation = VarValueBase.Operation.EQUAL;
+
+            } else if (image.contentEquals(">")==true) {
+                operation = VarValueBase.Operation.GT;
+
+            } else if (image.contentEquals("<")==true) {
+                operation = VarValueBase.Operation.LT;
+
+            } else if (image.contentEquals(">=")==true) {
+                operation = VarValueBase.Operation.GTE;
+
+            } else if (image.contentEquals("LTE")==true) {
+                operation = VarValueBase.Operation.LTE;
+
+            } else if (image.contentEquals("!=")==true) {
+                operation = VarValueBase.Operation.NOTEQUAL;
+
+            } 
+        }        
+    }
 
     @Override
-    public boolean execute(ExecuteContext ctx) throws ExecuteException {
-        boolean execContinue = true;
-        executeChildren(ctx);
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        ExecResult ret;
+
+        ret = executeChildren(ctx);
         VarBase rightValue = ctx.popVar(this);
         VarBase leftValue = ctx.popVar(this);
-        VarValueBase.Operation operation;
-        String image = getName();
  
-        if (image.contentEquals("+")==true) {
-            operation = VarValueBase.Operation.PLUS;
-            
-        } else if (image.contentEquals("-")==true) {
-            operation = VarValueBase.Operation.MINUS;
-            
-        } else if (image.contentEquals("*")==true) {
-            operation = VarValueBase.Operation.MUL;
-            
-        } else if (image.contentEquals("/")==true) {
-            operation = VarValueBase.Operation.DIV;
-            
-        } else if (image.contentEquals("==")==true) {
-            operation = VarValueBase.Operation.EQUAL;
-            
-        } else if (image.contentEquals(">")==true) {
-            operation = VarValueBase.Operation.GT;
-            
-        } else if (image.contentEquals("<")==true) {
-            operation = VarValueBase.Operation.LT;
-            
-        } else if (image.contentEquals(">=")==true) {
-            operation = VarValueBase.Operation.GTE;
-            
-        } else if (image.contentEquals("LTE")==true) {
-            operation = VarValueBase.Operation.LTE;
-            
-        } else if (image.contentEquals("!=")==true) {
-            operation = VarValueBase.Operation.NOTEQUAL;
-            
-        } else {
-            throw generateExecuteException("Operation <"+image+"> is not supported on Values");
-        }
-        
+        calcOperation();
+        if (operation == null) {
+            throw generateExecuteException("Operation <"+getName()+"> is not supported on Values");
+        }        
         VarValueBase result = VarValueBase.doOperation(this, leftValue, operation, rightValue);
         ctx.pushVar(result);
-        return execContinue;
+        return ret;
     }
     
     

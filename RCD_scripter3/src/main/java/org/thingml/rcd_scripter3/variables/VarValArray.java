@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
@@ -134,8 +135,7 @@ public class VarValArray extends VarBase {
     }
 
     @Override
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
         int argNum = args.length;
 
         if (methodId.equalsIgnoreCase("setsize_default")) {
@@ -157,6 +157,6 @@ public class VarValArray extends VarBase {
         } else {
             callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         }
-        return ret;
+        return ExecResult.NORMAL;
     }
 }

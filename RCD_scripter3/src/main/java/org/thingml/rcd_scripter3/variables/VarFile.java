@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 
 /**
@@ -282,8 +283,7 @@ public class VarFile extends VarBase {
     }
     
     @Override
-    public VarBase executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-        VarBase ret = null;
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
         int argNum = args.length;
 
         if (methodId.equalsIgnoreCase("open")) {
@@ -365,6 +365,6 @@ public class VarFile extends VarBase {
         } else {
             callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         }
-        return ret;
+        return ExecResult.NORMAL;
     }
 }
