@@ -30,6 +30,19 @@ void my_func(value $in_val1, value $in_val2, value $in_string) {
 
 my_func(1 , 2, "Param tekst");
 
+void check_hash_func(HASH $in_hash, value $key) {
+    IF ($in_hash.HAS($key)) {
+        PRINTLN("Key "+$key+" has value "+$in_hash[$key]);
+    } ELSE {
+        PRINTLN("Key "+$key+" is not present in HASH");
+    }
+}
+
+HASH $test = {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16U16 ,  COMMENT: "ThingMl test message  "};
+check_hash_func($test, ENUM_VAL);
+check_hash_func($test, TULL);
+
+
 ## This file is specifying how to generate c-code files with declarations messages with attributes and MSGC coders with attributes
 
 ## To run:
@@ -106,6 +119,7 @@ $MsgDef.Add( {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16
 FOR(HASH $Row : $MsgDef) {
 	$Row.ADD({TRACE_NAME: $Row[MSGID]-$MsgIdPrefix});
 }
+
 ##PRINTLN($MsgDef);
 ##PRINTLN($MsgDef);
 

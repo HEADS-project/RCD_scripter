@@ -24,6 +24,7 @@ import java.io.FileReader;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
 import org.thingml.rcd_scripter3.proc.ProcPrintf;
+import org.thingml.rcd_scripter3.variables.VarHash;
 
 /**
  *
@@ -50,7 +51,8 @@ public class RCD_scripterTest {
             //jobContext.setTrace(true);
             ProcBaseIf proc = new ProcPrint(jobContext);
             proc = new ProcPrintf(jobContext);
-     
+            VarHash.registerMethods();
+             
             System.out.println("Parser init using file <"+inputfile+">");
             System.out.println("<");
             parser = new RcdScript3Parser(new FileReader(inputfile)); 

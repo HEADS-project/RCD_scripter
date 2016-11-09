@@ -20,12 +20,15 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
+import org.thingml.rcd_scripter3.proc.CallMethod;
 
 /**
  *
@@ -111,8 +114,31 @@ public class VarHash extends VarBase {
         return VarType.HASH;
     }
     
+    public boolean has(VarBase key) {
+        VarBase test = getKeyValue(key.getString()); // Fetch key from HASH
+        return test != null;
+    }
+    
+    private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods(){
+
+        callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+        callMethods.put("has", new CallMethod("has", VarHash.class, "has", new Class[] { VarBase.class }));
+
+    }
+
     @Override
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+  
+        CallMethod cm = callMethods.get(methodId.toLowerCase());
+        if (cm != null) {
+            cm.Call(ctx, callersBase, this, args);
+        } else {
+            callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+        }
+        return ExecResult.NORMAL;
+/*        
         int argNum = args.length;
         
         // Fetch params and push into symtab
@@ -135,11 +161,12 @@ public class VarHash extends VarBase {
                 boolean has = test != null;
                 ctx.pushVar(new VarValueBool(""+has)); // Return value
             } else {
-                throw callersBase.generateExecuteException("ERROR method Hash.add() accepts 1 arg given "+argNum+" arg(s)");
+                throw callersBase.generateExecuteException("ERROR method Hash.has() accepts 1 arg given "+argNum+" arg(s)");
             }
         } else {
             callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         }
         return ExecResult.NORMAL;
+*/        
     }
 }
