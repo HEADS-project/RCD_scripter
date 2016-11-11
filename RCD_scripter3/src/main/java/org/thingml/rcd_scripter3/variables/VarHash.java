@@ -47,6 +47,15 @@ public class VarHash extends VarBase {
         hash.putAll(copyFromHash.hash);
     }
 
+    private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+
+        callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+        callMethods.put("has", new CallMethod("has", VarHash.class, "has", new Class[] { VarBase.class }));
+
+    }
+
     public void addKeyValue(VarKeyValue kv){
         hash.put(kv.getKey(), kv);
     }    
@@ -59,6 +68,11 @@ public class VarHash extends VarBase {
         hash.putAll(hash_add.hash);
     }
 
+    public boolean has(VarBase key) {
+        VarBase test = getKeyValue(key.getString()); // Fetch key from HASH
+        return test != null;
+    }
+    
     @Override
     public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
         VarKeyValue kv = getKeyValue(idx.getString());
@@ -114,20 +128,6 @@ public class VarHash extends VarBase {
         return VarType.HASH;
     }
     
-    public boolean has(VarBase key) {
-        VarBase test = getKeyValue(key.getString()); // Fetch key from HASH
-        return test != null;
-    }
-    
-    private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
-    
-    public static void registerMethods(){
-
-        callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
-        callMethods.put("has", new CallMethod("has", VarHash.class, "has", new Class[] { VarBase.class }));
-
-    }
-
     @Override
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
   

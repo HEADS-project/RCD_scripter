@@ -20,6 +20,13 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import java.util.HashMap;
+import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
+import org.thingml.rcd_scripter3.parser.ExecuteException;
+import org.thingml.rcd_scripter3.proc.CallMethod;
+
 /**
  *
  * @author steffend
@@ -30,6 +37,19 @@ public class VarValueString extends VarValueBase {
         super(image);
     }
     
+    private static HashMap<String, CallMethod> callMyMethods = new HashMap<String, CallMethod>();
+    private static HashMap<String, CallMethod> callStringMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        callStringMethods.put("length", new CallMethod("lenght", java.lang.String.class, "length", new Class[] {} ));
+        callStringMethods.put("endswith", new CallMethod("endswith", java.lang.String.class, "endsWith", new Class[] {java.lang.String.class} ));
+        callStringMethods.put("replace", new CallMethod("replace", java.lang.String.class, "replace", new Class[] {java.lang.CharSequence.class, java.lang.CharSequence.class} ));
+        callStringMethods.put("startswith", new CallMethod("startswith", java.lang.String.class, "startsWith", new Class[] {java.lang.String.class} ));
+        callStringMethods.put("tolowercase", new CallMethod("tolowercase", java.lang.String.class, "toLowerCase", new Class[] {} ));
+        callStringMethods.put("touppercase", new CallMethod("touppercase", java.lang.String.class, "toUpperCase", new Class[] {} ));
+        callStringMethods.put("trim", new CallMethod("trim", java.lang.String.class, "trim", new Class[] {} ));
+    }
+
     @Override
     public String getTypeString() {
         return "ValueString";
@@ -39,4 +59,22 @@ public class VarValueString extends VarValueBase {
     public VarType getType() {
         return VarType.STRING;
     }
+    
+    @Override
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+  
+        CallMethod cm = callMyMethods.get(methodId.toLowerCase());
+        if (cm != null) {
+            cm.Call(ctx, callersBase, this, args);
+        } else {
+            cm = callStringMethods.get(methodId.toLowerCase());
+            if (cm != null) {
+                cm.Call(ctx, callersBase, this.getString(), args);
+            } else {
+                callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
+            }
+        }
+        return ExecResult.NORMAL;
+    }
+    
 }

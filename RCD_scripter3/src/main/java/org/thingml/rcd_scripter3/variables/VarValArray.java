@@ -45,6 +45,12 @@ public class VarValArray extends VarBase {
         copyArray(copyFromArray); 
     }
 
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+    }
+
     private void copyArray(VarValArray copyFromArray) {
         this.allocSize = copyFromArray.allocSize;
         this.defaultValue = copyFromArray.defaultValue;

@@ -34,6 +34,12 @@ public class VarValueInt extends VarValueBase {
         intValue = Integer.decode(image);
     }
     
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+    }
+
     @Override
     public String getTypeString() {
         return "ValueInt";

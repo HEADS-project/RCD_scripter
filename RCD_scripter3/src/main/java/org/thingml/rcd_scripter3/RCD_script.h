@@ -32,16 +32,27 @@ my_func(1 , 2, "Param tekst");
 
 void check_hash_func(HASH $in_hash, value $key) {
     IF ($in_hash.HAS($key)) {
-        PRINTLN("Key "+$key+" has value "+$in_hash[$key]);
+        PRINTLN("Key "+$key+" has value <"+$in_hash[$key]+"> Having size "+$in_hash[$key].length());
     } ELSE {
         PRINTLN("Key "+$key+" is not present in HASH");
     }
 }
 
 HASH $test = {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16U16 ,  COMMENT: "ThingMl test message  "};
-check_hash_func($test, ENUM_VAL);
+check_hash_func($test, COMMENT);
 check_hash_func($test, TULL);
 
+void check_string_func(value $txt, value $start, value $end) {
+    PRINTLN("Check: <"+$txt+">");
+    PRINTLN("Begin with: "+$start+" "+$txt.startswith($start));
+    PRINTLN("End with: "+$end+" "+$txt.endswith($end));
+    PRINTLN("Replace start to end: "+$txt.replace($start, $end));
+    PRINTLN("Toupper: "+$txt.touppercase());
+    PRINTLN("Tolower: "+$txt.tolowercase());
+    PRINTLN("Trim: <"+$txt.trim()+">");
+}
+
+check_string_func("Start Tekst Slutt ", "Start", "Slutt ");
 
 ## This file is specifying how to generate c-code files with declarations messages with attributes and MSGC coders with attributes
 

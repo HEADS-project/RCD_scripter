@@ -47,6 +47,12 @@ public class VarHashList extends VarBase {
         copyList(copyFromList); 
     }
 
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+    }
+
     private void copyList(VarHashList copyFromList) {
         if (copyFromList != null) {
             defaultHash = new VarHash(copyFromList.defaultHash);

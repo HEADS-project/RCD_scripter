@@ -40,15 +40,11 @@ public class CallMethod {
     private String myName;
     private Method method;
 
-    public CallMethod(String myName, Class<?> c, String methodName, Class[] formalArgs) {
-        try {            
-            this.myName = myName;
-            this.c = c;
-            this.formalArgs = formalArgs;
-            method = c.getMethod(methodName, formalArgs);
-        } catch (NoSuchMethodException ex) {
-            System.out.println(ex);
-        }
+    public CallMethod(String myName, Class<?> c, String methodName, Class[] formalArgs) throws Exception{
+        this.myName = myName;
+        this.c = c;
+        this.formalArgs = formalArgs;
+        method = c.getMethod(methodName, formalArgs);
     }
 
     public void Call(ExecuteContext ctx, ASTRcdBase callersBase, Object inst, VarBase[] args) throws ExecuteException {

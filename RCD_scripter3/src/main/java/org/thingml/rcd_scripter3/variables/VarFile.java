@@ -23,7 +23,6 @@ package org.thingml.rcd_scripter3.variables;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -32,8 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
@@ -68,6 +65,12 @@ public class VarFile extends VarBase {
         } catch (Exception ex) {
             System.out.println(ex);
         }
+    }
+
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
     }
 
     public void open(ASTRcdBase b, String fileName) throws ExecuteException {
