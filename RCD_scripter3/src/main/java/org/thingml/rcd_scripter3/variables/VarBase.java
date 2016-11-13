@@ -20,24 +20,58 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
-import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
-import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
-import org.thingml.rcd_scripter3.parser.Token;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 
 /**
  *
  * @author steffend
  */
-abstract public class VarBase implements ProcBaseIf {
-    public enum VarType { KEYVALUE, HASHLIST, ID, HASH, INT, STRING, BOOL, FILE, VALARRAY, VOID };
+abstract public class VarBase {
+    public enum VarType { KEYVALUE, ARRAY, ID, INT, REAL, STRING, BOOL, FILE, VOID };
+    public enum Operation { PLUS, MINUS, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
 
-    abstract public String getString();
+    private String image;
+    private String operationImage;
+    
+    public VarBase(String image) {
+        this.image = image;
+        this.operationImage = image;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    
+    public void setOperationImage(String image) {
+        this.operationImage = image;
+    }
+    
+    public String getOperationImage() {
+        return operationImage;
+    }
+    
     abstract public String printString();
-    abstract public String getTypeString();
     abstract public VarType getType();
+
+    abstract public long intVal();
+    abstract public double realVal();
+    abstract public boolean boolVal();
+    abstract public String stringVal();
+    abstract public Object getValObj();
+    
+    public boolean isInt()    { return false; }
+    public boolean isReal()   { return false; }
+    public boolean isBool()   { return false; }
+    public boolean isString() { return false; }
+    public boolean isArray()  { return false; }
+    public boolean isObject()  { return false; }
+    
+
+    public String getTypeString() {
+        return getType().toString();
+    }
     
     public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
@@ -47,14 +81,4 @@ abstract public class VarBase implements ProcBaseIf {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
 
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-        throw callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
-    }
-    
-    public Object getValObj(){
-        Object ret;
-        
-        ret = getString();
-        return ret;
-    }
 }

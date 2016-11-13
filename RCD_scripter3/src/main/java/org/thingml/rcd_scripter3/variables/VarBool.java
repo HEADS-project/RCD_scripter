@@ -20,18 +20,17 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
-
 /**
  *
  * @author steffend
  */
-public class VarValueInt extends VarValueBase {
+public class VarBool extends VarBase {
     
-    private int intValue = 0;
+    private boolean boolValue = false;
     
-    public VarValueInt(String image) {
+    public VarBool(String image) {
         super(image);
-        intValue = Integer.decode(image);
+        if (image.toLowerCase().contentEquals("true")) boolValue = true;;
     }
     
     //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
@@ -41,35 +40,47 @@ public class VarValueInt extends VarValueBase {
     }
 
     @Override
-    public String getTypeString() {
-        return "ValueInt";
+    public VarType getType() {
+        return VarType.BOOL;
     }
     
     @Override
-    public VarType getType() {
-        return VarType.INT;
+    public long intVal() {
+        if (boolVal()) return 1;
+        else return 0;
+    }    
+    
+    @Override
+    public double realVal() {
+        return intVal();
     }
     
-    public int getInt() {
-        return intValue;
+    @Override
+    public boolean boolVal() {
+        return boolValue;
     }
     
+    @Override
+    public String stringVal() {
+        return ""+intVal();
+    }
+
     @Override
     public Object getValObj(){
         Object ret;
         
-        ret = getInt();
+        ret = boolVal();
         return ret;
     }
-    
+
     @Override
-    protected boolean compareVal(VarValueBase value_other) {
-        return intValue == ((VarValueInt)value_other).intValue;
+    public boolean isBool() {
+        return true;
     }
     
     @Override
     public String printString() {
-        String ret = "<"+getTypeString()+" Image:"+getString()+" Value:"+intValue+" Operations:"+getOperationImage()+">";
+        String ret = "<"+getTypeString()+" Image:"+stringVal()+" Value:"+boolValue+" Operations:"+getOperationImage()+">";
         return ret;
     }
 
