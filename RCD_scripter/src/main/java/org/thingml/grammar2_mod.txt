@@ -1,0 +1,68 @@
+
+Script -> (Def | Statement | Block)*
+
+Def -> (DefRowList | DefRow | DefCell | DefFile | DefArray)<;>
+
+DefRowList  -> <DEF> Var <=> <ROWLIST> <(> (<=>VarRowList)? <)> 
+DefRow    -> <DEF> Var <=> <ROW> <(> (CellList | <=>VarRow)? <)>
+DefCell   -> <DEF> Var <=> <CELL> <(> CellEntry | <=>VarCell <)>
+DefValue  -> <DEF> Var <=> <VALUE> <(> Expr | <=>VarValue <)>
+DefVarArray  -> <DEF> Var <=> <VARARRAY> <(> Num | <=>VarArray <)> 
+DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <)>
+
+
+Block -> ForBlock | IfRowBlock | IfVarBlock
+ForBlock -> <FOR_EACH> <(> Var <IN> Var <)> <{> Script <}>
+
+IfRowBlock -> <IF_ROW> <(> CmpHas <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+CmpHas -> Var <HAS> CellEntry 
+
+IfVarBlock -> <IF> <(> CmpVar <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+CmpVar -> Expr <==> Expr 
+
+Statement ->  (VarMethod | VarAssign | VarIndexAssign | Print | Fprint)<;>
+VarMethod -> Var <.> (M_Add | M_Setdefault | M_Close | M_Print )
+M_Add -> <ADD> <(> CellList | =Var <)>
+M_Setdefault -> <SETDEF> <(> CellList | =Var <)> 
+M_Close -> <CLOSE> <(><)> 
+M_Print -> <PRINT><(> TxtExpr <)> 
+
+Print -> <PRINT><(> TxtExpr <)> 
+
+CellList -> CellEntry (<,> CellEntry)*
+CellEntry -> Tupl | VarCell | VarIdCell 
+Tupl -> <{>Id, Expr <}>
+VarIdCell -> Var <.> Id   //??? 
+
+VarAssign -> Var <=> Expr
+VarIndexAssign -> VarIndex <=> Expr
+
+Expr -> NumExpr | TxtExpr
+
+NumExpr -> Term ( AddOp Term )*
+AddOp -> ["+","-"]
+Term -> Factor (MulOp Factor)*
+MulOp -> ["*","/"]
+Factor -> Num |  VarValue | VarIndexValue
+
+TxtExpr -> (String | Id)  ((<+> | <->) TxtElement)*
+TxtElement -> String | Num | Id | Var | VarValue | VarIndexValue | VarOtherValue
+
+VarIndexValue -> Var <[> Index <]>   // Return VALUE
+Index -> (NumExpr | TxtExpr ) 
+
+Num -> Dec | Hex
+Dec -> Digit+
+Hex -> "0" ["x","X"] (HexDigit)+ 
+
+VarRowList -> Var
+VarRow -> Var
+VarCell -> Var
+VarFile -> Var
+VarValue -> Var
+VarArray -> Var
+Var -> <$>Id
+Id -> Letter+
+String -> "...."
+
+

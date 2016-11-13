@@ -1,0 +1,69 @@
+
+Script -> (Def | Statement | Block)*
+
+Def -> (DefRowList | DefRow | DefCell | DefFile | DefArray)<;>
+
+DefHashList  -> <DEF> Var <=> <HASHLIST> <(> (VarHashList)? <)> 
+DefHash    -> <DEF> Var <=> <HASH> <(> (HashList | VarHash)? <)>
+DefKeyValue   -> <DEF> Var <=> <KEYVALUE> <(> KeyValue | VarKeyValue <)>
+DefValue  -> <DEF> Var <=> <VALUE> <(> Expr | VarValue <)>
+DefVarArray  -> <DEF> Var <=> <VARARRAY> <(> Num | VarArray <)> 
+DefFile   -> <DEF> Var <=> <OPENFILE> <(> String <)>
+
+
+Block -> ForBlock | IfBlock
+ForBlock -> <FOR_EACH> <(> Var <IN> Var <)> <{> Script <}>
+
+
+IfBlock -> <IF> <(> Cmp <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
+Cmp -> CmpVar
+CmpVar -> Expr <==> Expr 
+CmpHas -> Expr <HAS> Expr 
+
+Statement ->  (VarAssign | VarIndexAssign | CallVarMethod | CallProc)<;>
+VarAssign -> Var <=> Expr
+VarIndexAssign -> VarIndex <=> Expr
+CallVarMethod -> Var <.> Id <(> (Expr (<,> Expr)*)?  <)>
+// Var <.> ADD <(> HashList | =Var <)>
+// Var <.> SETDEF <(> HashList | =Var <)> 
+// Var <.> CLOSE <(><)> 
+// Var <.> PRINT <(> TxtExpr <)> 
+CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
+PRINT><(> TxtExpr <)> 
+
+HashList -> <{>KeyValue (<,> KeyValue)* <}>
+CellEntry -> Tupl | VarCell | VarIdCell 
+Tupl -> Expr <:> Expr
+VarIdCell -> Var <.> Id 
+
+
+Expr -> NumExpr | TxtExpr
+
+NumExpr -> Term ( AddOp Term )*
+AddOp -> ["+","-"]
+Term -> Factor (MulOp Factor)*
+MulOp -> ["*","/"]
+Factor -> Num |  VarValue | VarIdValue | VarIndexValue
+
+TxtExpr -> (String | Id)  ((<+> | <->) TxtElement)*
+TxtElement -> String | Num | Id | Var | VarValue | VarIdValue | VarIndexValue | VarOtherValue
+
+VarIdValue -> Var <.> Id    // Return VALUE
+VarIndexValue -> Var <[> NumExpr <]>   // Return VALUE
+Num -> Dec | Hex
+Dec -> Digit+
+Hex -> "0" ["x","X"] (HexDigit)+ 
+
+VarHashList -> Var
+VarHash -> Var
+VarKeyValue -> Var
+VarFile -> Var
+VarValue -> Var
+VarArray -> Var
+
+VarIndex -> Var <[> Expr <]> 
+Var -> <$>Id
+Id -> Letter+
+String -> "...."
+
+

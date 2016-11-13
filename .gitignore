@@ -16,3 +16,7 @@ RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/SimpleCharStream.ja
 RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/Token.java
 RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/parser/TokenMgrError.java
 *.stmp
+/RCD_scripter/src/main/java/org/thingml/rcd_scripter2 - Copy
+RCD_scripter/src/main/java/org/thingml/rcd_scripter2 - Copy/
+RCD_scripter3/test.c
+RCD_scripter3/insert_test.c
