@@ -58,19 +58,9 @@ TOKEN [IGNORE_CASE]: /* Commands */
 {
   <INCLUDE :("INCLUDE")>
 |
-  <VALARRAY :("VALARRAY")>
-|
-  <VALUE :("VALUE")>
-|
-  <FILE :("FILE")>
-|
-  <HASH :("HASH")>
-|
-  <HASHLIST :("HASHLIST")>
-|
-  <VOID :("VOID")>
-|
   <FOR :("FOR")>
+|
+  <PROC :("PROC")>
 |
   <RETURN :("RETURN")>
 |
@@ -85,6 +75,10 @@ TOKEN [IGNORE_CASE]: /* Commands */
   <FALSE:("FALSE")>
 |
   <RCD_SCRIPT_END: ("RCD_SCRIPT_END")>
+|
+  <AND:("AND")>
+|
+  <OR:("OR")>
 
 }
 
@@ -186,7 +180,7 @@ void Script() : {}
     (
 		Include()
 		|
-        Decl()
+        DeclProc()
         |
         Block()
         |
@@ -230,37 +224,14 @@ void Include() :
 	}
 }
 
-// ************* Decl xxx ***************
-void Decl() : 
-{
-}
-{
-    (
-        LOOKAHEAD(RetType() <ID_LITERAL> <OBRA>) 
-        DeclProc()
-        |
-        (
-            DeclHashList()
-            |
-            DeclHash()
-            |
-            DeclFile()
-            |
-            DeclValue()
-            |
-            DeclValArray()
-        )
-        <SEMI>
-    )
-}
-
+// ************* DeclProc ***************
 void DeclProc() #RcdDeclProc :
 {
     Token t;
 }
 {
     (
-        RetType()
+        <PROC>
         t = <ID_LITERAL>
         <OBRA>
             (
@@ -281,144 +252,16 @@ void DeclProc() #RcdDeclProc :
 	}
 }
 
-void RetType() #RcdType :
-{
-    Token t;
-}
-{
-    (
-        t = <HASHLIST>
-        |
-        t = <HASH>
-        |
-        t = <FILE>
-        |
-        t = <VALUE>
-        |
-        t = <VALARRAY>
-        |
-        t = <VOID>
-    )
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
 void Param() #RcdParam:
 {
     Token t;
 }
 {
-    ParamType()
     t = <VAR_LITERAL>
     {
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
-}
-
-void ParamType() #RcdType :
-{
-    Token t;
-}
-{
-    (
-        t = <HASHLIST>
-        |
-        t = <HASH>
-        |
-        t = <FILE>
-        |
-        t = <VALUE>
-        |
-        t = <VALARRAY>
-    )
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-void DeclHashList() #RcdDeclHashList :
-{
-    Token t;
-}
-{
-    <HASHLIST>
-    t = <VAR_LITERAL>
-    (
-        <ASSIGN>
-        Var()
-    )?
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-
-void DeclHash() #RcdDeclHash :
-{
-    Token t;
-}
-{
-    <HASH>
-    t = <VAR_LITERAL>
-    (
-        <ASSIGN>
-        Expr()
-    )?
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-void DeclFile() #RcdDeclFile :
-{
-    Token t;
-}
-{
-    <FILE>
-    t = <VAR_LITERAL>
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-void DeclValue() #RcdDeclValue :
-{
-    Token t;
-}
-{
-    <VALUE>
-    t = <VAR_LITERAL>
-    (
-        <ASSIGN>
-        Expr()
-    )?
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
-}
-
-void DeclValArray() #RcdDeclValArray :
-{
-    Token t;
-}
-{
-    <VALARRAY>
-    t = <VAR_LITERAL>
-    (
-        Var()
-    )?
-    {
-	    jjtThis.setName(t.image);
-        jjtThis.setToken(token);
-	}
 }
 
 // ************* Block ***************
@@ -439,7 +282,7 @@ void IfBlock() #RcdIfBlock :
 	<IF>
     { jjtThis.setToken(token); }
 	<OBRA>
-	CmpExprNode()
+	ExprNode()
 	<CBRA>
     <OCBRA>
 	ScriptNode("TrueScript")
@@ -459,14 +302,9 @@ void ForBlock() #RcdForBlock :
 	<FOR>
     { jjtThis.setToken(token); }
 	<OBRA>
-    (
-        <HASH>
-        |
-        <VALUE>
-    )
 	Var()
 	<COLON>
-    Var()
+    Expr()
 	<CBRA>
 	<OCBRA>
 	ScriptNode("ForScript")

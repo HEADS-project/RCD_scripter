@@ -56,6 +56,7 @@ public class VarFile extends VarBase {
 
     
     public VarFile() {
+        super("");
         try {
             Class<?> c = Class.forName("java.lang.String");
             Class[] cArg = new Class[2];
@@ -72,7 +73,51 @@ public class VarFile extends VarBase {
     public static void registerMethods()throws Exception{
         //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
     }
+    @Override
+    public VarType getType() {
+        return VarType.FILE;
+    }
 
+    @Override
+    public String printString() {
+        String ret = "File: " + stringVal();
+        return ret;
+    }
+    
+    @Override
+    public long intVal() {
+        return 0;
+    }    
+    
+    @Override
+    public double realVal() {
+        return intVal();
+    }
+    
+    @Override
+    public boolean boolVal() {
+        return true;
+    }
+    
+    @Override
+    public String stringVal() {
+        return fileName;
+    }
+
+    @Override
+    public Object getValObj(){
+        Object ret;
+        
+        ret = intVal();
+        return ret;
+    }
+
+    @Override
+    public boolean isObject() {
+        return true;
+    }
+    
+    
     public void open(ASTRcdBase b, String fileName) throws ExecuteException {
         this.fileName = fileName;
         modeInsert = false;
@@ -219,26 +264,6 @@ public class VarFile extends VarBase {
         }
     }
     
-    @Override
-    public String getTypeString() {
-        return "File";
-    }
-
-    @Override
-    public VarType getType() {
-        return VarType.FILE;
-    }
-
-    @Override
-    public String printString() {
-        String ret = "File: " + getString();
-        return ret;
-    }
-    
-    @Override
-    public String getString() {
-        return fileName;
-    }
 
     private void createTmpFile(ASTRcdBase b) {
         int tmpNum = -1;
@@ -285,7 +310,6 @@ public class VarFile extends VarBase {
         
     }
     
-    @Override
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
         int argNum = args.length;
 
@@ -293,7 +317,7 @@ public class VarFile extends VarBase {
             if (argNum == 1) {
                 VarBase arg = args[0];
                 if (arg instanceof VarValueString) {
-                    open(callersBase, arg.getString());
+                    open(callersBase, arg.stringVal());
                 } else {
                     throw callersBase.generateExecuteException("ERROR method File.open() cannot use <"+arg.getType()+">");
                 }
@@ -306,7 +330,7 @@ public class VarFile extends VarBase {
                 VarBase arg2 = args[1];
                 if (arg1 instanceof VarValueString) {
                     if (arg2 instanceof VarValueString) {
-                        insert(callersBase, arg1.getString(), arg2.getString());
+                        insert(callersBase, arg1.stringVal(), arg2.stringVal());
                     } else {
                         throw callersBase.generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
                     }
@@ -320,7 +344,7 @@ public class VarFile extends VarBase {
             if (argNum == 1) {
                 VarBase arg = args[0];
                 if (arg instanceof VarBase) {
-                    write(callersBase, arg.getString());
+                    write(callersBase, arg.stringVal());
                 } else {
                     throw callersBase.generateExecuteException("ERROR method File.print() cannot print <"+arg.getType()+">");
                 }
@@ -331,7 +355,7 @@ public class VarFile extends VarBase {
             if (argNum == 1) {
                 VarBase arg = args[0];
                 if (arg instanceof VarBase) {
-                    write(callersBase, arg.getString()+"\n");
+                    write(callersBase, arg.stringVal()+"\n");
                 } else {
                     throw callersBase.generateExecuteException("ERROR method File.println() cannot print <"+arg.getType()+">");
                 }

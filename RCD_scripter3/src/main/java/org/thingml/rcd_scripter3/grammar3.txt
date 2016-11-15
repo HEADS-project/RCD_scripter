@@ -20,11 +20,11 @@ Script -> (Include | DeclProc | Statement | Block)*
 
 Include -> <INCLUDE><(> String <)><;>
 
-DeclProc -> Id <(> (Var (<,> Var)*)? <)> <{> Script <}>
+DeclProc -> <PROC> Id <(> (Var (<,> Var)*)? <)> <{> Script <}>
 
 
 Block ->  ProcBlock | ForBlock | IfBlock
-ForBlock -> <FOR> <(> VarArray <:> VarArray <)> <{> Script <}>
+ForBlock -> <FOR> <(> VarArray <:> Expr <)> <{> Script <}>
 
 IfBlock -> <IF> <(> Expr <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
 
@@ -32,13 +32,12 @@ Statement ->  (VarAssign | CallVarMethod | CallProc | Return)<;>
 
 VarAssign -> LeftVar <=> Expr
 LeftVar -> Var (Index)*
-Index -> (<[> Expr <]>)
 
-CallVarMethod -> LeftVar <.> Id <(> (Expr (<,> Expr)*)?  <)>
+CallVarMethod -> Var (PrimExprSuffix)*
 // VarArray <.> SETDEF <(> VarArray <)> 
 // VarArray <.> ADD <(> VarArray <)>
 
-// VarArray <.> HAS <(> Expr <)>
+// VarBool = VarArray <.> HAS <(> Expr <)>
 
 // VarFile <.> Open <(> ExprFilename <)> 
 // VarFile <.> Insert <(> ExprFilename, ExprTagbase <)> 
@@ -47,12 +46,20 @@ CallVarMethod -> LeftVar <.> Id <(> (Expr (<,> Expr)*)?  <)>
 // VarFile <.> PRINTF <(> Expr (<,> Expr)* <)> 
 // VarFile <.> CLOSE <(><)> 
 
+// VarBool = Var.ISARRAY()
+// VarBool = Var.ISINT()
+// VarBool = Var.ISREAL()
+// VarBool = Var.ISBOOL()
+// VarBool = Var.ISFILE()
+
 ???// VarArray <.> SETSIZE_DEFAULT <(> VarInt, VarValue <)> 
 
 CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
 // PRINT<(> Expr <)> 
 // PRINTLN<(> Expr <)> 
 // PRINTF <(> Expr (<,> Expr)* <)> 
+// VarArray = ARRAY()
+// VarFile = FILE()
 
 Return -> <RETURN> <(> (Expr)?  <)>
 
@@ -77,7 +84,7 @@ UnaryExpr -> ("+" | "-")? PrimExprPrefix (PrimExprSuffix)*
 PrimExprPrefix -> <(> Expr <)> | Literal | CallProc | Var
 
 PrimExprSuffix -> Index | CallMethod
-Index -> (<[> Expr <]>)
+Index -> <[> Expr <]>
 CallMethod -> <.><(> (Expr (<,> Expr)*)?  <)>
 
 
