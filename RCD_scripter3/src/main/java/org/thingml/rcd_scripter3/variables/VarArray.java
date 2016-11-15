@@ -24,6 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
@@ -34,30 +36,71 @@ import org.thingml.rcd_scripter3.proc.CallMethod;
  *
  * @author steffend
  */
-public class VarArray extends VarBase {
+public class VarArray extends VarBase implements Cloneable{
 
-    private HashMap<String, VarKeyValue> hash = null;
+    private HashMap<String, VarKeyContainer> hash = new HashMap<String, VarKeyContainer>();
+    private HashMap<String, VarKeyContainer> defaultElemHash = new HashMap<String, VarKeyContainer>();
 
     public VarArray() {
         super("");
-        hash = new HashMap<String, VarKeyValue>();
     }
 
     public VarArray(VarArray copyFromArray) {
         super("");
-        hash = new HashMap<String, VarKeyValue>();
-        hash.putAll(copyFromArray.hash);
+        copyArray(copyFromArray); 
     }
 
-    private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    public VarArray(VarBase convertToArray) {
+        super("");
+        addKeyContainer(new VarKeyContainer("0", new VarContainer(convertToArray)));
+    }
+
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
     
     public static void registerMethods()throws Exception{
 
-        callMethods.put("add", new CallMethod("add", VarArray.class, "addHash", new Class[] { VarArray.class }));
-        callMethods.put("has", new CallMethod("has", VarArray.class, "has", new Class[] { VarBase.class }));
+        //callMethods.put("add", new CallMethod("add", VarArray.class, "addHash", new Class[] { VarArray.class }));
+        //callMethods.put("has", new CallMethod("has", VarArray.class, "has", new Class[] { VarBase.class }));
 
     }
 
+    @Override
+    protected VarArray clone() throws CloneNotSupportedException {
+        return new VarArray(this);
+    }    
+    
+    
+    private void copyArray(VarArray copyFromArray) {
+        if (copyFromArray != null) {
+            //defaultHash = new VarHash(copyFromArray.defaultElemHash.clo);
+            Iterator i1 = copyFromArray.defaultElemHash.entrySet().iterator();
+            while(i1.hasNext()) {
+                HashMap.Entry pair  = (HashMap.Entry)i1.next();
+                try {
+                    VarKeyContainer clonedValue;
+                    clonedValue = ((VarKeyContainer)pair.getValue()).clone();
+                    defaultElemHash.put(clonedValue.getKey(), clonedValue);
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(VarArray.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+                
+            Iterator i2 = copyFromArray.hash.entrySet().iterator();
+            while(i2.hasNext()) {
+                HashMap.Entry pair  = (HashMap.Entry)i2.next();
+                try {
+                    VarKeyContainer clonedValue;
+                    clonedValue = ((VarKeyContainer)pair.getValue()).clone();
+                    hash.put(clonedValue.getKey(), clonedValue);
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(VarArray.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+    
+    
+    
     @Override
     public VarType getType() {
         return VarType.ARRAY;
@@ -91,47 +134,40 @@ public class VarArray extends VarBase {
         ret = intVal();
         return ret;
     }
-
     
-    @Override
-    public String getTypeString() {
-        return "Hash";
-    }
-
-    public void addKeyValue(VarKeyValue kv){
-        hash.put(kv.getKey(), kv);
+    public void addKeyContainer(VarKeyContainer kc){
+        hash.put(kc.getKey(), kc);
     }    
     
-    public VarKeyValue getKeyValue(String key){
+    public VarKeyContainer getKeyContainer(String key){
         return hash.get(key);
     }    
     
-    public void addHash(VarArray hash_add) {
-        hash.putAll(hash_add.hash);
+    public void addArray(VarArray array_add) {
+        hash.putAll(array_add.hash);
     }
 
     public boolean has(VarBase key) {
-        VarBase test = getKeyValue(key.stringVal()); // Fetch key from HASH
+        VarKeyContainer test = getKeyContainer(key.stringVal()); // Fetch key from HASH
         return test != null;
     }
     
     @Override
-    public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
-        VarKeyValue kv = getKeyValue(idx.stringVal());
-        VarBase ret = null;
-        if (kv != null) {
-            ret = kv.getValue();
+    public VarContainer fetchFromIndex(ASTRcdBase b, VarContainer idx) throws ExecuteException {
+        VarKeyContainer kc = getKeyContainer(idx.stringVal());
+        VarContainer ret;
+        if (kc != null) {
+            ret = kc.getContainer();
         } else {
             b.printMessage("ERROR "+b.getName()+"["+idx.stringVal()+"] is not defined");
-            ret = new VarString("");
+            ret = new VarContainer();
         }
         return ret;
     }
 
     @Override
-    public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
-        VarKeyValue kv = new VarKeyValue(idx.stringVal(), (VarValueBase)expr);
-        addKeyValue(kv);
+    public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
+        addKeyContainer(new VarKeyContainer(idx.stringVal(), expr));
     }
     
     
@@ -147,8 +183,8 @@ public class VarArray extends VarBase {
         Iterator i = hash.entrySet().iterator();
         while(i.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarKeyValue kv = (VarKeyValue)pair.getValue();
-            ret += comma + kv.stringVal();
+            VarKeyContainer kc = (VarKeyContainer)pair.getValue();
+            ret += comma + kc.stringVal();
             comma = ", ";
         }
 
@@ -156,14 +192,4 @@ public class VarArray extends VarBase {
         return ret;
     }
 
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
-  
-        CallMethod cm = callMethods.get(methodId.toLowerCase());
-        if (cm != null) {
-            cm.Call(ctx, callersBase, this, args);
-        } else {
-            callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
-        }
-        return ExecResult.NORMAL;
-    }
 }

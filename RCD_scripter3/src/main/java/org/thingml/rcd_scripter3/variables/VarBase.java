@@ -22,14 +22,13 @@ package org.thingml.rcd_scripter3.variables;
 
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
-import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 
 /**
  *
  * @author steffend
  */
-abstract public class VarBase {
-    public enum VarType { KEYVALUE, ARRAY, ID, INT, REAL, STRING, BOOL, FILE, VOID };
+abstract public class VarBase implements Cloneable{
+    public enum VarType { KEYCONTAINER, ARRAY, INT, REAL, STRING, BOOL, FILE, VOID };
     public enum Operation { PLUS, MINUS, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
 
     private String image;
@@ -51,6 +50,11 @@ abstract public class VarBase {
     public String getOperationImage() {
         return operationImage;
     }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }    
     
     abstract public String printString();
     abstract public VarType getType();
@@ -73,11 +77,11 @@ abstract public class VarBase {
         return getType().toString();
     }
     
-    public VarBase fetchFromIndex(ASTRcdBase b, VarBase idx) throws ExecuteException {
+    public VarContainer fetchFromIndex(ASTRcdBase b, VarContainer idx) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
     
-    public void storeToIndex(ASTRcdBase b, VarBase idx, VarBase expr) throws ExecuteException {
+    public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
 

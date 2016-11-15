@@ -38,7 +38,7 @@ public class VarInt extends VarBase {
     public static void registerMethods()throws Exception{
         //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
     }
-
+    
     @Override
     public VarType getType() {
         return VarType.INT;
