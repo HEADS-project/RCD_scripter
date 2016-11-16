@@ -234,13 +234,7 @@ void DeclProc() #RcdDeclProc :
         <PROC>
         t = <ID_LITERAL>
         <OBRA>
-            (
-                Param()
-                (
-                    <COMMA>
-                    Param()
-                )*
-            )?
+            FormParamNode()
         <CBRA>
         <OCBRA>
         ScriptNode("ProcScript")
@@ -252,7 +246,21 @@ void DeclProc() #RcdDeclProc :
 	}
 }
 
-void Param() #RcdParam:
+void FormParamNode() #RcdNode :
+{
+}
+{
+    { jjtThis.setName("FormParam"); }
+    (
+        FormParam()
+        (
+            <COMMA>
+            FormParam()
+        )*
+    )?
+}
+
+void FormParam() #RcdFormParam:
 {
     Token t;
 }
@@ -304,7 +312,7 @@ void ForBlock() #RcdForBlock :
 	<OBRA>
 	Var()
 	<COLON>
-    Expr()
+    ExprNode()
 	<CBRA>
 	<OCBRA>
 	ScriptNode("ForScript")
@@ -328,10 +336,7 @@ void Statement() :
 	(
 		CallProc(false)
         |
-        LOOKAHEAD(Var() <PERIOD>) 
-        CallVarMethod(false)
-        |
-        VarAssign()
+        VarXXX()
         |
         ReturnStmt()
         |
@@ -350,57 +355,86 @@ void CallProc(boolean returnValue) #RcdCallProc :
         jjtThis.setReturnValue(returnValue);
     }
 	<OBRA>
-        (
-            Expr()
-            (
-                <COMMA>
-                Expr()
-            )*
-        )?
+        ActParamNode()
 	<CBRA>
 }
 
-void CallVarMethod(boolean returnValue) #RcdCallVarMethod :
+void VarXXX() :
 {
 }
 {
-	Var()
-    { 
-        jjtThis.setToken(token); 
-        jjtThis.setReturnValue(returnValue);
-    }
-    <PERIOD>
-    Id()
-	<OBRA>
-        (
-            Expr()
-            (
-                <COMMA>
-                Expr()
-            )*
-        )?
-	<CBRA>
+    Var()
+    (
+	    (
+            Index()
+    	)*
+	    (
+            Assign()
+            |
+            CallMethod(false)
+    	)
+    ) 
 }
 
-void VarAssign() #RcdVarAssign :
+void Index() #RcdIndex:
 {
     Token t;
 }
 {
+}
+	t = <OABRA>
+        ExprNode()
+	<CABRA>
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+}
+
+void Assign() #RcdAssign:
+{
+    Token t;
+}
+{
+}
+	t = <ASSIGN>
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+	ExprNode()
+}
+
+
+
+void CallMethod(boolean returnValue) #RcdCallMethod :
+{
+}
+{
+}
+    <PERIOD>
+    { 
+        jjtThis.setToken(token); 
+        jjtThis.setReturnValue(returnValue);
+    }
+    Id()
+	<OBRA>
+        ActParamNode()
+	<CBRA>
+}
+
+void ActParamNode() #RcdNode :
+{
+}
+{
+    { jjtThis.setName("ActParam"); }
     (
-        t = <VAR_LITERAL>
-	    (
-    		<OABRA>
-			Expr()
-	    	<CABRA>
-    	)?
-        {
-            jjtThis.setName(t.image);
-            jjtThis.setToken(t); 
-        }
-    ) 
-	<ASSIGN>
-	Expr()
+        ExprNode()
+        (
+            <COMMA>
+            ExprNode()
+        )*
+    )?
 }
 
 void ReturnStmt() #RcdReturnStmt :
@@ -411,7 +445,7 @@ void ReturnStmt() #RcdReturnStmt :
     { jjtThis.setToken(token); }
 	<OBRA>
     (
-        CmpExprNode()
+        ExprNode()
     )?
 }
 
@@ -423,7 +457,7 @@ void ExitStmt() #RcdExitStmt :
     { jjtThis.setToken(token); }
 	<OBRA>
     (
-        CmpExprNode()
+        ExprNode()
     )?
 }
 
@@ -566,18 +600,11 @@ void Var() #RcdVar:
     Token t;
 }
 {
-    (
-        t = <VAR_LITERAL>
-	    (
-    		<OABRA>
-			Expr()
-	    	<CABRA>
-    	)?
-        {
-            jjtThis.setName(t.image);
-            jjtThis.setToken(t); 
-        }
-    ) 
+    t = <VAR_LITERAL>
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void Id() #RcdId :

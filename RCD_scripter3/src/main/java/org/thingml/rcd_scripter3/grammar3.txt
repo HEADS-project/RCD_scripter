@@ -23,17 +23,16 @@ Include -> <INCLUDE><(> String <)><;>
 DeclProc -> <PROC> Id <(> (Var (<,> Var)*)? <)> <{> Script <}>
 
 
-Block ->  ProcBlock | ForBlock | IfBlock
+Block ->  ForBlock | IfBlock
 ForBlock -> <FOR> <(> VarArray <:> Expr <)> <{> Script <}>
 
 IfBlock -> <IF> <(> Expr <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
 
 Statement ->  (VarAssign | CallVarMethod | CallProc | Return)<;>
 
-VarAssign -> LeftVar <=> Expr
-LeftVar -> Var (Index)*
+VarAssign -> Var (Index)* <=> Expr
 
-CallVarMethod -> Var (PrimExprSuffix)*
+CallVarMethod -> Var (Index)* CallMethod
 // VarArray <.> SETDEF <(> VarArray <)> 
 // VarArray <.> ADD <(> VarArray <)>
 
@@ -79,11 +78,11 @@ AddOp -> ["+","-"]
 MulExpr -> UnaryExpr (MulOp UnaryExpr)*
 MulOp -> ["*","/","%"]
 
-UnaryExpr -> ("+" | "-")? PrimExprPrefix (PrimExprSuffix)*
+UnaryExpr -> ("+" | "-")? PrimExprPrefix PrimExprSuffix
 
 PrimExprPrefix -> <(> Expr <)> | Literal | CallProc | Var
 
-PrimExprSuffix -> Index | CallMethod
+PrimExprSuffix -> (Index)* (CallMethod)?
 Index -> <[> Expr <]>
 CallMethod -> <.><(> (Expr (<,> Expr)*)?  <)>
 
