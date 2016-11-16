@@ -17,7 +17,8 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarId;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarString;
 
 public class ASTRcdId extends ASTRcdBase {
 
@@ -33,7 +34,7 @@ public class ASTRcdId extends ASTRcdBase {
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
-        ctx.pushVar(new VarId(image));
+        ctx.pushContainer(new VarContainer (new VarString(image)));
         return ExecResult.NORMAL;
     }
 

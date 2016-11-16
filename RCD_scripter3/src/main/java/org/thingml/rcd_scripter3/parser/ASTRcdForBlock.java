@@ -16,11 +16,18 @@
 
 package org.thingml.rcd_scripter3.parser;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarArray;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarBase.VarType;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarHash;
 import org.thingml.rcd_scripter3.variables.VarHashList;
+import org.thingml.rcd_scripter3.variables.VarKeyContainer;
+import org.thingml.rcd_scripter3.variables.VarString;
 import org.thingml.rcd_scripter3.variables.VarValArray;
 import org.thingml.rcd_scripter3.variables.VarValueString;
 
@@ -39,51 +46,57 @@ public class ASTRcdForBlock extends ASTRcdBase {
         ExecResult scriptRet;
         ExecResult execRet = ExecResult.NORMAL;
 
-        if (children == null) throw generateExecuteException("ERROR ForBlock without parameters");
+        if(numChildren() != 3) throw this.generateExecuteException("ERROR ForBlock with <"+numChildren()+"> child nodes expected 3");
 
-        if(children.length != 3) throw this.generateExecuteException("ERROR ForBlock with <"+children.length+"> child nodes");
+        // Create the entry variable and store it in symtab
+        String     entryVarName = ((ASTRcdBase)children[0]).getName();
+        VarContainer entryVarCont = ctx.getContainer(this, entryVarName);
+        VarArray entryVar = new VarArray();
+        entryVarCont.setInst(entryVar);
         
-        String     loopVarName = ((ASTRcdBase)children[0]).getName();
-        
+        // Get the array to iterate over
         ((ASTRcdBase)children[1]).execute(ctx);
-        VarBase     sourceVar = ctx.popVar(this);
+        VarContainer  sourceCont = ctx.popContainer(this);
         
+        // Check that there are statements to execute
         ASTRcdBase script = (ASTRcdBase) children[2];
         if (!(script.getName().contentEquals("ForScript"))) throw generateExecuteException("ERROR ForBlock cannot find script got <"+script.getName()+"><"+script.getClass().getName()+">");
 
-        if (sourceVar instanceof VarHashList) { // Iterate over HASH in HASHLIST
-            VarHashList varHashList = (VarHashList) sourceVar;
+        // Iterate over elements in ARRAY
+        if (sourceCont.getType() == VarType.ARRAY) { 
+            VarArray array = (VarArray)sourceCont.getInst();
 
-            Iterator i = varHashList.hashList.iterator();
-            int n = 0;
-            while(i.hasNext()) {
-                ctx.blockStart();
-                VarHash hash = (VarHash)i.next();
-                ctx.declVar(this, loopVarName, hash);
-                scriptRet = script.execute(ctx);
-                ctx.blockEnd();
-                n++;
-                if (scriptRet == ExecResult.BREAK_LOOP) break;
-                if (scriptRet == ExecResult.RETURN_PROC) { execRet = scriptRet; break;}
-                if (scriptRet == ExecResult.EXIT_PROGRAM) { execRet = scriptRet; break;}
-            }
+            // Populate entry variable with key container
+            VarContainer keyCont = new VarContainer();
+            VarKeyContainer varKeyCont = new VarKeyContainer("key", keyCont);
+            entryVar.hash.put("key", varKeyCont);
             
-        } else if (sourceVar instanceof VarValArray) { // Iterate over VALUE in VALARRAY
-            VarValArray varValArray = (VarValArray) sourceVar;
+            // Populate entry variable with value container
+            VarContainer valCont = new VarContainer();
+            VarKeyContainer varValCont = new VarKeyContainer("val", valCont);
+            entryVar.hash.put("val", varValCont);
 
-            for (int i = 0; i < varValArray.size(); i++) {
-                ctx.blockStart();
-                VarBase valueElem = varValArray.getValue(i);
-                ctx.declVar(this, loopVarName, valueElem);
+            Iterator i = array.hash.entrySet().iterator();
+            while(i.hasNext()) {
+                HashMap.Entry pair  = (HashMap.Entry)i.next();
+
+                // Update key info in entry variable
+                String key = (String)pair.getKey();
+                keyCont.setInst(new VarString(key));
+
+                // Update value info in entry variable
+                VarKeyContainer value = (VarKeyContainer)pair.getValue();
+                valCont.setInst(value.getContainer().getInst());
+                
                 scriptRet = script.execute(ctx);
-                ctx.blockEnd();
+
                 if (scriptRet == ExecResult.BREAK_LOOP) break;
                 if (scriptRet == ExecResult.RETURN_PROC) { execRet = scriptRet; break;}
                 if (scriptRet == ExecResult.EXIT_PROGRAM) { execRet = scriptRet; break;}
             }
             
         } else {
-            throw this.generateExecuteException("ERROR ForBlock cannot iterate over var type <"+sourceVar.getTypeString()+">");
+            throw this.generateExecuteException("ERROR ForBlock cannot iterate over var type <"+sourceCont.getTypeString()+">");
         }
         
         return execRet;

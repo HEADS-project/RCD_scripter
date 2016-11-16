@@ -17,6 +17,7 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarValueBool;
 
 public class ASTRcdIfBlock extends ASTRcdBase {
@@ -33,53 +34,43 @@ public class ASTRcdIfBlock extends ASTRcdBase {
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret = ExecResult.NORMAL;
         ASTRcdBase c = null;
-        VarValueBool test;
-        if (children != null) {
-            switch (children.length) {
-                case 2: // IF (test) script
-                    c = (ASTRcdBase) children[0];
-                    c.execute(ctx);
-                    test = ctx.popVarX(this, VarValueBool.class);
-                    if (test.getBool()) {
-                        c = (ASTRcdBase) children[1];
-                        if (c.getName().contentEquals("TrueScript")) {
-                            ctx.blockStart();
-                            ret = c.execute(ctx);
-                            ctx.blockEnd();
-                        } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
-                        }
-                    }
-                    break;
-                case 3: // IF (test) script ELSE script
-                    c = (ASTRcdBase) children[0];
-                    c.execute(ctx);
-                    test = ctx.popVarX(this, VarValueBool.class);
-                    if (test.getBool()) {
-                        c = (ASTRcdBase) children[1];
-                        if (c.getName().contentEquals("TrueScript")) {
-                            ctx.blockStart();
-                            ret = c.execute(ctx);
-                            ctx.blockEnd();
-                        } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
-                        }
+        VarContainer test;
+        switch (numChildren()) {
+            case 2: // IF (test) script
+                c = (ASTRcdBase) children[0];
+                c.execute(ctx);
+                test = ctx.popContainer(this);
+                if (test.boolVal()) {
+                    c = (ASTRcdBase) children[1];
+                    if (c.getName().contentEquals("TrueScript")) {
+                        ret = c.execute(ctx);
                     } else {
-                        c = (ASTRcdBase) children[2];
-                        if (c.getName().contentEquals("FalseScript")) {
-                            ctx.blockStart();
-                            ret = c.execute(ctx);
-                            ctx.blockEnd();
-                        } else {
-                            throw generateExecuteException("ERROR IfBlock cannot find false-script got <"+c.getName()+"><"+c.getClass().getName()+">");
-                        }
+                        throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
                     }
-                    break;
-                default:
-                    throw generateExecuteException("ERROR IfBlock with <"+children.length+"> child nodes");
-            }
-        } else {
-            throw generateExecuteException("ERROR IfBlock without parameters");
+                }
+                break;
+            case 3: // IF (test) script ELSE script
+                c = (ASTRcdBase) children[0];
+                c.execute(ctx);
+                test = ctx.popContainer(this);
+                if (test.boolVal()) {
+                    c = (ASTRcdBase) children[1];
+                    if (c.getName().contentEquals("TrueScript")) {
+                        ret = c.execute(ctx);
+                    } else {
+                        throw generateExecuteException("ERROR IfBlock cannot find true-script got <"+c.getName()+"><"+c.getClass().getName()+">");
+                    }
+                } else {
+                    c = (ASTRcdBase) children[2];
+                    if (c.getName().contentEquals("FalseScript")) {
+                        ret = c.execute(ctx);
+                    } else {
+                        throw generateExecuteException("ERROR IfBlock cannot find false-script got <"+c.getName()+"><"+c.getClass().getName()+">");
+                    }
+                }
+                break;
+            default:
+                throw generateExecuteException("ERROR IfBlock with <"+numChildren()+"> child nodes");
         }
         return ret;
     }

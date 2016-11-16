@@ -17,7 +17,10 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarHash;
+import org.thingml.rcd_scripter3.variables.VarArray;
+import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarBase.VarType;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarKeyContainer;
 
 public class ASTRcdArrayVal extends ASTRcdBase {
@@ -33,21 +36,19 @@ public class ASTRcdArrayVal extends ASTRcdBase {
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret = ExecResult.NORMAL;
-        VarHash hash = new VarHash();
-        VarKeyContainer kv;
+        VarArray  totArray = new VarArray();
         
-        if (children != null) {
-            for (int i = 0; i < children.length; ++i) {
-                ASTRcdBase c = (ASTRcdBase) children[i];
-                ret = c.execute(ctx);
-                kv = ctx.popVarX(this, VarKeyContainer.class);
-                hash.addKeyValue(kv);
-                
-                if (ret != ExecResult.NORMAL) break;
-            }
+        for (int i = 0; i < numChildren(); ++i) {
+            ASTRcdBase c = (ASTRcdBase) children[i];
+            ret = c.execute(ctx);
+            VarContainer addCont = ctx.popContainer(this);
+            if (addCont.getType() != VarType.ARRAY) throw c.generateExecuteException("ERROR found type <"+addCont.getTypeString()+"> expected ARRAY");
+            totArray.addArray((VarArray)addCont.getInst());
+
+            if (ret != ExecResult.NORMAL) break;
         }
         
-        ctx.pushContainer(hash);
+        ctx.pushContainer(new VarContainer (totArray));
         return ret;
     }
     

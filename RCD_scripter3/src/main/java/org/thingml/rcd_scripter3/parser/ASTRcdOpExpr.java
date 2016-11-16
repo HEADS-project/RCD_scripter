@@ -18,6 +18,7 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdOpExpr extends ASTRcdBase {
@@ -60,13 +61,13 @@ public class ASTRcdOpExpr extends ASTRcdBase {
             } else if (image.contentEquals(">=")==true) {
                 operation = VarValueBase.Operation.GTE;
 
-            } else if (image.contentEquals("LTE")==true) {
+            } else if (image.contentEquals("<=")==true) {
                 operation = VarValueBase.Operation.LTE;
 
             } else if (image.contentEquals("!=")==true) {
                 operation = VarValueBase.Operation.NOTEQUAL;
 
-            } 
+            }
         }        
     }
 
@@ -75,15 +76,15 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         ExecResult ret;
 
         ret = executeChildren(ctx);
-        VarBase rightValue = ctx.popVar(this);
-        VarBase leftValue = ctx.popVar(this);
+        VarContainer rightCont = ctx.popContainer(this);
+        VarContainer leftCont = ctx.popContainer(this);
  
         calcOperation();
         if (operation == null) {
             throw generateExecuteException("Operation <"+getName()+"> is not supported on Values");
         }        
-        VarValueBase result = VarValueBase.doOperation(this, leftValue, operation, rightValue);
-        ctx.pushVar(result);
+        VarBase result = VarBase.doOperation(this, leftCont.getInst(), operation, rightCont.getInst());
+        ctx.pushContainer(new VarContainer(result));
         return ret;
     }
     

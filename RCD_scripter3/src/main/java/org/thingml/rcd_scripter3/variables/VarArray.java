@@ -38,7 +38,7 @@ import org.thingml.rcd_scripter3.proc.CallMethod;
  */
 public class VarArray extends VarBase implements Cloneable{
 
-    private HashMap<String, VarKeyContainer> hash = new HashMap<String, VarKeyContainer>();
+    public HashMap<String, VarKeyContainer> hash = new HashMap<String, VarKeyContainer>();
     private HashMap<String, VarKeyContainer> defaultElemHash = new HashMap<String, VarKeyContainer>();
 
     public VarArray() {
@@ -140,11 +140,11 @@ public class VarArray extends VarBase implements Cloneable{
         return ret;
     }
     
-    public void addKeyContainer(VarKeyContainer kc){
+    private void addKeyContainer(VarKeyContainer kc){
         hash.put(kc.getKey(), kc);
     }    
     
-    public VarKeyContainer getKeyContainer(String key){
+    private VarKeyContainer getKeyContainer(String key){
         return hash.get(key);
     }    
     
