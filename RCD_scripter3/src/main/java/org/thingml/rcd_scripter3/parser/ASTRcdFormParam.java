@@ -17,15 +17,14 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarId;
 
-public class ASTRcdParam extends ASTRcdBase {
+public class ASTRcdFormParam extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdParam(int id) {
+    public ASTRcdFormParam(int id) {
       super(id);
     }
 

@@ -381,7 +381,6 @@ void Index() #RcdIndex:
     Token t;
 }
 {
-}
 	t = <OABRA>
         ExprNode()
 	<CABRA>
@@ -396,7 +395,6 @@ void Assign() #RcdAssign:
     Token t;
 }
 {
-}
 	t = <ASSIGN>
     {
         jjtThis.setName(t.image);
@@ -411,7 +409,6 @@ void CallMethod(boolean returnValue) #RcdCallMethod :
 {
 }
 {
-}
     <PERIOD>
     { 
         jjtThis.setToken(token); 
@@ -461,21 +458,71 @@ void ExitStmt() #RcdExitStmt :
     )?
 }
 
-// ************* Comparison grammar ***************
+// ************* Expression grammar ***************
 
-void CmpExprNode() #RcdNode :
+void ExprNode() #RcdNode :
 {
 }
 {
-    { jjtThis.setName("CmpExprNode"); }
-	CmpExpr()
+    { jjtThis.setName("ExprNode"); }
+	OrExpr()
+}
+
+void OrExpr() : 
+{
+}
+{
+    AndExpr() 
+	( 
+		OrExprFollow() 
+	)?
+}
+
+void OrExprFollow() #RcdOpExpr : 
+{
+    Token t;
+}
+{
+	( 
+		t = <OR>
+	) 
+	AndExpr() 
+	{
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+}
+
+void AndExpr() : 
+{
+}
+{
+    CmpExpr() 
+	( 
+		AndExprFollow() 
+	)?
+}
+
+void AndExprFollow() #RcdOpExpr : 
+{
+    Token t;
+}
+{
+	( 
+		t = <AND>
+	) 
+	CmpExpr() 
+	{
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void CmpExpr() : 
 {
 }
 {
-    Expr() 
+    AddExpr() 
 	( 
 		CmpExprFollow() 
 	)?
@@ -499,34 +546,24 @@ void CmpExprFollow() #RcdOpExpr :
 		|
 		t = <NOTEQUAL>
 	) 
-	Expr() 
+	AddExpr() 
 	{
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-// ************* Expression grammar ***************
-
-void ExprNode() #RcdNode :
+void AddExpr() : 
 {
 }
 {
-    { jjtThis.setName("ExprNode"); }
-	Expr()
-}
-
-void Expr() : 
-{
-}
-{
-    TermExpr() 
+    MulExpr() 
 	( 
-		ExprFollow() 
+		AddExprFollow() 
 	)*
 }
 
-void ExprFollow() #RcdOpExpr: 
+void AddExprFollow() #RcdOpExpr: 
 {
     Token t;
 }
@@ -536,24 +573,24 @@ void ExprFollow() #RcdOpExpr:
         |
         t = <MINUS>
     ) 
-    TermExpr() 
+    MulExpr() 
     {
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-void TermExpr() : 
+void MulExpr() : 
 {
 }
 {
-    Factor() 
+    UnaryExpr() 
 	( 
-        TermExprFollow()
+        MulExprFollow()
 	)*
 }
 
-void TermExprFollow() #RcdOpExpr: 
+void MulExprFollow() #RcdOpExpr: 
 {
     Token t;
 }
@@ -563,36 +600,55 @@ void TermExprFollow() #RcdOpExpr:
         |
         t = <DIV>
     ) 
-    Factor() 
+    UnaryExpr() 
     {
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-void Factor() : {}
+void UnaryExpr() : 
 {
-  <OBRA> Expr() <CBRA> 
-  |
-  LOOKAHEAD(Id() <OBRA>) 
-  CallProc(true)
-  |
-  LOOKAHEAD(Var() <PERIOD>) 
-  CallVarMethod(true)
-  |
-  Var() 
-  | 
-  Id() 
-  | 
-  String()
-  |
-  IntNum()
-  |
-  Bool()
-//  |
-//  FloatNum()
-  |
-  Hash()
+}
+{
+    (
+        (
+            <PLUS>
+            |
+            <MINUS>
+        )? 
+    ) #RcdOpExpr(>1)
+
+    PrimExprPrefix()
+    PrimExprSuffix()
+}
+
+void PrimExprPrefix() : 
+{
+}
+{
+    <OBRA> ExprNode() <CBRA> 
+    |
+    LOOKAHEAD(Id() <OBRA>) 
+    CallProc(true)
+    |
+    Literal()
+    |
+    Var() 
+    | 
+    Id() 
+}
+
+void PrimExprSuffix() : 
+{
+}
+{
+    (
+        Index()
+    )*
+    (
+        CallMethod(true)
+    )?
 }
 
 void Var() #RcdVar:
@@ -619,7 +675,24 @@ void Id() #RcdId :
     }
 }
 
-void String() #RcdString :
+// ************* Literal value grammar ***************
+
+void Literal() : 
+{
+}
+{
+    StringVal()
+    |
+    IntVal()
+    |
+    BoolVal()
+    //  |
+    //  RealVal()
+    |
+    ArrayVal()
+}
+
+void StringVal() #RcdStringVal :
 {
     Token t;
 }
@@ -631,7 +704,7 @@ void String() #RcdString :
     }
 }
 
-void IntNum() #RcdIntNum :
+void IntVal() #RcdIntVal :
 {
     Token t;
 }
@@ -647,7 +720,7 @@ void IntNum() #RcdIntNum :
     }
 }
 
-void Bool() #RcdBool :
+void BoolVal() #RcdBoolVal :
 {
     Token t;
 }
@@ -663,7 +736,7 @@ void Bool() #RcdBool :
     }
 }
 
-void FloatNum() #RcdFloatNum :
+void RealVal() #RcdRealVal :
 {
     Token t;
 }
@@ -675,24 +748,22 @@ void FloatNum() #RcdFloatNum :
     }
 }
 
-// ************* HASH grammar ***************
-
-void Hash() #RcdHash :
+void ArrayVal() #RcdArrayVal :
 {
 }
 {
-  (
-    <OCBRA> 
-    {
-        jjtThis.setToken(token); 
-    }
-	Tupl()
-	( 
-	    <COMMA>
-		Tupl()
-	)*
-    <CCBRA> 
-  ) 
+    (
+        <OCBRA> 
+        {
+            jjtThis.setToken(token); 
+        }
+        Tupl()
+        ( 
+            <COMMA>
+            Tupl()
+        )*
+        <CCBRA> 
+    ) 
 }
 
 void Tupl() : 
@@ -700,13 +771,13 @@ void Tupl() :
 }
 {
     (
-        Expr()
+        ExprNode()
         (
             <COLON>
                 {
                     jjtThis.setToken(token); 
                 }
-            Expr() 
+            ExprNode() 
         )?
     ) #RcdTupl(>1)
 }

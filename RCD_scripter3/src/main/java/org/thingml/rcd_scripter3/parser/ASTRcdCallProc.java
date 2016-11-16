@@ -19,7 +19,7 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarId;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 public class ASTRcdCallProc extends ASTRcdBase {
 
@@ -39,35 +39,31 @@ public class ASTRcdCallProc extends ASTRcdBase {
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret;
-        int baseStackSize = ctx.getVarStackSize();
+        int baseStackSize = ctx.getContainerStackSize();
         
         ret = executeChildren(ctx);
         
-        int addedStackElems = ctx.getVarStackSize() - baseStackSize;
+        int addedStackElems = ctx.getContainerStackSize() - baseStackSize;
         int argNum = addedStackElems-1;
-        VarBase[] args = new VarBase[argNum];
+        VarContainer[] args = new VarContainer[argNum];
         for (int i = 0; i < argNum; i++) {
-            args[argNum - i - 1] = ctx.popVar(this);
+            args[argNum - i - 1] = ctx.popContainer(this);
         }
         
-        VarId id = ctx.popVarX(this, VarId.class);
+        VarContainer id = ctx.popContainer(this);
 
         if (ret != ExecResult.NORMAL) return ret;
         
-        String procId = id.getString();
+        String procId = id.stringVal();
 
         ProcBaseIf proc = ctx.getProcBase(this, procId);
         if (proc != null) {
-            baseStackSize = ctx.getVarStackSize();
             ret = proc.executeProc(ctx, this, procId, args);
-            int retStackElems = ctx.getVarStackSize() - baseStackSize; // Does the proc return value
-            if (returnValue) {
-                if (retStackElems == 0) throw generateExecuteException("ERROR CallProc expected return value");
-            } else {
-                if (retStackElems > 0) ctx.popVar(this); // Remove from stack if not used by caller
+            if (!returnValue) {
+                ctx.popContainer(this); // Remove from stack if not used by caller
             }
         } else {
-            throw generateExecuteException("ERROR method <"+procId+"> is not defined");
+            throw generateExecuteException("ERROR proc <"+procId+"> is not defined");
         }
         return ret;
     }

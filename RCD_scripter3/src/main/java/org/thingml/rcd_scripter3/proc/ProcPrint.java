@@ -27,6 +27,7 @@ import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 /**
  *
@@ -44,21 +45,19 @@ public class ProcPrint implements ProcBaseIf {
         }
     }
     
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarBase[] args) throws ExecuteException {
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
         
         // Fetch params and push into symtab
         if (procId.equalsIgnoreCase("print")) {
             if (argNum == 1) {
-                VarBase arg = args[0];
-                System.out.print(arg.getString());
+                System.out.print(args[0].stringVal());
             } else {
                 throw callersBase.generateExecuteException("ERROR function print() accepts 1 arg given "+argNum+" arg(s)");
             }
         } else if (procId.equalsIgnoreCase("println")) {
             if (argNum == 1) {
-                VarBase arg = args[0];
-                System.out.println(arg.getString());
+                System.out.println(args[0].stringVal());
             } else if (argNum == 0) {
                 System.out.println();
             } else {
@@ -69,5 +68,8 @@ public class ProcPrint implements ProcBaseIf {
         }
         return ExecResult.NORMAL;
     }
-    
+
+    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer inst, VarContainer[] args) throws ExecuteException {
+        throw callersBase.generateExecuteException("ERROR procedure <print, println> cannot be called as method for <"+inst.getTypeString()+">");
+    }
 }

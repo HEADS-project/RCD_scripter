@@ -17,8 +17,10 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarArray;
 import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarKeyValue;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarKeyContainer;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdTupl extends ASTRcdBase {
@@ -36,12 +38,13 @@ public class ASTRcdTupl extends ASTRcdBase {
         ExecResult ret;
         
         ret = executeChildren(ctx);
-        VarValueBase val = ctx.popVarX(this, VarValueBase.class);
-        VarBase key = ctx.popVar(this);
+        VarContainer val = ctx.popContainer(this);
+        VarContainer key = ctx.popContainer(this);
         
-        VarKeyValue kv = new VarKeyValue(key.getString(), val);
+        VarKeyContainer kv = new VarKeyContainer(key.stringVal(), val);
+        VarContainer c = new VarContainer(new VarArray(kv));
         
-        ctx.pushVar(kv);
+        ctx.pushContainer(c);
         return ret;
     }
   

@@ -28,6 +28,7 @@ import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 /**
  *
@@ -56,7 +57,7 @@ public class ProcPrintf implements ProcBaseIf {
         }
     }
     
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarBase[] args) throws ExecuteException {
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
         
         // Fetch params and push into symtab
@@ -85,4 +86,7 @@ public class ProcPrintf implements ProcBaseIf {
         return ExecResult.NORMAL;
     }
     
+    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer inst, VarContainer[] args) throws ExecuteException {
+        throw callersBase.generateExecuteException("ERROR procedure <printf> cannot be called as method for <"+inst.getTypeString()+">");
+    }
 }

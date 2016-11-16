@@ -18,7 +18,8 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarValueInt;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
 public class ASTRcdExitStmt extends ASTRcdBase {
 
@@ -37,8 +38,9 @@ public class ASTRcdExitStmt extends ASTRcdBase {
             // Nothing to return
         } else if (numChildren() == 1){
             executeChildren(ctx);
-            VarBase exitVal = ctx.popVarX(this, VarValueInt.class);
-            ctx.assignVar(this, "exitVal", exitVal);
+            VarContainer exitVal = ctx.popContainer(this);
+            VarContainer symCon = ctx.getContainer(this, "exitVal");
+            symCon.setInst(exitVal.getInst());
         } else {
           throw generateExecuteException("ERROR exit() got <"+numChildren()+"> params expected 0 or 1");  
         }

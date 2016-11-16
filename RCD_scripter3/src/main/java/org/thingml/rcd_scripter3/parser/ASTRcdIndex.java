@@ -17,24 +17,32 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarId;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
-public class ASTRcdId extends ASTRcdBase {
+public class ASTRcdIndex extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdId(int id) {
+    public ASTRcdIndex(int id) {
       super(id);
     }
 
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
-        String image = getName();
-
-        ctx.pushVar(new VarId(image));
-        return ExecResult.NORMAL;
+        // Pop the container from stack, do index lookup an push result onto the stack
+        ExecResult ret = ExecResult.NORMAL;
+        
+        VarContainer vb = ctx.popContainer(this);
+        if (numChildren() == 1) {
+            ret = executeChildren(ctx);
+            VarContainer idx = ctx.popContainer(this);
+            VarContainer elem = vb.fetchFromIndex(this, idx);
+            ctx.pushContainer(elem);
+        } else {
+            throw generateExecuteException("ERROR Index got <"+numChildren()+"> children, expected 1.");
+        }
+        return ret;
     }
-
 }

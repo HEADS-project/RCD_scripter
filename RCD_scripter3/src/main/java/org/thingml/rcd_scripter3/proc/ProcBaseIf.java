@@ -25,12 +25,13 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
-import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 /**
  *
  * @author steffend
  */
 public interface ProcBaseIf {
-    ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarBase[] args) throws ExecuteException;
+    ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarContainer[] args) throws ExecuteException;
+    ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer inst, VarContainer[] args) throws ExecuteException;
 }

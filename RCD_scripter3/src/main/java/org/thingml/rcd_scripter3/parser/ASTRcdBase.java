@@ -85,6 +85,18 @@ public class ASTRcdBase extends SimpleNode {
         return new ExecuteException(token, message);
     }
 
+    /** Generate ExecuteException. */
+    public void printMessage(String message) {
+        String ret = message;
+        Token t = token;
+        if (t != null) {
+            ret += "\n Image:<"+t.image+"> beginline:"+t.beginLine+" beginColumn:"+t.beginColumn+" endLine:"+t.endLine+" endColumn:"+t.endColumn;
+        } else {
+            ret += "\n No token info available";
+        }
+        System.out.println(ret);
+    }
+
 
   /**
    * {@inheritDoc}

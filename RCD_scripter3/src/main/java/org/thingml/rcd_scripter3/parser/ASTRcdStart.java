@@ -17,7 +17,8 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarValueInt;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
 public class ASTRcdStart extends ASTRcdBase {
 
@@ -34,10 +35,12 @@ public class ASTRcdStart extends ASTRcdBase {
     }
 
     public int run (ExecuteContext ctx) throws ExecuteException {
-        ctx.declVar(this, "exitVal", new VarValueInt("0"));
+        VarContainer exitCon = ctx.getContainer(this, "exitVal");
+        exitCon.setInst(new VarInt("1"));
+
+        
         ExecResult execRes = executeChildren(ctx);
-        VarValueInt exitVal = ctx.getVarX(this, "exitVal", VarValueInt.class);
-        int ret = exitVal.getInt();
+        int ret = (int)exitCon.getInst().intVal();
         System.out.println("The script ended with exit code <"+ret+">");
         return ret;
     }

@@ -17,39 +17,36 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarHash;
-import org.thingml.rcd_scripter3.variables.VarKeyValue;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarString;
 
-public class ASTRcdHash extends ASTRcdBase {
+public class ASTRcdStringVal extends ASTRcdBase {
+    private final String CR = "\r";
+    private final String NL = "\n";
+    private final String TAB = "\t";
+    private final String QUOTE = "\"";
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdHash(int id) {
+    public ASTRcdStringVal(int id) {
       super(id);
     }
 
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
-        ExecResult ret = ExecResult.NORMAL;
-        VarHash hash = new VarHash();
-        VarKeyValue kv;
+        String image = getName();
+
+        image = image.substring(0, image.length()-1).substring(1);
+        image = image.replace("\\r", CR);
+        image = image.replace("\\n", NL);
+        image = image.replace("\\t", TAB);
+        image = image.replace("\\\"", QUOTE);
         
-        if (children != null) {
-            for (int i = 0; i < children.length; ++i) {
-                ASTRcdBase c = (ASTRcdBase) children[i];
-                ret = c.execute(ctx);
-                kv = ctx.popVarX(this, VarKeyValue.class);
-                hash.addKeyValue(kv);
-                
-                if (ret != ExecResult.NORMAL) break;
-            }
-        }
-        
-        ctx.pushVar(hash);
-        return ret;
+        ctx.pushContainer(new VarContainer (new VarString(image)));
+        return ExecResult.NORMAL;
     }
-    
+
 
 }

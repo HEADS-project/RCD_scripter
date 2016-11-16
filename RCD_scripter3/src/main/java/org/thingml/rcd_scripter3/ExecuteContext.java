@@ -43,7 +43,6 @@ public class ExecuteContext {
     private boolean trace = false;
     private SymbolTable symTab = new SymbolTable();
     //private Stack<Token> executingTokenStack = new Stack<Token>();
-    private Stack<VarBase> varStack = new Stack<VarBase>();
     private Stack<SymbolTable> symStack = new Stack<SymbolTable>();
 
     public boolean getTrace() {
@@ -116,109 +115,84 @@ public class ExecuteContext {
         symTab.declProc(name, newProc);
     }
     
-    public int getVarStackSize() {
-        return varStack.size();
+    public int getContainerStackSize() {
+        return symTab.getContainerStackSizeThisLevel();
     }
     
-    public void pushVar(VarBase v) {
-        varStack.push(v);
+    public void pushContainer(VarContainer c) {
+        symTab.pushContainerThisLevel(c);
     }
     
-    public VarBase popVar(ASTRcdBase b)  throws ExecuteException {
-        VarBase var = null;
-        try {
-            var = varStack.pop();
-        } catch (Exception ex) {
-            if (b != null) {
-                throw b.generateExecuteException("Error popVar failed : No value on stack.\n" + ex);
-            }
-        }
-        return var;
+    public VarContainer popContainer(ASTRcdBase b)  throws ExecuteException {
+        return symTab.popContainerThisLevel(b);
     }
     
-    public VarBase peekVar() {
-        return varStack.peek();
-    }
+//    public void declVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
+//        VarBase oldVar = symTab.getVarCheckThisLevel(name);
+//        if (oldVar != null) {
+//            throw b.generateExecuteException("Error variable <"+name+"> is already declared");
+//        }
+//        symTab.declVar(name, newVar);
+//    }
     
-    public void declVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
-        VarBase oldVar = symTab.getVarCheckThisLevel(name);
-        if (oldVar != null) {
-            throw b.generateExecuteException("Error variable <"+name+"> is already declared");
-        }
-        symTab.declVar(name, newVar);
-    }
-    
-    public void assignVar(ASTRcdBase b, String name, VarBase newVar)  throws ExecuteException {
-        VarBase oldVar = symTab.getVarCheckAllLevels(name);
-        if (oldVar != null) {
-            if (oldVar.getType() == newVar.getType()) {
-                // Ok
-            } else {
-                // It is different types
-                if (oldVar instanceof VarValueBase) {
-                    if (newVar instanceof VarValueBase) {
-                        // Ok
-                    } else {
-                        throw b.generateExecuteException("ERROR Expression of type <"+newVar.getType()+"> cannot be assigned to Var <"+name+"> of type <VALUE>");
-                    }
-                } else {
-                    throw b.generateExecuteException("ERROR Expression of type <"+newVar.getType()+"> cannot be assigned to Var <"+name+"> of type <"+oldVar.getType()+">");
-                }
-            }
-        } else {
-            throw b.generateExecuteException("Error variable <"+name+"> is not declared");
-        }
-        symTab.assignVar(name, newVar);
-    }
+//    public void assignVar(ASTRcdBase b, String name, VarContainer newCont)  throws ExecuteException {
+//        VarContainer oldCont = symTab.getContainerCheckThisLevel(name);
+//        if (oldCont != null) {
+//            oldCont.setInst(newCont.getInst());
+//        } else {
+//            symTab.putContainer(name, newCont);
+//        }
+//    }
     
 //    public void addVarSilent(String name, VarBase var) {
 //        varList.put(name, var);
 //    }
 
-    public String getVarName(VarBase obj){
-        return symTab.getVarName(obj);
-    }
+//    public String getVarName(VarBase obj){
+//        return symTab.getVarName(obj);
+//    }
     
-    public VarBase getVarBase(ASTRcdBase b, String name)  throws ExecuteException {
-        VarBase var = symTab.getVarCheckAllLevels(name);
+    public VarContainer getContainer(ASTRcdBase b, String name)  throws ExecuteException {
+        VarContainer var = symTab.getContainerCheckThisLevel(name);
         if (var == null) {
-            throw b.generateExecuteException("Error variable <"+name+"> is not defined");
+            var = new VarContainer();
+            symTab.putContainer(name, var);
         }
         return var;
     }
     
-    public VarBase getVarBaseSilent(String name) {
-        VarBase var = symTab.getVarCheckAllLevels(name);
-        return var;
-    }
+//    public VarBase getVarBaseSilent(String name) {
+//        VarBase var = symTab.getVarCheckAllLevels(name);
+//        return var;
+//    }
     
-    public <T> T popVarX(ASTRcdBase b, Class test) throws ExecuteException {
-        VarBase var = null;
-        
-        var = popVar(b);
+//    public <T> T popVarX(ASTRcdBase b, Class test) throws ExecuteException {
+//        VarBase var = null;
+//        
+//        var = popContainer(b);
+//
+//        if (var != null) {
+//            if (!test.isAssignableFrom(var.getClass())) {
+//                throw b.generateExecuteException("Error popVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
+//            }
+//        }
+//        return (T)var;
+//    }
 
-        if (var != null) {
-            if (!test.isAssignableFrom(var.getClass())) {
-                throw b.generateExecuteException("Error popVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
-            }
-        }
-        return (T)var;
-    }
-
-    public <T> T getVarX(ASTRcdBase b, String name, Class test) throws ExecuteException {
-        VarBase var = getVarBase(b, name);
-
-        if (var != null) {
-            if (!test.isAssignableFrom(var.getClass())) {
-                throw b.generateExecuteException("Error getVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
-            }
-        }
-        return (T)var;
-    }
+//    public <T> T getVarX(ASTRcdBase b, String name, Class test) throws ExecuteException {
+//        VarBase var = getContainer(b, name);
+//
+//        if (var != null) {
+//            if (!test.isAssignableFrom(var.getClass())) {
+//                throw b.generateExecuteException("Error getVarX failed : Got " + var.getTypeString() + " cannot be cast to " + test.getName()+"\n"+var.printString());
+//            }
+//        }
+//        return (T)var;
+//    }
 
     public String printStringAll() {
         String ret = "<ExecuteContext() \n";
-        ret += symTab.printStringAll();
+        ret += symTab.printString();
         ret += ">\n";
 
         return ret;

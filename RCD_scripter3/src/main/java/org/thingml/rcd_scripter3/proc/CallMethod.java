@@ -27,7 +27,7 @@ import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarValueBool;
-import org.thingml.rcd_scripter3.variables.VarValueInt;
+import org.thingml.rcd_scripter3.variables.VarInt;
 import org.thingml.rcd_scripter3.variables.VarValueString;
 
 /**
@@ -74,13 +74,13 @@ public class CallMethod {
         }
         if (ret != null) {
             if (VarBase.class.isAssignableFrom(ret.getClass())) {
-                ctx.pushVar((VarBase)ret); // Return value
+                ctx.pushContainer((VarBase)ret); // Return value
             } else if(ret instanceof Boolean) {
-                ctx.pushVar(new VarValueBool(""+ret)); // Return value
+                ctx.pushContainer(new VarValueBool(""+ret)); // Return value
             } else if(ret instanceof Integer) {
-                ctx.pushVar(new VarValueInt(""+ret)); // Return value
+                ctx.pushContainer(new VarInt(""+ret)); // Return value
             } else if(ret instanceof String) {
-                ctx.pushVar(new VarValueString(""+ret)); // Return value
+                ctx.pushContainer(new VarValueString(""+ret)); // Return value
             }
         }
     }

@@ -22,10 +22,11 @@ package org.thingml.rcd_scripter3;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
-import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 /**
  *
@@ -34,8 +35,10 @@ import org.thingml.rcd_scripter3.variables.VarBase;
 public class SymbolTable {
     private SymbolTable parentTable = null;
     private int level = 0;
-    private HashMap<String, VarBase> varList = new HashMap<String, VarBase>();
+    private HashMap<String, VarContainer> contList = new HashMap<String, VarContainer>();
     private HashMap<String, ProcBaseIf> procList = new HashMap<String, ProcBaseIf>();
+    
+    private Stack<VarContainer> containerStack = new Stack<VarContainer>();
     
     public SymbolTable createSubTable() {
         SymbolTable newTable = new SymbolTable();
@@ -78,66 +81,52 @@ public class SymbolTable {
         return ret;
     }    
 
-    public VarBase getVarCheckAllLevels(String name) {
-        // Search the hierarchy of symbol tables
-        VarBase ret = varList.get(name);
-        if (ret == null) {
-            // Not found in current table
-            if (parentTable != null) {
-                // Search parent
-                ret = parentTable.getVarCheckAllLevels(name);
-            }
-        }
+//    public VarBase getVarCheckAllLevels(String name) {
+//        // Search the hierarchy of symbol tables
+//        VarBase ret = varList.get(name);
+//        if (ret == null) {
+//            // Not found in current table
+//            if (parentTable != null) {
+//                // Search parent
+//                ret = parentTable.getVarCheckAllLevels(name);
+//            }
+//        }
+//        return ret;
+//    }    
+
+    public VarContainer getContainerCheckThisLevel(String name) {
+        // Only search current table
+        VarContainer ret = contList.get(name);
         return ret;
     }    
 
-    public VarBase getVarCheckThisLevel(String name) {
-        // Search the hierarchy of symbol tables
-        VarBase ret = varList.get(name);
-        return ret;
-    }    
-
-    public void declVar(String name, VarBase newVar) {
-        // Store in current symbol table
-        varList.put(name, newVar);
+    public void putContainer(String name, VarContainer newVar) {
+        // Store in current table
+        contList.put(name, newVar);
     }
 
-    public void assignVar(String name, VarBase newVar) {
-        // Store in symbol table where it is declared
-        VarBase currVal = varList.get(name);
-        if (currVal != null) {
-            varList.put(name, newVar);
-        } else {
-            // Not found in current table
-            if (parentTable != null) {
-                // Try parent
-                parentTable.assignVar(name, newVar);
-            }
-        }
-    }
-
-    public String getVarName(VarBase obj){
-        Iterator i = varList.entrySet().iterator();
-        while(i.hasNext()) {
-            HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarBase base = (VarBase)pair.getValue();
-            if (base == obj) {
-                return ""+pair.getKey();
-            }
-        }
-        if (parentTable != null) {
-            // Try parent
-            parentTable.getVarName(obj);
-        }
-        return "???";
-    }
+//    public String getVarName(VarBase obj){
+//        Iterator i = varList.entrySet().iterator();
+//        while(i.hasNext()) {
+//            HashMap.Entry pair = (HashMap.Entry)i.next();
+//            VarBase base = (VarBase)pair.getValue();
+//            if (base == obj) {
+//                return ""+pair.getKey();
+//            }
+//        }
+//        if (parentTable != null) {
+//            // Try parent
+//            parentTable.getVarName(obj);
+//        }
+//        return "???";
+//    }
     
-    public String printStringAll() {
+    public String printString() {
         String ret = "<SymbolTable("+level+") \n";
-        Iterator i = varList.entrySet().iterator();
+        Iterator i = contList.entrySet().iterator();
         while(i.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry)i.next();
-            VarBase base = (VarBase)pair.getValue();
+            VarContainer base = (VarContainer)pair.getValue();
             ret += "<Content of id("+pair.getKey()+")\n";
             if (base != null) {
                 ret += base.printString();
@@ -147,10 +136,27 @@ public class SymbolTable {
             ret += ">\n";
         }
         ret += ">\n";
-        if (parentTable != null) {
-            // Try parent
-            ret += parentTable.printStringAll();
-        }
         return ret;
     }
+    
+    public int getContainerStackSizeThisLevel() {
+        return containerStack.size();
+    }
+    
+    public void pushContainerThisLevel(VarContainer c) {
+        containerStack.push(c);
+    }
+    
+    public VarContainer popContainerThisLevel(ASTRcdBase b)  throws ExecuteException {
+        VarContainer var = null;
+        try {
+            var = containerStack.pop();
+        } catch (Exception ex) {
+            if (b != null) {
+                throw b.generateExecuteException("Error popContainerThisLevel failed : No value on stack.\n" + ex);
+            }
+        }
+        return var;
+    }
+    
 }

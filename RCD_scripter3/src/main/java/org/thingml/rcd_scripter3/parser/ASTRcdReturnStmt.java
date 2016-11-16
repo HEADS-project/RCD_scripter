@@ -18,6 +18,7 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
 public class ASTRcdReturnStmt extends ASTRcdBase {
 
@@ -36,8 +37,9 @@ public class ASTRcdReturnStmt extends ASTRcdBase {
             // Nothing to return
         } else if (numChildren() == 1){
             executeChildren(ctx);
-            VarBase retVal = ctx.popVar(this);
-            ctx.assignVar(this, "returnVal", retVal);
+            VarContainer retVal = ctx.popContainer(this);
+            VarContainer symCon = ctx.getContainer(this, "returnVal");
+            symCon.setInst(retVal.getInst());
         } else {
           throw generateExecuteException("ERROR return() got <"+numChildren()+"> params expected 0 or 1");  
         }

@@ -58,6 +58,7 @@ public class VarContainer implements Cloneable{
     
     public String printString() {return varInst.printString(); }
     public VarType getType() { return varInst.getType(); }
+    public String getTypeString() { return varInst.getTypeString(); }
 
     public long intVal() {return varInst.intVal(); }
     public double realVal() {return varInst.realVal(); }
@@ -71,9 +72,6 @@ public class VarContainer implements Cloneable{
     public boolean isString() {return varInst.isString(); }
     public boolean isArray() {return varInst.isArray(); }
     public boolean isObject() {return varInst.isObject(); }
-    
-
-    public String getTypeString() {return varInst.getTypeString(); }
     
     public VarContainer fetchFromIndex(ASTRcdBase b, VarContainer idx) throws ExecuteException  {
         return varInst.fetchFromIndex(b, idx); 

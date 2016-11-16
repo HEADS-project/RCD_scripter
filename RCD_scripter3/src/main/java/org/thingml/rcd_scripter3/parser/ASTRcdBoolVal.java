@@ -17,15 +17,16 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarValueBool;
+import org.thingml.rcd_scripter3.variables.VarBool;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 
-public class ASTRcdBool extends ASTRcdBase {
+public class ASTRcdBoolVal extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdBool(int id) {
+    public ASTRcdBoolVal(int id) {
       super(id);
     }
 
@@ -33,7 +34,7 @@ public class ASTRcdBool extends ASTRcdBase {
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         String image = getName();
 
-        ctx.pushVar(new VarValueBool(image));
+        ctx.pushContainer(new VarContainer (new VarBool(image)));
         return ExecResult.NORMAL;
     }
   

@@ -17,26 +17,17 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
-public class ASTRcdVar extends ASTRcdBase {
+public class ASTRcdRealVal extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdVar(int id) {
+    public ASTRcdRealVal(int id) {
       super(id);
     }
-    
-    @Override
-    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
-        // Fetch the container from symTab an push it onto the stack
-        ExecResult ret = ExecResult.NORMAL;
-        
-        VarContainer vb = ctx.getContainer( this, name);
-        ctx.pushContainer(vb);
-        return ret;
-    }
+
+  
 }

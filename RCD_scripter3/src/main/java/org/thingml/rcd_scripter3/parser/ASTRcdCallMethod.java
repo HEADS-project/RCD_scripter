@@ -17,24 +17,18 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
-import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarFile;
-import org.thingml.rcd_scripter3.variables.VarHash;
-import org.thingml.rcd_scripter3.variables.VarHashList;
-import org.thingml.rcd_scripter3.variables.VarId;
-import org.thingml.rcd_scripter3.variables.VarValArray;
-import org.thingml.rcd_scripter3.variables.VarValueBase;
-import org.thingml.rcd_scripter3.variables.VarValueInt;
-import org.thingml.rcd_scripter3.variables.VarValueString;
+import org.thingml.rcd_scripter3.proc.ProcBaseIf;
+import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
-public class ASTRcdCallVarMethod extends ASTRcdBase {
+public class ASTRcdCallMethod extends ASTRcdBase {
 
     private boolean returnValue = false;
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdCallVarMethod(int id) {
+    public ASTRcdCallMethod(int id) {
       super(id);
     }
 
@@ -45,31 +39,32 @@ public class ASTRcdCallVarMethod extends ASTRcdBase {
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret;
-        int baseStackSize = ctx.getVarStackSize();
+        VarContainer var = ctx.popContainer(this);
+        int baseStackSize = ctx.getContainerStackSize();
         
         ret = executeChildren(ctx);
         
-        int addedStackElems = ctx.getVarStackSize() - baseStackSize;
-        int argNum = addedStackElems-2;
-        VarBase[] args = new VarBase[argNum];
+        int addedStackElems = ctx.getContainerStackSize() - baseStackSize;
+        int argNum = addedStackElems-1;
+        VarContainer[] args = new VarContainer[argNum];
         for (int i = 0; i < argNum; i++) {
-            args[argNum - i - 1] = ctx.popVar(this);
+            args[argNum - i - 1] = ctx.popContainer(this);
         }
         
-        VarId id = ctx.popVarX(this, VarId.class);
-        VarBase var = ctx.popVar(this);
-        
+        VarContainer id = ctx.popContainer(this);
+
         if (ret != ExecResult.NORMAL) return ret;
 
-        String methodId = id.getString();
+        String methodId = var.getType().toString() +":"+ id.stringVal();
 
-        baseStackSize = ctx.getVarStackSize();
-        ret = var.executeProc(ctx, this, methodId, args);
-        int retStackElems = ctx.getVarStackSize() - baseStackSize; // Does the proc return value
-        if (returnValue) {
-            if (retStackElems == 0) throw generateExecuteException("ERROR CallVarMethod expected return value");
+        ProcBaseIf method = ctx.getProcBase(this, methodId);
+        if (method != null) {
+            ret = method.executeMethod(ctx, this, var, args);
+            if (!returnValue) {
+                ctx.popContainer(this); // Remove from stack if not used by caller
+            }
         } else {
-            if (retStackElems > 0) ctx.popVar(this); // Remove from stack if not used by caller
+            throw generateExecuteException("ERROR method <"+methodId+"> is not defined");
         }
 
         return ret;

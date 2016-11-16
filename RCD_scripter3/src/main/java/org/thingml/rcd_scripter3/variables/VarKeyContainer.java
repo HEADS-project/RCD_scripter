@@ -24,47 +24,40 @@ package org.thingml.rcd_scripter3.variables;
  *
  * @author steffend
  */
-public class VarKeyValue extends VarBase {
+public class VarKeyContainer implements Cloneable{
  
     protected String key;
-    protected VarValueBase value;
+    protected VarContainer container;
     
-    public VarKeyValue(String id, VarValueBase value) {
+    public VarKeyContainer(String id, VarContainer value) {
         this.key = id;
-        this.value = value;
+        this.container = value;
     }
 
     public String getKey() {
         return key;
     }
     
-    public VarValueBase getValue() {
-        return value;
+    public VarContainer getContainer() {
+        return container;
     }
     
-    public String getString() {
-        String ret = key + ":" + value.getString();
+    public String stringVal() {
+        String ret = key + ":" + container.stringVal();
         return ret;
     }
-    
+
     @Override
+    protected VarKeyContainer clone() throws CloneNotSupportedException {
+        return new VarKeyContainer(key, container.clone());
+    }    
+        
     public String getTypeString() {
-        return "KeyValue:" + getString();
+        return "KeyValue:" + stringVal();
     }
 
-    @Override
-    public VarType getType() {
-        return VarType.KEYVALUE;
-    }
-    
-    @Override
     public String printString(){
-        String ret = key+":"+value.printString();
+        String ret = key+":"+container.printString();
         return ret;
     }
-
-    public boolean compareTypeAndVal(VarKeyValue keyvalue_other) {
-        return value.compareTypeAndVal(keyvalue_other.value);
-    }
-    
 }

@@ -55,6 +55,11 @@ public class VarArray extends VarBase implements Cloneable{
         addKeyContainer(new VarKeyContainer("0", new VarContainer(convertToArray)));
     }
 
+    public VarArray(VarKeyContainer copyFromKc) {
+        super("");
+        addKeyContainer(copyFromKc);
+    }
+
     //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
     
     public static void registerMethods()throws Exception{

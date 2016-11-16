@@ -18,40 +18,32 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarValueBase;
 
-public class ASTRcdVarAssign extends ASTRcdBase {
+public class ASTRcdAssign extends ASTRcdBase {
 
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdVarAssign(int id) {
+    public ASTRcdAssign(int id) {
       super(id);
     }
     
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        // Expect the left container to be on top of the stack
+        // Execute the expression and assign the result to the container
+        VarContainer leftContainer = ctx.popContainer(this);
         ExecResult ret;
-        VarBase expr;
 
-        int baseStackSize = ctx.getVarStackSize();
-        ret = executeChildren(ctx);
-        int addedStackElems = ctx.getVarStackSize() - baseStackSize;
-
-        switch (addedStackElems) {
-            case 1: // No index, only expression
-                expr = ctx.popVar(this);
-                ctx.assignVar(this, name, expr);
-                break;
-            case 2: // Index and expression
-                VarBase vb = ctx.getVarBase( this, name);
-                expr = ctx.popVar(this);
-                VarBase idx = ctx.popVar(this);
-                vb.storeToIndex(this, idx, expr);
-                break;
-            default:
-                throw generateExecuteException("ERROR VarAssign statement got <"+addedStackElems+"> expressions, expected 1 or 2.");
+        if (numChildren() == 1) {
+            ret = executeChildren(ctx);
+            VarContainer rightContainer = ctx.popContainer(this);
+            leftContainer.setInst(rightContainer.getInst());
+        } else {
+            throw generateExecuteException("ERROR Assign got <"+numChildren()+"> children, expected 1.");
         }
         return ret;
     }
