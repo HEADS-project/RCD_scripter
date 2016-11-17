@@ -36,7 +36,7 @@ public class ASTRcdStart extends ASTRcdBase {
 
     public int run (ExecuteContext ctx) throws ExecuteException {
         VarContainer exitCon = ctx.getContainer(this, "exitVal");
-        exitCon.setInst(new VarInt("1"));
+        exitCon.setInst(new VarInt("0"));
 
         
         ExecResult execRes = executeChildren(ctx);

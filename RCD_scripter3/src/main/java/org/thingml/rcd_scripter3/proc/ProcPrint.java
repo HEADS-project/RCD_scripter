@@ -28,6 +28,7 @@ import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
 /**
  *
@@ -66,6 +67,7 @@ public class ProcPrint implements ProcBaseIf {
         } else {
             callersBase.generateExecuteException("ERROR procedure <"+procId+"> is not defined expected <print, println>");
         }
+        ctx.pushContainer(new VarContainer( new VarInt("0")));
         return ExecResult.NORMAL;
     }
 

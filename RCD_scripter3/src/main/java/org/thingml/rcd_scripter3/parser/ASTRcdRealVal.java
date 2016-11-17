@@ -17,7 +17,9 @@
 package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarInt;
+import org.thingml.rcd_scripter3.variables.VarReal;
 
 public class ASTRcdRealVal extends ASTRcdBase {
 
@@ -29,5 +31,12 @@ public class ASTRcdRealVal extends ASTRcdBase {
       super(id);
     }
 
+    @Override
+    public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
+        String image = getName();
+
+        ctx.pushContainer(new VarContainer (new VarReal(image)));
+        return ExecResult.NORMAL;
+    }
   
 }

@@ -121,6 +121,12 @@ abstract public class VarBase implements Cloneable{
             case LTE:
                 newValue = doOperationLTE(varLeft, varRight);
                 break;
+            case AND:
+                newValue = doOperationAND(varLeft, varRight);
+                break;
+            case OR:
+                newValue = doOperationOR(varLeft, varRight);
+                break;
             default:
                 throw b.generateExecuteException("ERROR operation<"+op+"> is not supported");
         }
@@ -136,8 +142,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                long resultInt = varLeft.intVal() + varRight.intVal();
-                newValue = new VarInt(""+resultInt);
+                if (varRight.getType() != VarType.REAL) {
+                    long resultInt = varLeft.intVal() + varRight.intVal();
+                    newValue = new VarInt(""+resultInt);
+                } else {
+                    double resultReal = varLeft.realVal() + varRight.realVal();
+                    newValue = new VarReal(""+resultReal);
+                }
                 break;
             case REAL: 
                 double resultReal = varLeft.realVal() + varRight.realVal();
@@ -167,8 +178,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                long resultInt = varLeft.intVal() - varRight.intVal();
-                newValue = new VarInt(""+resultInt);
+                if (varRight.getType() != VarType.REAL) {
+                    long resultInt = varLeft.intVal() - varRight.intVal();
+                    newValue = new VarInt(""+resultInt);
+                } else {
+                    double resultReal = varLeft.realVal() - varRight.realVal();
+                    newValue = new VarReal(""+resultReal);
+                }
                 break;
             case REAL: 
                 double resultReal = varLeft.realVal() - varRight.realVal();
@@ -198,8 +214,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                resultBool = varLeft.intVal() == varRight.intVal();
-                newValue = new VarBool(""+resultBool);
+                if (varRight.getType() != VarType.REAL) {
+                    resultBool = varLeft.intVal() == varRight.intVal();
+                    newValue = new VarBool(""+resultBool);
+                } else {
+                    resultBool = varLeft.realVal() == varRight.realVal();
+                    newValue = new VarBool(""+resultBool);
+                }
                 break;
             case REAL: 
                 resultBool = varLeft.realVal() == varRight.realVal();
@@ -238,8 +259,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                long resultInt = varLeft.intVal() * varRight.intVal();
-                newValue = new VarInt(""+resultInt);
+                if (varRight.getType() != VarType.REAL) {
+                    long resultInt = varLeft.intVal() * varRight.intVal();
+                    newValue = new VarInt(""+resultInt);
+                } else {
+                    double resultReal = varLeft.realVal() * varRight.realVal();
+                    newValue = new VarReal(""+resultReal);
+                }
                 break;
             case REAL: 
                 double resultReal = varLeft.realVal() * varRight.realVal();
@@ -258,8 +284,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                long resultInt = varLeft.intVal() / varRight.intVal();
-                newValue = new VarInt(""+resultInt);
+                if (varRight.getType() != VarType.REAL) {
+                    long resultInt = varLeft.intVal() / varRight.intVal();
+                    newValue = new VarInt(""+resultInt);
+                } else {
+                    double resultReal = varLeft.realVal() / varRight.realVal();
+                    newValue = new VarReal(""+resultReal);
+                }
                 break;
             case REAL: 
                 double resultReal = varLeft.realVal() / varRight.realVal();
@@ -279,8 +310,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                resultBool = varLeft.intVal() > varRight.intVal();
-                newValue = new VarBool(""+resultBool);
+                if (varRight.getType() != VarType.REAL) {
+                    resultBool = varLeft.intVal() > varRight.intVal();
+                    newValue = new VarBool(""+resultBool);
+                } else {
+                    resultBool = varLeft.realVal() > varRight.realVal();
+                    newValue = new VarBool(""+resultBool);
+                }
                 break;
             case REAL: 
                 resultBool = varLeft.realVal() > varRight.realVal();
@@ -304,8 +340,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                resultBool = varLeft.intVal() < varRight.intVal();
-                newValue = new VarBool(""+resultBool);
+                if (varRight.getType() != VarType.REAL) {
+                    resultBool = varLeft.intVal() < varRight.intVal();
+                    newValue = new VarBool(""+resultBool);
+                } else {
+                    resultBool = varLeft.realVal() < varRight.realVal();
+                    newValue = new VarBool(""+resultBool);
+                }
                 break;
             case REAL: 
                 resultBool = varLeft.realVal() < varRight.realVal();
@@ -329,8 +370,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                resultBool = varLeft.intVal() >= varRight.intVal();
-                newValue = new VarBool(""+resultBool);
+                if (varRight.getType() != VarType.REAL) {
+                    resultBool = varLeft.intVal() >= varRight.intVal();
+                    newValue = new VarBool(""+resultBool);
+                } else {
+                    resultBool = varLeft.realVal() >= varRight.realVal();
+                    newValue = new VarBool(""+resultBool);
+                }
                 break;
             case REAL: 
                 resultBool = varLeft.realVal() >= varRight.realVal();
@@ -354,8 +400,13 @@ abstract public class VarBase implements Cloneable{
 
         switch (varLeft.getType()) {
             case INT:
-                resultBool = varLeft.intVal() <= varRight.intVal();
-                newValue = new VarBool(""+resultBool);
+                if (varRight.getType() != VarType.REAL) {
+                    resultBool = varLeft.intVal() <= varRight.intVal();
+                    newValue = new VarBool(""+resultBool);
+                } else {
+                    resultBool = varLeft.realVal() <= varRight.realVal();
+                    newValue = new VarBool(""+resultBool);
+                }
                 break;
             case REAL: 
                 resultBool = varLeft.realVal() <= varRight.realVal();
@@ -369,6 +420,42 @@ abstract public class VarBase implements Cloneable{
         }
         if (newValue != null) {
             newValue.setOperationImage("("+varLeft.getOperationImage()+")<=("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationOR(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+            case REAL: 
+            case BOOL: 
+                resultBool = varLeft.boolVal() || varRight.boolVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+") OR ("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationAND(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+            case REAL: 
+            case BOOL: 
+                resultBool = varLeft.boolVal() && varRight.boolVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+") AND ("+varRight.getOperationImage()+")");
         }
         return newValue;
     }

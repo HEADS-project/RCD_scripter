@@ -609,19 +609,27 @@ void MulExprFollow() #RcdOpExpr:
 
 void UnaryExpr() : 
 {
-    Token t;
+    Token t = null;
 }
 {
     (
         (
-            t = <PLUS>
+            (
+                t = <PLUS>
+                {
+                    jjtThis.setName("u"+t.image);
+                    jjtThis.setToken(t); 
+                }
+            )
             |
-            t = <MINUS>
+            (
+                t = <MINUS>
+                {
+                    jjtThis.setName("u"+t.image);
+                    jjtThis.setToken(t); 
+                }
+            )
         )? 
-        {
-            jjtThis.setName("u"+t.image);
-            jjtThis.setToken(t); 
-        }
     ) #RcdOpExpr(>1)
 
     PrimExprPrefix()
@@ -691,8 +699,8 @@ void Literal() :
     IntVal()
     |
     BoolVal()
-    //  |
-    //  RealVal()
+    |
+    RealVal()
     |
     ArrayVal()
 }

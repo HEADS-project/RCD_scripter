@@ -62,7 +62,7 @@ public class VarBool extends VarBase {
     
     @Override
     public String stringVal() {
-        return ""+intVal();
+        return ""+boolVal();
     }
     
     @Override
