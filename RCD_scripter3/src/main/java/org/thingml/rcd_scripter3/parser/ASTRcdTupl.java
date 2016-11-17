@@ -21,7 +21,6 @@ import org.thingml.rcd_scripter3.variables.VarArray;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarKeyContainer;
-import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdTupl extends ASTRcdBase {
 

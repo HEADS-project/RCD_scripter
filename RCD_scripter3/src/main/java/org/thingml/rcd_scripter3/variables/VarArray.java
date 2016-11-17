@@ -133,6 +133,11 @@ public class VarArray extends VarBase implements Cloneable{
     }
 
     @Override
+    public VarArray arrayVal() {
+        return this;
+    }
+    
+    @Override
     public Object getValObj(){
         Object ret;
         
@@ -174,8 +179,7 @@ public class VarArray extends VarBase implements Cloneable{
     public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
         addKeyContainer(new VarKeyContainer(idx.stringVal(), expr));
     }
-    
-    
+        
     @Override
     public String printString(){
         String ret = "Array: " + dump();

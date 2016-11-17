@@ -26,9 +26,11 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
-import org.thingml.rcd_scripter3.variables.VarValueBool;
+import org.thingml.rcd_scripter3.variables.VarBool;
+import org.thingml.rcd_scripter3.variables.VarContainer;
 import org.thingml.rcd_scripter3.variables.VarInt;
-import org.thingml.rcd_scripter3.variables.VarValueString;
+import org.thingml.rcd_scripter3.variables.VarReal;
+import org.thingml.rcd_scripter3.variables.VarString;
 
 /**
  *
@@ -73,14 +75,18 @@ public class CallMethod {
             throw callersBase.generateExecuteException("ERROR method "+myName+"() accepts "+formalArgs.length+" given "+args.length+" arg(s)");
         }
         if (ret != null) {
-            if (VarBase.class.isAssignableFrom(ret.getClass())) {
-                ctx.pushContainer((VarBase)ret); // Return value
+            if (VarContainer.class.isAssignableFrom(ret.getClass())) {
+                ctx.pushContainer((VarContainer)ret); // Return value
             } else if(ret instanceof Boolean) {
-                ctx.pushContainer(new VarValueBool(""+ret)); // Return value
+                ctx.pushContainer(new VarContainer (new VarBool(""+ret))); // Return value
             } else if(ret instanceof Integer) {
-                ctx.pushContainer(new VarInt(""+ret)); // Return value
+                ctx.pushContainer(new VarContainer (new VarInt(""+ret))); // Return value
             } else if(ret instanceof String) {
-                ctx.pushContainer(new VarValueString(""+ret)); // Return value
+                ctx.pushContainer(new VarContainer (new VarString(""+ret))); // Return value
+            } else if(ret instanceof Double) {
+                ctx.pushContainer(new VarContainer (new VarReal(""+ret))); // Return value
+            } else if(ret instanceof Float) {
+                ctx.pushContainer(new VarContainer (new VarReal(""+ret))); // Return value
             }
         }
     }

@@ -64,6 +64,11 @@ public class VarString extends VarBase {
     }
 
     @Override
+    public VarArray arrayVal() {
+        return new VarArray(this);
+    }
+    
+    @Override
     public Object getValObj(){
         Object ret;
         

@@ -20,51 +20,73 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
-
 /**
  *
  * @author steffend
  */
-public class VarValueBool extends VarValueBase {
+public class VarReal extends VarBase {
     
-    private boolean boolValue = false;
+    private double realValue = 0;
     
-    public VarValueBool(String image) {
+    public VarReal(String image) {
         super(image);
-        if (image.toLowerCase().contentEquals("true")) boolValue = true;;
+        realValue = Double.parseDouble(image);
     }
     
-    @Override
-    public String getTypeString() {
-        return "ValueBool";
+    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
+    
+    public static void registerMethods()throws Exception{
+        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
     }
     
     @Override
     public VarType getType() {
-        return VarType.BOOL;
+        return VarType.REAL;
     }
     
-    public boolean getBool() {
-        return boolValue;
+    @Override
+    public long intVal() {
+        return (long)realVal();
+    }    
+    
+    @Override
+    public double realVal() {
+        return realValue;
+    }
+    
+    @Override
+    public boolean boolVal() {
+        return realVal() == 0.0;
+    }
+    
+    @Override
+    public String stringVal() {
+        return ""+realVal();
+    }
+
+    @Override
+    public VarArray arrayVal() {
+        return new VarArray(this);
     }
     
     @Override
     public Object getValObj(){
         Object ret;
         
-        ret = getBool();
+        ret = intVal();
         return ret;
     }
-    
+
     @Override
-    protected boolean compareVal(VarValueBase value_other) {
-        return boolValue == ((VarValueBool)value_other).boolValue;
+    public boolean isReal() {
+        return true;
     }
     
     @Override
     public String printString() {
-        String ret = "<"+getTypeString()+" Image:"+getString()+" Value:"+boolValue+" Operations:"+getOperationImage()+">";
+        String ret = "<"+getTypeString()+" Image:"+stringVal()+" Value:"+realValue+" Operations:"+getOperationImage()+">";
         return ret;
     }
 
+    
 }

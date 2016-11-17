@@ -609,14 +609,19 @@ void MulExprFollow() #RcdOpExpr:
 
 void UnaryExpr() : 
 {
+    Token t;
 }
 {
     (
         (
-            <PLUS>
+            t = <PLUS>
             |
-            <MINUS>
+            t = <MINUS>
         )? 
+        {
+            jjtThis.setName("u"+t.image);
+            jjtThis.setToken(t); 
+        }
     ) #RcdOpExpr(>1)
 
     PrimExprPrefix()

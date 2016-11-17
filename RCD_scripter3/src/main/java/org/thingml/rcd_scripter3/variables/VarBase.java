@@ -29,7 +29,7 @@ import org.thingml.rcd_scripter3.parser.ExecuteException;
  */
 abstract public class VarBase implements Cloneable{
     public enum VarType { KEYCONTAINER, ARRAY, INT, REAL, STRING, BOOL, FILE, VOID };
-    public enum Operation { PLUS, MINUS, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
+    public enum Operation { PLUS, MINUS, UPLUS, UMINUS, OR, AND, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
 
     private String image;
     private String operationImage;
@@ -62,6 +62,7 @@ abstract public class VarBase implements Cloneable{
     abstract public long intVal();
     abstract public double realVal();
     abstract public boolean boolVal();
+    abstract public VarArray arrayVal();
     abstract public String stringVal();
     abstract public Object getValObj();
     
@@ -83,6 +84,293 @@ abstract public class VarBase implements Cloneable{
     
     public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
+    }
+
+    public static VarBase doOperation(ASTRcdBase b, VarBase varLeft, Operation op, VarBase varRight) throws ExecuteException {
+        
+        VarBase newValue = null;
+        
+        switch (op) {
+            case PLUS:
+                newValue = doOperationPLUS(varLeft, varRight);
+                break;
+            case MINUS:
+                newValue = doOperationMINUS(varLeft, varRight);
+                break;
+            case EQUAL:
+                newValue = doOperationEQUAL(varLeft, varRight);
+                break;
+            case NOTEQUAL:
+                newValue = doOperationNOTEQUAL(varLeft, varRight);
+                break;
+            case MUL:
+                newValue = doOperationMUL(varLeft, varRight);
+                break;
+            case DIV:
+                newValue = doOperationDIV(varLeft, varRight);
+                break;
+            case GT:
+                newValue = doOperationGT(varLeft, varRight);
+                break;
+            case LT:
+                newValue = doOperationLT(varLeft, varRight);
+                break;
+            case GTE:
+                newValue = doOperationGTE(varLeft, varRight);
+                break;
+            case LTE:
+                newValue = doOperationLTE(varLeft, varRight);
+                break;
+            default:
+                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported");
+        }
+        if (newValue == null) {
+            throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+varLeft.getTypeString()+"> and <"+varRight.getTypeString()+">");
+        }
+
+        return newValue;
+    }
+
+    private static VarBase doOperationPLUS(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+
+        switch (varLeft.getType()) {
+            case INT:
+                long resultInt = varLeft.intVal() + varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varLeft.realVal() + varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+            case STRING: 
+                String resultString = varLeft.stringVal() + varRight.stringVal();
+                newValue = new VarString(""+resultString);
+                break;
+            case BOOL:
+                // Not supported
+                break;
+            case ARRAY: 
+                newValue = new VarArray(varLeft.arrayVal());
+                ((VarArray)newValue).addArray((VarArray)varRight);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")+("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationMINUS(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+
+        switch (varLeft.getType()) {
+            case INT:
+                long resultInt = varLeft.intVal() - varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varLeft.realVal() - varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+            case STRING: 
+                String resultString = varLeft.stringVal().replaceAll(varRight.stringVal(), "");
+                newValue = new VarString(""+resultString);
+                break;
+            case BOOL:
+                // Not supported
+                break;
+            case ARRAY: 
+                // Not supported
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")-("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+    
+    private static VarBase doOperationEQUAL(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+                resultBool = varLeft.intVal() == varRight.intVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case REAL: 
+                resultBool = varLeft.realVal() == varRight.realVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case STRING: 
+                resultBool = varLeft.stringVal().contentEquals(varRight.stringVal());
+                newValue = new VarBool(""+resultBool);
+                break;
+            case BOOL:
+                resultBool = varLeft.boolVal() == varRight.boolVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case ARRAY: 
+                // Not supported
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")==("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationNOTEQUAL(VarBase varLeft, VarBase varRight) {
+        VarBase equalValue = doOperationEQUAL(varLeft, varRight);
+        boolean notEqual = !equalValue.boolVal();
+        VarBase newValue = new VarBool(""+notEqual);
+        newValue.setOperationImage("NOT("+equalValue.getOperationImage()+")");
+        
+        return newValue;
+    }
+    
+    private static VarBase doOperationMUL(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+
+        switch (varLeft.getType()) {
+            case INT:
+                long resultInt = varLeft.intVal() * varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varLeft.realVal() * varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")*("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationDIV(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+
+        switch (varLeft.getType()) {
+            case INT:
+                long resultInt = varLeft.intVal() / varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varLeft.realVal() / varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")/("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationGT(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+                resultBool = varLeft.intVal() > varRight.intVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case REAL: 
+                resultBool = varLeft.realVal() > varRight.realVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case STRING: 
+                resultBool = varLeft.stringVal().compareTo(varRight.stringVal()) > 0;
+                newValue = new VarBool(""+resultBool);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")>("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationLT(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+                resultBool = varLeft.intVal() < varRight.intVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case REAL: 
+                resultBool = varLeft.realVal() < varRight.realVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case STRING: 
+                resultBool = varLeft.stringVal().compareTo(varRight.stringVal()) < 0;
+                newValue = new VarBool(""+resultBool);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")<("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationGTE(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+                resultBool = varLeft.intVal() >= varRight.intVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case REAL: 
+                resultBool = varLeft.realVal() >= varRight.realVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case STRING: 
+                resultBool = varLeft.stringVal().compareTo(varRight.stringVal()) >= 0;
+                newValue = new VarBool(""+resultBool);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")>=("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationLTE(VarBase varLeft, VarBase varRight) {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        switch (varLeft.getType()) {
+            case INT:
+                resultBool = varLeft.intVal() <= varRight.intVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case REAL: 
+                resultBool = varLeft.realVal() <= varRight.realVal();
+                newValue = new VarBool(""+resultBool);
+                break;
+            case STRING: 
+                resultBool = varLeft.stringVal().compareTo(varRight.stringVal()) <= 0;
+                newValue = new VarBool(""+resultBool);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varLeft.getOperationImage()+")<=("+varRight.getOperationImage()+")");
+        }
+        return newValue;
     }
 
 }

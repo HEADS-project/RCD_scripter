@@ -19,7 +19,6 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
-import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdAssign extends ASTRcdBase {
 

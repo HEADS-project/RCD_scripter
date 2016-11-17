@@ -25,11 +25,7 @@ import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
 import org.thingml.rcd_scripter3.proc.ProcPrintf;
 import org.thingml.rcd_scripter3.variables.VarFile;
-import org.thingml.rcd_scripter3.variables.VarHash;
-import org.thingml.rcd_scripter3.variables.VarHashList;
-import org.thingml.rcd_scripter3.variables.VarValArray;
-import org.thingml.rcd_scripter3.variables.VarValueInt;
-import org.thingml.rcd_scripter3.variables.VarValueString;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
 /**
  *
@@ -57,11 +53,11 @@ public class RCD_scripterTest {
             ProcBaseIf proc = new ProcPrint(jobContext);
             proc = new ProcPrintf(jobContext);
             VarFile.registerMethods();
-            VarHash.registerMethods();
-            VarHashList.registerMethods();
-            VarValArray.registerMethods();
-            VarValueInt.registerMethods();
-            VarValueString.registerMethods();
+            //VarHash.registerMethods();
+            //VarHashList.registerMethods();
+            //VarValArray.registerMethods();
+            VarInt.registerMethods();
+            //VarString.registerMethods();
              
             System.out.println("Parser init using file <"+inputfile+">");
             System.out.println("<");

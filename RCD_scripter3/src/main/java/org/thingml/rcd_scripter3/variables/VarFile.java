@@ -100,6 +100,11 @@ public class VarFile extends VarBase {
     }
     
     @Override
+    public VarArray arrayVal() {
+        return new VarArray(this);
+    }
+    
+    @Override
     public String stringVal() {
         return fileName;
     }
@@ -310,55 +315,30 @@ public class VarFile extends VarBase {
         
     }
     
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarBase[] args) throws ExecuteException {
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
 
         if (methodId.equalsIgnoreCase("open")) {
             if (argNum == 1) {
-                VarBase arg = args[0];
-                if (arg instanceof VarValueString) {
-                    open(callersBase, arg.stringVal());
-                } else {
-                    throw callersBase.generateExecuteException("ERROR method File.open() cannot use <"+arg.getType()+">");
-                }
+                open(callersBase, args[0].stringVal());
             } else {
                 throw callersBase.generateExecuteException("ERROR method File.open() accepts 1 arg given "+argNum+" arg(s)");
             }
         } else if (methodId.equalsIgnoreCase("insert")) {
             if (argNum == 2) {
-                VarBase arg1 = args[0];
-                VarBase arg2 = args[1];
-                if (arg1 instanceof VarValueString) {
-                    if (arg2 instanceof VarValueString) {
-                        insert(callersBase, arg1.stringVal(), arg2.stringVal());
-                    } else {
-                        throw callersBase.generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
-                    }
-                } else {
-                    throw callersBase.generateExecuteException("ERROR method File.insert() cannot use <"+arg1.getType()+"><"+arg2.getType()+">");
-                }
+                insert(callersBase, args[0].stringVal(), args[1].stringVal());
             } else {
                 throw callersBase.generateExecuteException("ERROR method File.insert() accepts 2 arg given "+argNum+" arg(s)");
             }
         } else if (methodId.equalsIgnoreCase("print")) {
             if (argNum == 1) {
-                VarBase arg = args[0];
-                if (arg instanceof VarBase) {
-                    write(callersBase, arg.stringVal());
-                } else {
-                    throw callersBase.generateExecuteException("ERROR method File.print() cannot print <"+arg.getType()+">");
-                }
+                write(callersBase, args[0].stringVal());
             } else {
                 throw callersBase.generateExecuteException("ERROR method File.print() accepts 1 arg given "+argNum+" arg(s)");
             }
         } else if (methodId.equalsIgnoreCase("println")) {
             if (argNum == 1) {
-                VarBase arg = args[0];
-                if (arg instanceof VarBase) {
-                    write(callersBase, arg.stringVal()+"\n");
-                } else {
-                    throw callersBase.generateExecuteException("ERROR method File.println() cannot print <"+arg.getType()+">");
-                }
+                write(callersBase, args[0].stringVal()+"\n");
             } else if (argNum == 0) {
                 write(callersBase, "\n");
             } else {

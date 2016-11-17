@@ -18,7 +18,6 @@ package org.thingml.rcd_scripter3.parser;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarContainer;
-import org.thingml.rcd_scripter3.variables.VarValueBool;
 
 public class ASTRcdIfBlock extends ASTRcdBase {
 

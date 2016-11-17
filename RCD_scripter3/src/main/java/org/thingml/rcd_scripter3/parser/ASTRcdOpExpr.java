@@ -19,11 +19,10 @@ package org.thingml.rcd_scripter3.parser;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
-import org.thingml.rcd_scripter3.variables.VarValueBase;
 
 public class ASTRcdOpExpr extends ASTRcdBase {
 
-    private VarValueBase.Operation operation = null;
+    private VarBase.Operation operation = null;
     
     /**
      * Constructor.
@@ -36,36 +35,48 @@ public class ASTRcdOpExpr extends ASTRcdBase {
     private void calcOperation (){
 
         if (operation == null) {
-            String image = getName();
+            String image = getName().toLowerCase();
             if (image.contentEquals("+")==true) {
-                operation = VarValueBase.Operation.PLUS;
+                operation = VarBase.Operation.PLUS;
 
             } else if (image.contentEquals("-")==true) {
-                operation = VarValueBase.Operation.MINUS;
+                operation = VarBase.Operation.MINUS;
 
             } else if (image.contentEquals("*")==true) {
-                operation = VarValueBase.Operation.MUL;
+                operation = VarBase.Operation.MUL;
 
             } else if (image.contentEquals("/")==true) {
-                operation = VarValueBase.Operation.DIV;
+                operation = VarBase.Operation.DIV;
 
             } else if (image.contentEquals("==")==true) {
-                operation = VarValueBase.Operation.EQUAL;
+                operation = VarBase.Operation.EQUAL;
 
             } else if (image.contentEquals(">")==true) {
-                operation = VarValueBase.Operation.GT;
+                operation = VarBase.Operation.GT;
 
             } else if (image.contentEquals("<")==true) {
-                operation = VarValueBase.Operation.LT;
+                operation = VarBase.Operation.LT;
 
             } else if (image.contentEquals(">=")==true) {
-                operation = VarValueBase.Operation.GTE;
+                operation = VarBase.Operation.GTE;
 
             } else if (image.contentEquals("<=")==true) {
-                operation = VarValueBase.Operation.LTE;
+                operation = VarBase.Operation.LTE;
 
             } else if (image.contentEquals("!=")==true) {
-                operation = VarValueBase.Operation.NOTEQUAL;
+                operation = VarBase.Operation.NOTEQUAL;
+
+            } else if (image.contentEquals("u-")==true) {
+                operation = VarBase.Operation.UMINUS;
+
+            } else if (image.contentEquals("u+")==true) {
+                operation = VarBase.Operation.UPLUS;
+
+            } else if (image.contentEquals("and")==true) {
+                operation = VarBase.Operation.AND;
+
+            } else if (image.contentEquals("or")==true) {
+                operation = VarBase.Operation.OR;
 
             }
         }        

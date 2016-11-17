@@ -64,7 +64,12 @@ public class VarBool extends VarBase {
     public String stringVal() {
         return ""+intVal();
     }
-
+    
+    @Override
+    public VarArray arrayVal() {
+        return new VarArray(this);
+    }
+    
     @Override
     public Object getValObj(){
         Object ret;

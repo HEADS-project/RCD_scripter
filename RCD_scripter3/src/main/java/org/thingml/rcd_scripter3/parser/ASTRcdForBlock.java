@@ -24,12 +24,8 @@ import org.thingml.rcd_scripter3.variables.VarArray;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarBase.VarType;
 import org.thingml.rcd_scripter3.variables.VarContainer;
-import org.thingml.rcd_scripter3.variables.VarHash;
-import org.thingml.rcd_scripter3.variables.VarHashList;
 import org.thingml.rcd_scripter3.variables.VarKeyContainer;
 import org.thingml.rcd_scripter3.variables.VarString;
-import org.thingml.rcd_scripter3.variables.VarValArray;
-import org.thingml.rcd_scripter3.variables.VarValueString;
 
 public class ASTRcdForBlock extends ASTRcdBase {
 
