@@ -169,8 +169,9 @@ public class VarArray extends VarBase implements Cloneable{
         if (kc != null) {
             ret = kc.getContainer();
         } else {
-            b.printMessage("ERROR "+b.getName()+"["+idx.stringVal()+"] is not defined");
+            //b.printMessage("ERROR "+b.getName()+"["+idx.stringVal()+"] is not defined");
             ret = new VarContainer();
+            storeToIndex(b, idx, ret);
         }
         return ret;
     }
@@ -201,4 +202,9 @@ public class VarArray extends VarBase implements Cloneable{
         return ret;
     }
 
+    @Override
+    public boolean isArray() {
+        return true;
+    }
+    
 }

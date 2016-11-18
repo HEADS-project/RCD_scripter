@@ -25,6 +25,9 @@ $boolf = false;
 println("Boolt "+$boolt+" "+($boolt AND $boolf)+" "+($boolt OR $boolf));
 $real1 = 1.1;
 println("Real "+$real1+" "+$real1*$tall1+" "+$tall1*$real1);
+$array[11] = 1.1;
+$array[2] = 2;
+println("Real "+$array [11]+" Int "+$array [2]);
 RCD_SCRIPT_END
 
 */

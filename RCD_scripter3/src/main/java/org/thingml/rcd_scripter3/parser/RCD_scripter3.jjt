@@ -385,7 +385,7 @@ void Index() #RcdIndex:
         ExprNode()
 	<CABRA>
     {
-        jjtThis.setName(t.image);
+        jjtThis.setName("INDEX");
         jjtThis.setToken(t); 
     }
 }

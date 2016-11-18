@@ -74,7 +74,17 @@ public class VarContainer implements Cloneable{
     public boolean isObject() {return varInst.isObject(); }
     
     public VarContainer fetchFromIndex(ASTRcdBase b, VarContainer idx) throws ExecuteException  {
-        return varInst.fetchFromIndex(b, idx); 
+        VarContainer ret;
+        if (isArray()) {
+            // Fetch from existing array
+            ret = varInst.fetchFromIndex(b, idx); 
+        } else {
+            // Transform current into an array
+            VarBase arrInst = new VarArray(varInst);
+            ret = arrInst.fetchFromIndex(b, idx); 
+             varInst = arrInst;
+        }
+        return ret;
     }
     
     public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
