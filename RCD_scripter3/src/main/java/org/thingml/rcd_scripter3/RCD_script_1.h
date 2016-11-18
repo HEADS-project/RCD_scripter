@@ -28,6 +28,10 @@ println("Real "+$real1+" "+$real1*$tall1+" "+$tall1*$real1);
 $array[11] = 1.1;
 $array[2] = 2;
 println("Real "+$array [11]+" Int "+$array [2]);
+println("array "+$array.is_array());
+println("array "+$array.is_int());
+println("array[2] "+$array[2].is_array());
+println("array[2] "+$array[2].is_int());
 RCD_SCRIPT_END
 
 */

@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarBool;
@@ -36,30 +37,46 @@ import org.thingml.rcd_scripter3.variables.VarString;
  *
  * @author steffend
  */
-public class CallMethod {
+public class CallMethodRegHelper implements ProcBaseIf {
+    public enum InstClass {VARINST, STRING};
+    private InstClass instClass;
     private Class<?> c;
     private Class[] formalArgs;
     private String myName;
     private Method method;
 
-    public CallMethod(String myName, Class<?> c, String methodName, Class[] formalArgs) throws Exception{
+    public CallMethodRegHelper(String myName, Class<?> c, InstClass instClass, String methodName, Class[] formalArgs) throws Exception{
+        this.instClass = instClass;
         this.myName = myName;
         this.c = c;
         this.formalArgs = formalArgs;
         method = c.getMethod(methodName, formalArgs);
     }
+    //public void Call(ExecuteContext ctx, ASTRcdBase callersBase, Object inst, VarBase[] args) throws ExecuteException {
 
-    public void Call(ExecuteContext ctx, ASTRcdBase callersBase, Object inst, VarBase[] args) throws ExecuteException {
+    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
         Object ret = null;
+        VarContainer retCont = new VarContainer();
+        Object inst = null;
+        
+        switch (instClass) {
+            case VARINST:
+                inst = varInst.getInst();
+                break;
+            case STRING:
+                inst = varInst.stringVal();
+                break;
+        }  
+
         if (args.length == formalArgs.length) {
             Object[] actArg = new Object[formalArgs.length];
             for (int i = 0; i < formalArgs.length; i++) {
-                if (formalArgs[i].isAssignableFrom(args[i].getClass())) {
-                    actArg[i] = args[i];
+                if (formalArgs[i].isAssignableFrom(args[i].getInst().getClass())) {
+                    actArg[i] = args[i].getInst();
                 } else if (formalArgs[i].isAssignableFrom(args[i].getValObj().getClass())) {
                     actArg[i] = args[i].getValObj();
                 } else {
-                    throw callersBase.generateExecuteException("ERROR method "+myName+"() param "+i+" got <"+args[i].getClass().getSimpleName()+"> expected <"+formalArgs[i].getClass().getSimpleName()+">");
+                    throw callersBase.generateExecuteException("ERROR method "+myName+"() param "+i+" got <"+args[i].getInst().getClass().getSimpleName()+"> expected <"+formalArgs[i].getClass().getSimpleName()+">");
                 }
             }
             try {
@@ -75,19 +92,29 @@ public class CallMethod {
             throw callersBase.generateExecuteException("ERROR method "+myName+"() accepts "+formalArgs.length+" given "+args.length+" arg(s)");
         }
         if (ret != null) {
-            if (VarContainer.class.isAssignableFrom(ret.getClass())) {
-                ctx.pushContainer((VarContainer)ret); // Return value
+            if (VarBase.class.isAssignableFrom(ret.getClass())) {
+                retCont.setInst((VarBase)ret); // Return value
+            } else if(ret instanceof VarContainer) {
+                retCont = (VarContainer)ret; // Return value
             } else if(ret instanceof Boolean) {
-                ctx.pushContainer(new VarContainer (new VarBool(""+ret))); // Return value
+                retCont.setInst(new VarBool(""+ret)); // Return value
             } else if(ret instanceof Integer) {
-                ctx.pushContainer(new VarContainer (new VarInt(""+ret))); // Return value
+                retCont.setInst(new VarInt(""+ret)); // Return value
+            } else if(ret instanceof Long) {
+                retCont.setInst(new VarInt(""+ret)); // Return value
             } else if(ret instanceof String) {
-                ctx.pushContainer(new VarContainer (new VarString(""+ret))); // Return value
+                retCont.setInst(new VarString(""+ret)); // Return value
             } else if(ret instanceof Double) {
-                ctx.pushContainer(new VarContainer (new VarReal(""+ret))); // Return value
+                retCont.setInst(new VarReal(""+ret)); // Return value
             } else if(ret instanceof Float) {
-                ctx.pushContainer(new VarContainer (new VarReal(""+ret))); // Return value
+                retCont.setInst(new VarReal(""+ret)); // Return value
             }
         }
+        ctx.pushContainer(retCont);
+        return ExecResult.NORMAL;
+    }
+
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
+        throw callersBase.generateExecuteException("ERROR method "+myName+"() cannot be called as procedure for");
     }
 }

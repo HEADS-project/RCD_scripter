@@ -20,8 +20,10 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
+import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 
 /**
  *
@@ -37,6 +39,21 @@ abstract public class VarBase implements Cloneable{
     public VarBase(String image) {
         this.image = image;
         this.operationImage = image;
+    }
+    private static void registerForVarX(ExecuteContext ctx, String name, CallMethodRegHelper cmrh) throws Exception{
+        ctx.declProc(null, "ARRAY:"+name, cmrh);
+        ctx.declProc(null, "INT:"+name, cmrh);
+        ctx.declProc(null, "REAL:"+name, cmrh);
+        ctx.declProc(null, "STRING:"+name, cmrh);
+        ctx.declProc(null, "BOOL:"+name, cmrh);
+        ctx.declProc(null, "FILE:"+name, cmrh);
+    }
+    public static void registerMethods(ExecuteContext ctx) throws Exception{
+        registerForVarX(ctx, "is_int", new CallMethodRegHelper("is_int", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isInt", new Class[] {}));
+        registerForVarX(ctx, "is_real", new CallMethodRegHelper("is_real", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isReal", new Class[] {}));
+        registerForVarX(ctx, "is_bool", new CallMethodRegHelper("is_bool", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isBool", new Class[] {}));
+        registerForVarX(ctx, "is_string", new CallMethodRegHelper("is_string", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isString", new Class[] {}));
+        registerForVarX(ctx, "is_array", new CallMethodRegHelper("is_array", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isArray", new Class[] {}));
     }
 
     public String getImage() {

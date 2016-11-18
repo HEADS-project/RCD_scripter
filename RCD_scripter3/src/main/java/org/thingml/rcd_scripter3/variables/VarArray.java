@@ -30,7 +30,7 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
-import org.thingml.rcd_scripter3.proc.CallMethod;
+import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 
 /**
  *

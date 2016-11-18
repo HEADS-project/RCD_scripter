@@ -40,12 +40,12 @@ public class ASTRcdCallMethod extends ASTRcdBase {
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret;
         VarContainer var = ctx.popContainer(this);
+  
         int baseStackSize = ctx.getContainerStackSize();
-        
         ret = executeChildren(ctx);
-        
         int addedStackElems = ctx.getContainerStackSize() - baseStackSize;
         int argNum = addedStackElems-1;
+
         VarContainer[] args = new VarContainer[argNum];
         for (int i = 0; i < argNum; i++) {
             args[argNum - i - 1] = ctx.popContainer(this);

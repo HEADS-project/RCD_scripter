@@ -20,6 +20,9 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import org.thingml.rcd_scripter3.ExecuteContext;
+import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
+
 
 /**
  *
@@ -31,10 +34,14 @@ public class VarString extends VarBase {
         super(image);
     }
 
-    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
-    
-    public static void registerMethods()throws Exception{
-        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
+    public static void registerMethods(ExecuteContext ctx)throws Exception{
+        ctx.declProc(null, "lenght", new CallMethodRegHelper("lenght", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "length", new Class[] {} ));
+        ctx.declProc(null, "endswith", new CallMethodRegHelper("endswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "endsWith", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, "replace", new CallMethodRegHelper("replace", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "replace", new Class[] {java.lang.CharSequence.class, java.lang.CharSequence.class} ));
+        ctx.declProc(null, "startswith", new CallMethodRegHelper("startswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "startsWith", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, "tolowercase", new CallMethodRegHelper("tolowercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toLowerCase", new Class[] {} ));
+        ctx.declProc(null, "touppercase", new CallMethodRegHelper("touppercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toUpperCase", new Class[] {} ));
+        ctx.declProc(null, "trim", new CallMethodRegHelper("trim", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "trim", new Class[] {} ));
     }
 
     @Override
