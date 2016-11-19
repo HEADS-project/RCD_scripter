@@ -62,13 +62,12 @@ public class VarArray extends VarBase implements Cloneable{
 
     //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
     
-    public static void registerMethods()throws Exception{
-
-        //callMethods.put("add", new CallMethod("add", VarArray.class, "addHash", new Class[] { VarArray.class }));
-        //callMethods.put("has", new CallMethod("has", VarArray.class, "has", new Class[] { VarBase.class }));
-
+    public static void registerMethods(ExecuteContext ctx)throws Exception{
+        ctx.declProc(null, VarType.ARRAY+":clone", new CallMethodRegHelper("clone", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "clone", new Class[] {} ));
+        ctx.declProc(null, VarType.ARRAY+":has", new CallMethodRegHelper("has", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "has", new Class[] { VarBase.class }));
     }
 
+    
     @Override
     protected VarArray clone() throws CloneNotSupportedException {
         return new VarArray(this);

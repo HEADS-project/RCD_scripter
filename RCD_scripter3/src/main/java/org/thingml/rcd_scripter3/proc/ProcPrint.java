@@ -34,17 +34,24 @@ import org.thingml.rcd_scripter3.variables.VarInt;
  *
  * @author steffend
  */
-public class ProcPrint implements ProcBaseIf {
-    public ProcPrint(ExecuteContext ctx) {
-        try {
-            ctx.declProc(null, "print", this);
-            ctx.declProc(null, "PRINT", this);
-            ctx.declProc(null, "println", this);
-            ctx.declProc(null, "PRINTLN", this);
-        } catch (ExecuteException ex) {
-            Logger.getLogger(ProcPrint.class.getName()).log(Level.SEVERE, null, ex);
-        }
+public class ProcPrint {
+    public static void registerProcs(ExecuteContext ctx)throws Exception{
+        ctx.declProc(null, "print", new CallProcRegHelper("print", ProcPrint.class, "print", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {java.lang.String.class} ));
+        //ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {} ));
     }
+    public static void print(String txt) {
+        System.out.print(txt);
+    }
+    
+    public static void println(String txt) {
+        System.out.println(txt);
+    }
+    
+    public static void println() {
+        System.out.println();
+    }
+    
     
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;

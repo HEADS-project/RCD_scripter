@@ -37,36 +37,24 @@ import org.thingml.rcd_scripter3.variables.VarString;
  *
  * @author steffend
  */
-public class CallMethodRegHelper implements ProcBaseIf {
-    public enum InstClass {VARINST, STRING};
-    private InstClass instClass;
+public class CallProcRegHelper implements ProcBaseIf {
     private Class<?> c;
     private Class[] formalArgs;
     private String myName;
     private Method method;
 
-    public CallMethodRegHelper(String myName, Class<?> c, InstClass instClass, String methodName, Class[] formalArgs) throws Exception{
-        this.instClass = instClass;
+    public CallProcRegHelper(String myName, Class<?> c, String methodName, Class[] formalArgs) throws Exception{
         this.myName = myName.toLowerCase();
         this.c = c;
         this.formalArgs = formalArgs;
         method = c.getMethod(methodName, formalArgs);
     }
 
-    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         Object ret = null;
         VarContainer retCont = new VarContainer();
-        Object inst = null;
-        
-        switch (instClass) {
-            case VARINST:
-                inst = varInst.getInst();
-                break;
-            case STRING:
-                inst = varInst.stringVal();
-                break;
-        }  
 
+        if (!(myName.equalsIgnoreCase(procId))) throw callersBase.generateExecuteException("ERROR procedure <"+procId.toLowerCase()+"> is not defined expected <"+myName+">");
         if (args.length == formalArgs.length) {
             Object[] actArg = new Object[formalArgs.length];
             for (int i = 0; i < formalArgs.length; i++) {
@@ -75,20 +63,20 @@ public class CallMethodRegHelper implements ProcBaseIf {
                 } else if (formalArgs[i].isAssignableFrom(args[i].getValObj().getClass())) {
                     actArg[i] = args[i].getValObj();
                 } else {
-                    throw callersBase.generateExecuteException("ERROR method "+myName+"() param "+i+" got <"+args[i].getInst().getClass().getSimpleName()+"> expected <"+formalArgs[i].getClass().getSimpleName()+">");
+                    throw callersBase.generateExecuteException("ERROR procedure "+myName+"() param "+i+" got <"+args[i].getInst().getClass().getSimpleName()+"> expected <"+formalArgs[i].getClass().getSimpleName()+">");
                 }
             }
             try {
-                ret = method.invoke(inst, actArg);
+                ret = method.invoke(null, actArg);
             } catch (IllegalAccessException ex) {
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+                throw callersBase.generateExecuteException("ERROR procedure "+myName+"() call failed\n"+ex);
             } catch (IllegalArgumentException ex) {
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+                throw callersBase.generateExecuteException("ERROR procedure "+myName+"() call failed\n"+ex);
             } catch (InvocationTargetException ex) {
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+                throw callersBase.generateExecuteException("ERROR procedure "+myName+"() call failed\n"+ex);
             }
         } else {
-            throw callersBase.generateExecuteException("ERROR method "+myName+"() accepts "+formalArgs.length+" given "+args.length+" arg(s)");
+            throw callersBase.generateExecuteException("ERROR procedure "+myName+"() accepts "+formalArgs.length+" given "+args.length+" arg(s)");
         }
         if (ret != null) {
             if (VarBase.class.isAssignableFrom(ret.getClass())) {
@@ -113,7 +101,7 @@ public class CallMethodRegHelper implements ProcBaseIf {
         return ExecResult.NORMAL;
     }
 
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
+    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
         throw callersBase.generateExecuteException("ERROR method "+myName+"() cannot be called as procedure.");
     }
 }

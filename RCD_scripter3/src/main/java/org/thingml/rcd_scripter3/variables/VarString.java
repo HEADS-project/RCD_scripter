@@ -35,13 +35,13 @@ public class VarString extends VarBase {
     }
 
     public static void registerMethods(ExecuteContext ctx)throws Exception{
-        ctx.declProc(null, "lenght", new CallMethodRegHelper("lenght", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "length", new Class[] {} ));
-        ctx.declProc(null, "endswith", new CallMethodRegHelper("endswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "endsWith", new Class[] {java.lang.String.class} ));
-        ctx.declProc(null, "replace", new CallMethodRegHelper("replace", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "replace", new Class[] {java.lang.CharSequence.class, java.lang.CharSequence.class} ));
-        ctx.declProc(null, "startswith", new CallMethodRegHelper("startswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "startsWith", new Class[] {java.lang.String.class} ));
-        ctx.declProc(null, "tolowercase", new CallMethodRegHelper("tolowercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toLowerCase", new Class[] {} ));
-        ctx.declProc(null, "touppercase", new CallMethodRegHelper("touppercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toUpperCase", new Class[] {} ));
-        ctx.declProc(null, "trim", new CallMethodRegHelper("trim", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "trim", new Class[] {} ));
+        ctx.declProc(null, VarType.STRING+":lenght", new CallMethodRegHelper("lenght", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "length", new Class[] {} ));
+        ctx.declProc(null, VarType.STRING+":endswith", new CallMethodRegHelper("endswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "endsWith", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, VarType.STRING+":replace", new CallMethodRegHelper("replace", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "replace", new Class[] {java.lang.CharSequence.class, java.lang.CharSequence.class} ));
+        ctx.declProc(null, VarType.STRING+":startswith", new CallMethodRegHelper("startswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "startsWith", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, VarType.STRING+":tolowercase", new CallMethodRegHelper("tolowercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toLowerCase", new Class[] {} ));
+        ctx.declProc(null, VarType.STRING+":touppercase", new CallMethodRegHelper("touppercase", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "toUpperCase", new Class[] {} ));
+        ctx.declProc(null, VarType.STRING+":trim", new CallMethodRegHelper("trim", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "trim", new Class[] {} ));
     }
 
     @Override
