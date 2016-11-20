@@ -89,7 +89,7 @@ TOKEN :  /* Literals */
 |
   < ID_LITERAL: <LETTER> (<LETTER>|<DIGIT>)* >
 |
-  < DEC_LITERAL: (["+","-"])?(<DIGIT>)+ >
+  < DEC_LITERAL: (<DIGIT>)+ >
 |
   < FLOAT_LITERAL: (<DIGIT>)+ <PERIOD> (<DIGIT>)+ (<DECIMAL_EXPONENT>)? >
 |
@@ -613,27 +613,30 @@ void UnaryExpr() :
 }
 {
     (
-        (
-            (
-                t = <PLUS>
-                {
-                    jjtThis.setName("u"+t.image);
-                    jjtThis.setToken(t); 
-                }
-            )
-            |
-            (
-                t = <MINUS>
-                {
-                    jjtThis.setName("u"+t.image);
-                    jjtThis.setToken(t); 
-                }
-            )
-        )? 
-    ) #RcdOpExpr(>1)
+        UnaryExprFollow()
+    )
+    |
+    (
+        PrimExprPrefix()
+        PrimExprSuffix()
+    )
+}
 
-    PrimExprPrefix()
-    PrimExprSuffix()
+void UnaryExprFollow() #RcdOpExpr: 
+{
+    Token t;
+}
+{
+    (
+        t = <PLUS>
+        |
+        t = <MINUS>
+    )
+    UnaryExpr()
+    {
+        jjtThis.setName("u"+t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void PrimExprPrefix() : 

@@ -53,6 +53,18 @@ public class CallMethodRegHelper implements ProcBaseIf {
         method = c.getMethod(methodName, formalArgs);
     }
 
+    public static void printMethods(String fullClassName) {
+        try {
+            Class<?> c = Class.forName(fullClassName);
+            Method[] methods = c.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                System.out.println(methods[i]);
+            }
+        } catch (ClassNotFoundException ex) {
+            System.out.println("ERROR : "+ex);
+        }
+    }
+    
     public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
         Object ret = null;
         VarContainer retCont = new VarContainer();

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /*
-RCD_SCRIPT_START
 
 $tekst1 = "Heisan";
 println("Tekst "+$tekst1);
@@ -32,6 +31,17 @@ println("array "+$array.is_array());
 println("array "+$array.is_int());
 println("array[2] "+$array[2].is_array());
 println("array[2] "+$array[2].is_int());
+
+RCD_SCRIPT_START
+$tall = +2;
+println("Tall +2 "+$tall);
+$tall = -2;
+println("Tall -2 "+$tall);
+$tall = 2 --2;
+println("Tall 2--2 "+$tall);
+$tall = +2 - 2;
+println("Tall +2-2 "+$tall);
+
 RCD_SCRIPT_END
 
 */

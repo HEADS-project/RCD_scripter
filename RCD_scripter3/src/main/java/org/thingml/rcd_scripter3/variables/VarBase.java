@@ -114,6 +114,12 @@ abstract public class VarBase implements Cloneable{
             case MINUS:
                 newValue = doOperationMINUS(varLeft, varRight);
                 break;
+            case UPLUS:
+                newValue = doOperationUPLUS(varRight);
+                break;
+            case UMINUS:
+                newValue = doOperationUMINUS(varRight);
+                break;
             case EQUAL:
                 newValue = doOperationEQUAL(varLeft, varRight);
                 break;
@@ -190,6 +196,31 @@ abstract public class VarBase implements Cloneable{
         return newValue;
     }
 
+    private static VarBase doOperationUPLUS(VarBase varRight) {
+        VarBase newValue = null;
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("+("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
     private static VarBase doOperationMINUS(VarBase varLeft, VarBase varRight) {
         VarBase newValue = null;
 
@@ -225,6 +256,31 @@ abstract public class VarBase implements Cloneable{
         return newValue;
     }
     
+    private static VarBase doOperationUMINUS(VarBase varRight) {
+        VarBase newValue = null;
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = -varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = -varRight.realVal();
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = -varRight.intVal();
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("-("+varRight.getOperationImage()+")");
+        }
+        return newValue;
+    }
+
     private static VarBase doOperationEQUAL(VarBase varLeft, VarBase varRight) {
         VarBase newValue = null;
         boolean resultBool;

@@ -18,5 +18,9 @@ del TokenMgrError.java
 del ParseException.java
 del Token.java
 del SimpleCharStream.java
+del JJTRcdScript3ParserState.java
+del RcdScript3ParserConstants.java
+del RcdScript3ParserTokenManager.java
+del RcdScript3ParserTreeConstants.java
 java -cp ..\..\..\..\..\..\..\..\javacc-6.1.2\target\javacc-6.1.2.jar jjtree  RCD_scripter3.jjt
 java -cp ..\..\..\..\..\..\..\..\javacc-6.1.2\target\javacc-6.1.2.jar javacc  RCD_scripter3.jj

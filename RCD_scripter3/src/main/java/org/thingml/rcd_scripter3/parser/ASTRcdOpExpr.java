@@ -23,6 +23,7 @@ import org.thingml.rcd_scripter3.variables.VarContainer;
 public class ASTRcdOpExpr extends ASTRcdBase {
 
     private VarBase.Operation operation = null;
+    private boolean unaryOp = false;
     
     /**
      * Constructor.
@@ -30,6 +31,10 @@ public class ASTRcdOpExpr extends ASTRcdBase {
      */
     public ASTRcdOpExpr(int id) {
         super(id);
+    }
+    
+    public void setUnaryOp() {
+        unaryOp = true;
     }
     
     private void calcOperation (){
@@ -68,9 +73,11 @@ public class ASTRcdOpExpr extends ASTRcdBase {
 
             } else if (image.contentEquals("u-")==true) {
                 operation = VarBase.Operation.UMINUS;
+                unaryOp = true;
 
             } else if (image.contentEquals("u+")==true) {
                 operation = VarBase.Operation.UPLUS;
+                unaryOp = true;
 
             } else if (image.contentEquals("and")==true) {
                 operation = VarBase.Operation.AND;
@@ -85,16 +92,22 @@ public class ASTRcdOpExpr extends ASTRcdBase {
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret;
+        VarBase result;
 
+        calcOperation();
         ret = executeChildren(ctx);
         VarContainer rightCont = ctx.popContainer(this);
-        VarContainer leftCont = ctx.popContainer(this);
+        VarContainer leftCont = null;
  
-        calcOperation();
         if (operation == null) {
             throw generateExecuteException("Operation <"+getName()+"> is not supported on Values");
         }        
-        VarBase result = VarBase.doOperation(this, leftCont.getInst(), operation, rightCont.getInst());
+        if (!unaryOp) {
+            leftCont = ctx.popContainer(this);
+            result = VarBase.doOperation(this, leftCont.getInst(), operation, rightCont.getInst());
+        } else {
+            result = VarBase.doOperation(this, null, operation, rightCont.getInst());
+        }
         ctx.pushContainer(new VarContainer(result));
         return ret;
     }
