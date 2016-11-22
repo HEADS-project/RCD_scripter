@@ -44,7 +44,7 @@ public class ASTRcdCallProc extends ASTRcdBase {
         ret = executeChildren(ctx);
         
         int addedStackElems = ctx.getContainerStackSize() - baseStackSize;
-        int argNum = addedStackElems-1;
+        int argNum = addedStackElems;
         VarContainer[] args = new VarContainer[argNum];
         for (int i = 0; i < argNum; i++) {
             args[argNum - i - 1] = ctx.popContainer(this);

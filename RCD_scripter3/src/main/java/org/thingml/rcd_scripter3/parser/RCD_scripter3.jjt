@@ -142,6 +142,8 @@ TOKEN:  /* Separators */
 |
     <COLON:(":")>
 |
+    <QUESTION:("?")>
+|
     <ASSIGN:("=")>
 |
     <EQUAL:("==")>
@@ -334,8 +336,6 @@ void Statement() :
 }
 {
 	(
-		CallProc(false)
-        |
         VarXXX()
         |
         ReturnStmt()
@@ -345,25 +345,15 @@ void Statement() :
 	<SEMI>
 }
 
-void CallProc(boolean returnValue) #RcdCallProc :
-{
-}
-{
-	Id()
-    { 
-        jjtThis.setToken(token); 
-        jjtThis.setReturnValue(returnValue);
-    }
-	<OBRA>
-        ActParamNode()
-	<CBRA>
-}
-
 void VarXXX() :
 {
 }
 {
-    Var()
+    (
+        Var()
+        |
+        Id()
+    )
     (
 	    (
             Index()
@@ -372,6 +362,8 @@ void VarXXX() :
             Assign()
             |
             CallMethod(false)
+            |
+            CallProc(false)
     	)
     ) 
 }
@@ -416,7 +408,20 @@ void CallMethod(boolean returnValue) #RcdCallMethod :
     }
     Id()
 	<OBRA>
-        ActParamNode()
+    ActParamNode()
+	<CBRA>
+}
+
+void CallProc(boolean returnValue) #RcdCallProc :
+{
+}
+{
+	<OBRA>
+    { 
+        jjtThis.setToken(token); 
+        jjtThis.setReturnValue(returnValue);
+    }
+    ActParamNode()
 	<CBRA>
 }
 
@@ -465,6 +470,30 @@ void ExprNode() #RcdNode :
 }
 {
     { jjtThis.setName("ExprNode"); }
+    (
+        LOOKAHEAD(OrExpr()<QUESTION> )
+        CondExpr()
+        |
+        OrExpr()
+    )
+}
+
+void CondExpr() #RcdCondExpr : 
+{
+}
+{
+    OrExprNode()
+    <QUESTION>
+    ExprNode()
+    <COLON>
+    ExprNode()
+}
+
+void OrExprNode() #RcdNode :
+{
+}
+{
+    { jjtThis.setName("OrExprNode"); }
 	OrExpr()
 }
 
@@ -645,9 +674,6 @@ void PrimExprPrefix() :
 {
     <OBRA> ExprNode() <CBRA> 
     |
-    LOOKAHEAD(Id() <OBRA>) 
-    CallProc(true)
-    |
     Literal()
     |
     Var() 
@@ -664,6 +690,9 @@ void PrimExprSuffix() :
     )*
     (
         CallMethod(true)
+    )?
+    (
+        CallProc(true)
     )?
 }
 

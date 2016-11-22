@@ -54,6 +54,7 @@ CallVarMethod -> Var (Index)* CallMethod
 ???// VarArray <.> SETSIZE_DEFAULT <(> VarInt, VarValue <)> 
 
 CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
+CallProc -> Var (Index)* <(> (Expr (<,> Expr)*)?  <)> // Func name stored in var
 // PRINT<(> Expr <)> 
 // PRINTLN<(> Expr <)> 
 // PRINTF <(> Expr (<,> Expr)* <)> 
@@ -63,7 +64,9 @@ CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
 Return -> <RETURN> <(> (Expr)?  <)>
 
 
-Expr -> OrExpr
+Expr -> CondExpr
+
+CondExpr -> OrExpr (<?> Expr <:> Expr)?
 
 OrExpr -> AndExpr ( "OR" AndExpr)*
 

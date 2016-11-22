@@ -42,6 +42,14 @@ println("Tall 2--2 "+$tall);
 $tall = +2 - 2;
 println("Tall +2-2 "+$tall);
 
+$func_var = println;
+$func_var("$func_var "+$func_var);
+$var1 = 1;
+$var2 = 2;
+$var_use1 = true;
+println("CondExpr "+$var_use1+" "+($var_use1 ? $var1 : $var2));
+$var_use1 = false;
+println("CondExpr "+$var_use1+" "+($var_use1 ? $var1 : $var2));
 RCD_SCRIPT_END
 
 */
