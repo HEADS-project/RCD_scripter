@@ -45,23 +45,42 @@ public class ASTRcdDeclProc extends ASTRcdBase implements ProcBaseIf {
     }
 
     @Override
+    public int getNumArgs() {
+        return myParams.length;
+    }
+
+    @Override
+    public boolean acceptNumArgs(int numArgs) {
+        return numArgs == myParams.length;
+    }
+
+    @Override
+    public boolean isVariArgs() {
+        return false;
+    }
+
+    @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         
+        ASTRcdBase params = null;
         mySymTab = ctx.getSymTab();
-        ctx.declProc(this, getName(), this);
+        
+        int len = numChildren();
+        if (len != 2) throw generateExecuteException("ERROR procedure declaration with <"+len+"> children expected 2");
+        script = (ASTRcdBase) children[1];
+        if (!(script.getName().contentEquals("ProcScript"))) throw generateExecuteException("ERROR procedure declaration cannot find script got <"+script.getName()+"><"+script.getClass().getName()+">");
+        params = (ASTRcdBase) children[0];
+        if (!(params.getName().contentEquals("FormParam"))) throw generateExecuteException("ERROR procedure declaration cannot find params got <"+params.getName()+"><"+params.getClass().getName()+">");
         
         // Build paramlist
-        int len = numChildren();
-        if (len < 1) throw generateExecuteException("ERROR procedure declaration with <"+len+"> children expected at least 1");
-        script = (ASTRcdBase) children[len-1];
-        if (!(script.getName().contentEquals("ProcScript"))) throw generateExecuteException("ERROR procedure declaration cannot find script got <"+script.getName()+"><"+script.getClass().getName()+">");
-        
-        myParams = new Param[len-1];
-        for (int i = 0; i < len-1; ++i) {
-            ASTRcdBase p = (ASTRcdBase) children[i];
+        int paramLen = params.numChildren();
+        myParams = new Param[paramLen];
+        for (int i = 0; i < paramLen; i++) {
+            ASTRcdBase p = (ASTRcdBase) params.children[i];
             if (!(p instanceof ASTRcdFormParam))  throw generateExecuteException("ERROR procedure declaration cannot find param got <"+p.getClass().getName()+">");
             myParams[i] = new Param(p.getName());
         }
+        ctx.declProc(this, getName(), this);
         return ExecResult.NORMAL;
     }
 

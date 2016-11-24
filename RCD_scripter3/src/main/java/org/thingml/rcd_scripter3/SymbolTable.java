@@ -36,9 +36,43 @@ public class SymbolTable {
     private SymbolTable parentTable = null;
     private int level = 0;
     private HashMap<String, VarContainer> contList = new HashMap<String, VarContainer>();
-    private HashMap<String, ProcBaseIf> procList = new HashMap<String, ProcBaseIf>();
+    private HashMap<String, ProcArg> procArgList = new HashMap<String, ProcArg>();
     
     private Stack<VarContainer> containerStack = new Stack<VarContainer>();
+    
+    private class ProcArg {
+        boolean hasVariArgs;
+        private HashMap<Integer, ProcBaseIf> procList = new HashMap<Integer, ProcBaseIf>();
+        
+        public ProcArg(ProcBaseIf pbi) {
+            hasVariArgs = pbi.isVariArgs();
+            if (hasVariArgs) {
+                procList.put(0, pbi);
+            } else {
+                procList.put(pbi.getNumArgs(), pbi);
+            }
+        }
+        
+        public void addProc(ProcBaseIf pbi) {
+            procList.put(pbi.getNumArgs(), pbi);
+        }
+
+        public ProcBaseIf getProc(int numArgs) {
+            if (hasVariArgs) numArgs = 0;
+            
+            ProcBaseIf ret = procList.get(numArgs);
+            return ret;
+        }
+        
+        public boolean acceptNumArgs(int numArgs) {
+            ProcBaseIf pbi = getProc(numArgs);
+            return pbi != null;
+        }
+
+        public boolean getHasVariArgs() {
+            return hasVariArgs;
+        }
+    }
     
     public SymbolTable createSubTable() {
         SymbolTable newTable = new SymbolTable();
@@ -57,28 +91,92 @@ public class SymbolTable {
         return ret;
     }
     
-    public void declProc(String name, ProcBaseIf newProc) {
+    private void addProc(String name, ProcBaseIf newProc) {
         // Store in current symbol table
-        procList.put(name, newProc);
+        ProcArg pa = procArgList.get(name);
+        if (pa == null) {
+            procArgList.put(name, new ProcArg(newProc));
+        } else {
+            pa.addProc(newProc);
+        }
     }
-
-    public ProcBaseIf getProcCheckAllLevels(String name) {
+    
+    public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc)  throws ExecuteException {
+        if (existVarArgProcNameCheckAllLevels(name)) {
+            throw b.generateExecuteException("Error multiple proc <"+name+"> cannot distinguished when using variable arguments.");
+        }
+        if (newProc.isVariArgs()) {
+            // Try to declare variable arg proc ... must be alone
+            if (!anyProcNameCheckAllLevels(name)) {
+                // Declare variable arg proc
+                addProc(name, newProc);
+            } else {
+                throw b.generateExecuteException("Error multiple proc <"+name+"> cannot distinguished when using variable arguments.");
+            }
+        } else {
+            ProcBaseIf currentProc = getProcNameArgCheckAllLevels(name, newProc.getNumArgs());
+                // Declare single arg proc
+                addProc(name, newProc);
+            if (currentProc == null) {
+            } else {
+                // Exact match
+                throw b.generateExecuteException("Error multiple proc <"+name+"> with "+newProc.getNumArgs()+" arguments.");
+            }
+        }
+    }
+    
+    public ProcBaseIf getProcNameArgCheckAllLevels(String name, int numArgs) {
         // Search the hierarchy of symbol tables
-        ProcBaseIf ret = procList.get(name);
+        ProcBaseIf ret = null;
+        ProcArg pa = procArgList.get(name);
+        if (pa != null) {
+            ret = pa.getProc(numArgs);
+        }
+
         if (ret == null) {
             // Not found in current table
             if (parentTable != null) {
                 // Search parent
-                ret = parentTable.getProcCheckAllLevels(name);
+                ret = parentTable.getProcNameArgCheckAllLevels(name, numArgs);
             }
         }
         return ret;
     }    
 
-    public ProcBaseIf getProcCheckThisLevel(String name) {
+    private boolean existVarArgProcNameCheckAllLevels(String name) {
         // Search the hierarchy of symbol tables
-        ProcBaseIf ret = procList.get(name);
-        return ret;
+        boolean exist = false;
+        ProcArg pa = procArgList.get(name);
+        if (pa != null) {
+            exist = pa.getHasVariArgs();
+        }
+
+        if (!exist) {
+            // Not found in current table
+            if (parentTable != null) {
+                // Search parent
+                exist = parentTable.existVarArgProcNameCheckAllLevels(name);
+            }
+        }
+        return exist;
+    }    
+
+    private boolean anyProcNameCheckAllLevels(String name) {
+        // Search the hierarchy of symbol tables
+        boolean any = false;
+        ProcArg pa = procArgList.get(name);
+        if (pa != null) {
+            any = true;
+        }
+
+        if (!any) {
+            // Not found in current table
+            if (parentTable != null) {
+                // Search parent
+                any = parentTable.anyProcNameCheckAllLevels(name);
+            }
+        }
+        return any;
     }    
 
 //    public VarBase getVarCheckAllLevels(String name) {

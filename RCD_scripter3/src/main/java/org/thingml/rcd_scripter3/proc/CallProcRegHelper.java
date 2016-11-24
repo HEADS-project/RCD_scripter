@@ -50,6 +50,18 @@ public class CallProcRegHelper implements ProcBaseIf {
         method = c.getMethod(methodName, formalArgs);
     }
 
+    public int getNumArgs() {
+        return formalArgs.length;
+    }
+    
+    public boolean acceptNumArgs(int numArgs){
+        return numArgs == formalArgs.length;
+    }
+    
+    public boolean isVariArgs(){
+        return false;
+    }
+
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         Object ret = null;
         VarContainer retCont = new VarContainer();

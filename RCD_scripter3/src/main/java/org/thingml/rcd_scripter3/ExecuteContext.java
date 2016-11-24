@@ -99,20 +99,16 @@ public class ExecuteContext {
         symTab = symTab.discardSubTable();
     }
     
-    public ProcBaseIf getProcBase(ASTRcdBase b, String name)  throws ExecuteException {
-        ProcBaseIf proc = symTab.getProcCheckAllLevels(name);
+    public ProcBaseIf getProcBase(ASTRcdBase b, String name, int numArgs)  throws ExecuteException {
+        ProcBaseIf proc = symTab.getProcNameArgCheckAllLevels(name.toLowerCase(), numArgs);
         if (proc == null) {
-            throw b.generateExecuteException("Error proc <"+name+"> is not defined");
+            throw b.generateExecuteException("Error proc <"+name+">("+numArgs+") is not defined");
         }
         return proc;
     }
     
     public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc)  throws ExecuteException {
-        ProcBaseIf oldProc = symTab.getProcCheckThisLevel(name);
-        if (oldProc != null) {
-            throw b.generateExecuteException("Error proc <"+name+"> is already declared");
-        }
-        symTab.declProc(name, newProc);
+        symTab.declProc(b, name, newProc);
     }
     
     public int getContainerStackSize() {

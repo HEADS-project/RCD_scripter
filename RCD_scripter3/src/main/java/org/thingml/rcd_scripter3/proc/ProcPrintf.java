@@ -29,6 +29,7 @@ import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarInt;
 
 /**
  *
@@ -57,6 +58,19 @@ public class ProcPrintf implements ProcBaseIf {
         }
     }
     
+    public int getNumArgs() {
+        return 1;
+    }
+    
+    public boolean acceptNumArgs(int numArgs){
+        return numArgs >= 1;
+    }
+    
+    public boolean isVariArgs(){
+        return true;
+    }
+    
+    
     public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
         
@@ -83,6 +97,7 @@ public class ProcPrintf implements ProcBaseIf {
         } else {
             callersBase.generateExecuteException("ERROR procedure <"+procId+"> is not defined expected <printf>");
         }
+        ctx.pushContainer(new VarContainer( new VarInt("0")));
         return ExecResult.NORMAL;
     }
     

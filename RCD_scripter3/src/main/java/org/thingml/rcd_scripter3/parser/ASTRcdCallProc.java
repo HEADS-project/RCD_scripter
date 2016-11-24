@@ -56,7 +56,7 @@ public class ASTRcdCallProc extends ASTRcdBase {
         
         String procId = id.stringVal();
 
-        ProcBaseIf proc = ctx.getProcBase(this, procId);
+        ProcBaseIf proc = ctx.getProcBase(this, procId, args.length);
         if (proc != null) {
             ret = proc.executeProc(ctx, this, procId, args);
             if (!returnValue) {

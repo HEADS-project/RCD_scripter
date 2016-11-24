@@ -53,6 +53,18 @@ public class CallMethodRegHelper implements ProcBaseIf {
         method = c.getMethod(methodName, formalArgs);
     }
 
+    public int getNumArgs() {
+        return formalArgs.length;
+    }
+    
+    public boolean acceptNumArgs(int numArgs){
+        return numArgs == formalArgs.length;
+    }
+    
+    public boolean isVariArgs(){
+        return false;
+    }
+    
     public static void printMethods(String fullClassName) {
         try {
             Class<?> c = Class.forName(fullClassName);

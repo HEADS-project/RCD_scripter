@@ -57,7 +57,7 @@ public class ASTRcdCallMethod extends ASTRcdBase {
 
         String methodId = var.getType().toString() +":"+ id.stringVal();
 
-        ProcBaseIf method = ctx.getProcBase(this, methodId);
+        ProcBaseIf method = ctx.getProcBase(this, methodId, args.length);
         if (method != null) {
             ret = method.executeMethod(ctx, this, var, args);
             if (!returnValue) {

@@ -34,4 +34,7 @@ import org.thingml.rcd_scripter3.variables.VarContainer;
 public interface ProcBaseIf {
     ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String id, VarContainer[] args) throws ExecuteException;
     ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer inst, VarContainer[] args) throws ExecuteException;
+    int getNumArgs();
+    boolean acceptNumArgs(int numArgs);
+    boolean isVariArgs();
 }

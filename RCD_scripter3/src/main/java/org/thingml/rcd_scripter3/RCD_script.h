@@ -20,7 +20,7 @@ INSERT_END
 
 RCD_SCRIPT_START
 
-void my_func(value $in_val1, value $in_val2, value $in_string) {
+PROC my_func($in_val1, $in_val2, $in_string) {
     println("Input value1: " + $in_val1);
     println("Input value2: " + $in_val2);
     println("Input value3: " + $in_string);
@@ -30,7 +30,7 @@ void my_func(value $in_val1, value $in_val2, value $in_string) {
 
 my_func(1 , 2, "Param tekst");
 
-void check_hash_func(HASH $in_hash, value $key) {
+PROC check_hash_func($in_hash, $key) {
     IF ($in_hash.HAS($key)) {
         PRINTLN("Key "+$key+" has value <"+$in_hash[$key]+"> Having size "+$in_hash[$key].length());
     } ELSE {
@@ -38,11 +38,11 @@ void check_hash_func(HASH $in_hash, value $key) {
     }
 }
 
-HASH $test = {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16U16 ,  COMMENT: "ThingMl test message  "};
+$test = {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16U16 ,  COMMENT: "ThingMl test message  "};
 check_hash_func($test, COMMENT);
 check_hash_func($test, TULL);
 
-void check_string_func(value $txt, value $start, value $end) {
+PROC check_string_func($txt, $start, $end) {
     PRINTLN("Check: <"+$txt+">");
     PRINTLN("Begin with: "+$start+" "+$txt.startswith($start));
     PRINTLN("End with: "+$end+" "+$txt.endswith($end));

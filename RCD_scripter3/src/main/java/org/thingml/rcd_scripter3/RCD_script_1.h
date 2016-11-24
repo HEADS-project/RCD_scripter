@@ -15,6 +15,7 @@
  */
 /*
 
+RCD_SCRIPT_START
 $tekst1 = "Heisan";
 println("Tekst "+$tekst1);
 $tall1 = 2;
@@ -32,7 +33,6 @@ println("array "+$array.is_int());
 println("array[2] "+$array[2].is_array());
 println("array[2] "+$array[2].is_int());
 
-RCD_SCRIPT_START
 $tall = +2;
 println("Tall +2 "+$tall);
 $tall = -2;
@@ -50,6 +50,45 @@ $var_use1 = true;
 println("CondExpr "+$var_use1+" "+($var_use1 ? $var1 : $var2));
 $var_use1 = false;
 println("CondExpr "+$var_use1+" "+($var_use1 ? $var1 : $var2));
+
+
+
+
+PROC my_func($in_val1, $in_val2, $in_string) {
+    println("Input value1: " + $in_val1);
+    println("Input value2: " + $in_val2);
+    println("Input value3: " + $in_string);
+    printf("Input int1:%d int2:%d string<%s>\n", $in_val1, $in_val2, $in_string);
+    printf("Only text\n");
+}
+
+my_func(1 , 2, "Param tekst");
+
+PROC check_hash_func($in_hash, $key) {
+    IF ($in_hash.HAS($key)) {
+        PRINTLN("Key "+$key+" has value <"+$in_hash[$key]+"> Having size "+$in_hash[$key].length());
+    } ELSE {
+        PRINTLN("Key "+$key+" is not present in HASH");
+    }
+}
+
+$test = {MSGID: MSGID_PING2 ,              ENUM_VAL: 0x31 ,  MSGC: MSGC_U16U16 ,  COMMENT: "ThingMl test message  "};
+check_hash_func($test, COMMENT);
+check_hash_func($test, TULL);
+
+PROC check_string_func($txt, $start, $end) {
+    PRINTLN("Check: <"+$txt+">");
+    PRINTLN("Begin with: "+$start+" "+$txt.startswith($start));
+    PRINTLN("End with: "+$end+" "+$txt.endswith($end));
+    PRINTLN("Replace start to end: "+$txt.replace($start, $end));
+    PRINTLN("Toupper: "+$txt.touppercase());
+    PRINTLN("Tolower: "+$txt.tolowercase());
+    PRINTLN("Trim: <"+$txt.trim()+">");
+}
+
+check_string_func("Start Tekst Slutt ", "Start", "Slutt ");
+
+
 RCD_SCRIPT_END
 
 */

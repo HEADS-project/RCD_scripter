@@ -38,7 +38,7 @@ public class ProcPrint {
     public static void registerProcs(ExecuteContext ctx)throws Exception{
         ctx.declProc(null, "print", new CallProcRegHelper("print", ProcPrint.class, "print", new Class[] {java.lang.String.class} ));
         ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {java.lang.String.class} ));
-        //ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {} ));
+        ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {} ));
     }
     public static void print(String txt) {
         System.out.print(txt);
