@@ -87,13 +87,13 @@ public class VarContainer implements Cloneable{
         return ret;
     }
     
-    public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
-        if (varInst.isArray()) {
-            varInst.storeToIndex(b, idx, expr);
-        } else {
-            varInst = new VarArray(varInst);
-            varInst.storeToIndex(b, idx, expr);
-        }
-    }
+    //public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
+    //    if (varInst.isArray()) {
+    //        varInst.storeToIndex(b, idx, expr);
+    //    } else {
+    //        varInst = new VarArray(varInst);
+    //        varInst.storeToIndex(b, idx, expr);
+    //    }
+    //}
 
 }

@@ -39,7 +39,7 @@ import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 public class VarArray extends VarBase implements Cloneable{
 
     public HashMap<String, VarKeyContainer> hash = new HashMap<String, VarKeyContainer>();
-    private HashMap<String, VarKeyContainer> defaultElemHash = new HashMap<String, VarKeyContainer>();
+    private HashMap<String, VarKeyContainer> defaultElemHash = null;
 
     public VarArray() {
         super("");
@@ -65,9 +65,16 @@ public class VarArray extends VarBase implements Cloneable{
     public static void registerMethods(ExecuteContext ctx)throws Exception{
         ctx.declProc(null, VarType.ARRAY+":clone", new CallMethodRegHelper("clone", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "myClone", new Class[] {} ));
         ctx.declProc(null, VarType.ARRAY+":has", new CallMethodRegHelper("has", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "has", new Class[] { VarBase.class }));
+        ctx.declProc(null, VarType.ARRAY+":setdef", new CallMethodRegHelper("setdef", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "setDefaultArray", new Class[] { VarArray.class }));
+        ctx.declProc(null, VarType.ARRAY+":add", new CallMethodRegHelper("add", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "addArray", new Class[] { VarArray.class }));
+        ctx.declProc(null, VarType.ARRAY+":length", new CallMethodRegHelper("length", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "length", new Class[] {}));
     }
 
 
+    public int length() {
+        return hash.size();
+    }
+    
     public VarArray myClone() throws CloneNotSupportedException {
         return clone();
     }    
@@ -80,16 +87,18 @@ public class VarArray extends VarBase implements Cloneable{
     
     private void copyArray(VarArray copyFromArray) {
         if (copyFromArray != null) {
-            //defaultHash = new VarHash(copyFromArray.defaultElemHash.clo);
-            Iterator i1 = copyFromArray.defaultElemHash.entrySet().iterator();
-            while(i1.hasNext()) {
-                HashMap.Entry pair  = (HashMap.Entry)i1.next();
-                try {
-                    VarKeyContainer clonedValue;
-                    clonedValue = ((VarKeyContainer)pair.getValue()).clone();
-                    defaultElemHash.put(clonedValue.getKey(), clonedValue);
-                } catch (CloneNotSupportedException ex) {
-                    Logger.getLogger(VarArray.class.getName()).log(Level.SEVERE, null, ex);
+            if (copyFromArray.defaultElemHash != null) {
+                defaultElemHash = new HashMap<String, VarKeyContainer>();
+                Iterator i1 = copyFromArray.defaultElemHash.entrySet().iterator();
+                while(i1.hasNext()) {
+                    HashMap.Entry pair  = (HashMap.Entry)i1.next();
+                    try {
+                        VarKeyContainer clonedValue;
+                        clonedValue = ((VarKeyContainer)pair.getValue()).clone();
+                        defaultElemHash.put(clonedValue.getKey(), clonedValue);
+                    } catch (CloneNotSupportedException ex) {
+                        Logger.getLogger(VarArray.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
                 
@@ -156,6 +165,11 @@ public class VarArray extends VarBase implements Cloneable{
         return hash.get(key);
     }    
     
+    public void setDefaultArray(VarArray def_array) {
+        defaultElemHash = new HashMap<String, VarKeyContainer>();
+        defaultElemHash.putAll(def_array.hash);
+    }
+     
     public void addArray(VarArray array_add) {
         hash.putAll(array_add.hash);
     }
@@ -172,18 +186,27 @@ public class VarArray extends VarBase implements Cloneable{
         if (kc != null) {
             ret = kc.getContainer();
         } else {
-            //b.printMessage("ERROR "+b.getName()+"["+idx.stringVal()+"] is not defined");
-            ret = new VarContainer();
-            storeToIndex(b, idx, ret);
+            if (defaultElemHash == null) {
+                ret = new VarContainer();
+            } else {
+                VarArray newArr = new VarArray();
+                Iterator i1 = defaultElemHash.entrySet().iterator();
+                while(i1.hasNext()) {
+                    HashMap.Entry pair  = (HashMap.Entry)i1.next();
+                    try {
+                        VarKeyContainer clonedDefValue = ((VarKeyContainer)pair.getValue()).clone();
+                        newArr.addKeyContainer(clonedDefValue);
+                    } catch (CloneNotSupportedException ex) {
+                        throw b.generateExecuteException("Error array failed to apply default elements\n"+ex);
+                    }
+                }
+                ret = new VarContainer(newArr);
+            }
+            addKeyContainer(new VarKeyContainer(idx.stringVal(), ret));
         }
         return ret;
     }
-
-    @Override
-    public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
-        addKeyContainer(new VarKeyContainer(idx.stringVal(), expr));
-    }
-        
+    
     @Override
     public String printString(){
         String ret = "Array: " + dump();

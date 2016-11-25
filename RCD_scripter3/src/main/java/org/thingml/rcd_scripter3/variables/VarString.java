@@ -35,7 +35,7 @@ public class VarString extends VarBase {
     }
 
     public static void registerMethods(ExecuteContext ctx)throws Exception{
-        ctx.declProc(null, VarType.STRING+":lenght", new CallMethodRegHelper("lenght", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "length", new Class[] {} ));
+        ctx.declProc(null, VarType.STRING+":length", new CallMethodRegHelper("length", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "length", new Class[] {} ));
         ctx.declProc(null, VarType.STRING+":endswith", new CallMethodRegHelper("endswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "endsWith", new Class[] {java.lang.String.class} ));
         ctx.declProc(null, VarType.STRING+":replace", new CallMethodRegHelper("replace", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "replace", new Class[] {java.lang.CharSequence.class, java.lang.CharSequence.class} ));
         ctx.declProc(null, VarType.STRING+":startswith", new CallMethodRegHelper("startswith", java.lang.String.class, CallMethodRegHelper.InstClass.STRING, "startsWith", new Class[] {java.lang.String.class} ));

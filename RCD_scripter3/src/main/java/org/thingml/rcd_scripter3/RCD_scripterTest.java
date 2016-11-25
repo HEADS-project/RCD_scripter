@@ -24,6 +24,7 @@ import java.io.FileReader;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
 import org.thingml.rcd_scripter3.proc.ProcPrintf;
+import org.thingml.rcd_scripter3.proc.ProcType;
 import org.thingml.rcd_scripter3.variables.VarArray;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarFile;
@@ -55,6 +56,7 @@ public class RCD_scripterTest {
         try{
             //jobContext.setTrace(true);
             ProcPrint.registerProcs(jobContext);
+            ProcType.registerProcs(jobContext);
             ProcPrintf proc = new ProcPrintf(jobContext);
             VarFile.registerMethods();
             //VarHash.registerMethods();

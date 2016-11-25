@@ -99,9 +99,9 @@ abstract public class VarBase implements Cloneable{
         throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     }
     
-    public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
-        throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
-    }
+    //public void storeToIndex(ASTRcdBase b, VarContainer idx, VarContainer expr) throws ExecuteException {
+    //    throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
+    //}
 
     public static VarBase doOperation(ASTRcdBase b, VarBase varLeft, Operation op, VarBase varRight) throws ExecuteException {
         

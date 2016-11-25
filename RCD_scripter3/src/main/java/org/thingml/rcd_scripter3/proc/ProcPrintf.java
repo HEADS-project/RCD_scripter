@@ -42,7 +42,6 @@ public class ProcPrintf implements ProcBaseIf {
     public ProcPrintf(ExecuteContext ctx) {
         try {
             ctx.declProc(null, "printf", this);
-            ctx.declProc(null, "PRINTF", this);
             
             try {
                 Class<?> c = Class.forName("java.io.PrintStream");

@@ -83,7 +83,7 @@ public class ProcType {
         return new VarContainer( new VarInt(""+vc.intVal()));
     }
     
-    public static VarContainer intReal(VarContainer vc) {
+    public static VarContainer realVal(VarContainer vc) {
         return new VarContainer( new VarReal(""+vc.realVal()));
     }
     

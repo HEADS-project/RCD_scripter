@@ -108,7 +108,7 @@ public class ExecuteContext {
     }
     
     public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc)  throws ExecuteException {
-        symTab.declProc(b, name, newProc);
+        symTab.declProc(b, name.toLowerCase(), newProc);
     }
     
     public int getContainerStackSize() {
