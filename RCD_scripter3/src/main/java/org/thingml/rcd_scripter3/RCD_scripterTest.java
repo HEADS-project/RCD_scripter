@@ -58,11 +58,8 @@ public class RCD_scripterTest {
             ProcPrint.registerProcs(jobContext);
             ProcType.registerProcs(jobContext);
             ProcPrintf proc = new ProcPrintf(jobContext);
-            VarFile.registerMethods();
-            //VarHash.registerMethods();
-            //VarHashList.registerMethods();
-            //VarValArray.registerMethods();
-            //VarInt.registerMethods();
+
+            VarFile.registerMethods(jobContext);
             VarBase.registerMethods(jobContext);
             VarString.registerMethods(jobContext);
             VarArray.registerMethods(jobContext);

@@ -33,8 +33,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
-import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
+import org.thingml.rcd_scripter3.proc.CallFileExecMethodsRegHelper;
 
 /**
  *
@@ -68,11 +68,6 @@ public class VarFile extends VarBase {
         }
     }
 
-    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
-    
-    public static void registerMethods()throws Exception{
-        //callMethods.put("add", new CallMethod("add", VarHash.class, "addHash", new Class[] { VarHash.class }));
-    }
     @Override
     public VarType getType() {
         return VarType.FILE;
@@ -315,7 +310,17 @@ public class VarFile extends VarBase {
         
     }
     
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarContainer[] args) throws ExecuteException {
+    public static void registerMethods(ExecuteContext ctx)throws Exception{
+        ctx.declProc(null, VarType.FILE+":open", new CallFileExecMethodsRegHelper("open", 1, false));
+        ctx.declProc(null, VarType.FILE+":insert", new CallFileExecMethodsRegHelper("insert", 2, false));
+        ctx.declProc(null, VarType.FILE+":print", new CallFileExecMethodsRegHelper("print", 1, false));
+        ctx.declProc(null, VarType.FILE+":println", new CallFileExecMethodsRegHelper("println", 0, false));
+        ctx.declProc(null, VarType.FILE+":println", new CallFileExecMethodsRegHelper("println", 1, false));
+        ctx.declProc(null, VarType.FILE+":printf", new CallFileExecMethodsRegHelper("printf", 0, true));
+        ctx.declProc(null, VarType.FILE+":close", new CallFileExecMethodsRegHelper("close", 0, false));
+    }
+
+    public void executeMethods(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
 
         if (methodId.equalsIgnoreCase("open")) {
@@ -372,6 +377,6 @@ public class VarFile extends VarBase {
         } else {
             callersBase.generateExecuteException("ERROR method <"+methodId+"> is not defined for type <"+getTypeString()+">");
         }
-        return ExecResult.NORMAL;
+        ctx.pushContainer( new VarContainer());
     }
 }

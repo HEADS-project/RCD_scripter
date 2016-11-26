@@ -60,8 +60,6 @@ public class VarArray extends VarBase implements Cloneable{
         addKeyContainer(copyFromKc);
     }
 
-    //private static HashMap<String, CallMethod> callMethods = new HashMap<String, CallMethod>();
-    
     public static void registerMethods(ExecuteContext ctx)throws Exception{
         ctx.declProc(null, VarType.ARRAY+":clone", new CallMethodRegHelper("clone", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "myClone", new Class[] {} ));
         ctx.declProc(null, VarType.ARRAY+":has", new CallMethodRegHelper("has", VarArray.class, CallMethodRegHelper.InstClass.VARINST, "has", new Class[] { VarBase.class }));
