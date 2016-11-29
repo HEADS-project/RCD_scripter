@@ -85,6 +85,9 @@ public class CallProcRegHelper implements ProcBaseIf {
             } catch (IllegalArgumentException ex) {
                 throw callersBase.generateExecuteException("ERROR procedure "+myName+"() call failed\n"+ex);
             } catch (InvocationTargetException ex) {
+                Throwable cause = ex.getCause();
+                System.out.format("Invocation of %s failed because of: %s%n",
+                            myName, cause.getMessage());
                 throw callersBase.generateExecuteException("ERROR procedure "+myName+"() call failed\n"+ex);
             }
         } else {

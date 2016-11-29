@@ -20,15 +20,12 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
-import org.thingml.rcd_scripter3.parser.ASTRcdBase.ExecResult;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 

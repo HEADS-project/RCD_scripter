@@ -20,7 +20,6 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,13 +27,15 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
-import org.thingml.rcd_scripter3.proc.CallFileExecMethodsRegHelper;
+import org.thingml.rcd_scripter3.proc.CallMethodForwardRegHelper;
+import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 
 /**
  *
@@ -117,6 +118,9 @@ public class VarFile extends VarBase {
         return true;
     }
     
+    public void openCb(String fileName) throws ExecuteException {
+        open(getCallersBase(), fileName);
+    }
     
     public void open(ASTRcdBase b, String fileName) throws ExecuteException {
         this.fileName = fileName;
@@ -131,6 +135,10 @@ public class VarFile extends VarBase {
         isOpen = true;
     }
 
+    public void insertCb(String fileName, String keyword) throws ExecuteException {
+        insert(getCallersBase(), fileName, keyword);
+    }
+    
     public void insert(ASTRcdBase b, String fileName, String keyword) throws ExecuteException {
         this.fileName = fileName;
         this.keyword = keyword;
@@ -154,28 +162,40 @@ public class VarFile extends VarBase {
                 if (keywordStartLine == -1) {
                     keywordStartLine = i;  
                 } else {
-                    b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_START"+"> at line "+keywordStartLine+" and "+i+" in file <"+this.fileName+">\n");
+                    throw b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_START"+"> at line "+keywordStartLine+" and "+i+" in file <"+this.fileName+">\n");
                 }
             }
             if (line.contains(keyword+"_END")) {
                 if (keywordEndLine == -1) {
                     keywordEndLine = i;  
                 } else {
-                    b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_END"+"> at line "+keywordEndLine+" and "+i+" in file <"+this.fileName+">\n");
+                    throw b.generateExecuteException("ERROR found multiple keywords <"+keyword+"_END"+"> at line "+keywordEndLine+" and "+i+" in file <"+this.fileName+">\n");
                 }
             }
         }
 
         if (keywordStartLine == -1) {
-            b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_START"+"> in file <"+this.fileName+">\n");
+            throw b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_START"+"> in file <"+this.fileName+">\n");
         }
         if (keywordEndLine == -1) {
-            b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_END"+"> in file <"+this.fileName+">\n");
+            throw b.generateExecuteException("ERROR cannot find keyword <"+keyword+"_END"+"> in file <"+this.fileName+">\n");
         }
 
         isOpen = true;
     }
 
+    public void writeLnCb() throws ExecuteException {
+        write(getCallersBase(), "\n");
+    }
+    
+    public void writeLnCb(String txt) throws ExecuteException {
+        write(getCallersBase(), txt+"\n");
+    }
+    
+    public void writeCb(String txt) throws ExecuteException {
+        write(getCallersBase(), txt);
+    }
+    
     public void write(ASTRcdBase b, String txt) throws ExecuteException {
         if (isOpen) {
             if (modeInsert) {
@@ -184,12 +204,16 @@ public class VarFile extends VarBase {
                 try {
                     bufferedWriterTmp.write(txt);
                 } catch (IOException ex) {
-                    b.generateExecuteException("ERROR writing to file <"+fileNameTmp+">\n"+ex);
+                    throw b.generateExecuteException("ERROR writing to file <"+fileNameTmp+">\n"+ex);
                 }
             }
         } else {
-            b.generateExecuteException("ERROR writing to closed file <"+fileNameTmp+">\n");
+            throw b.generateExecuteException("ERROR writing to closed file <"+fileNameTmp+">\n");
         }
+    }
+    
+    public void closeCb() throws ExecuteException {
+        close(getCallersBase());
     }
     
     public void close(ASTRcdBase b) throws ExecuteException {
@@ -207,7 +231,7 @@ public class VarFile extends VarBase {
                         }
                     }
                 } catch (IOException ex) {
-                    b.generateExecuteException("ERROR writing to file <"+fileNameTmp+">\n"+ex);
+                    throw b.generateExecuteException("ERROR writing to file <"+fileNameTmp+">\n"+ex);
                 }
             }
         
@@ -215,20 +239,24 @@ public class VarFile extends VarBase {
             try {
                 bufferedWriterTmp.close();
             } catch (IOException ex) {
-                b.generateExecuteException("ERROR closing file <"+fileNameTmp+">\n"+ex);
+                throw b.generateExecuteException("ERROR closing file <"+fileNameTmp+">\n"+ex);
             }
 
             // Compare tmp file and original file
             List<String> generatedTmpFileLines = null;
             try {
                 generatedTmpFileLines = Files.readAllLines(Paths.get(this.fileNameTmp), Charset.defaultCharset());
+            } catch (NoSuchFileException ex) {
+                // The file doesnt exist ... ok
             } catch (IOException ex) {
-                b.generateExecuteException("ERROR reading file <"+fileNameTmp+">\n"+ex);
+                throw b.generateExecuteException("ERROR reading file <"+fileNameTmp+">\n"+ex);
             }
 
             boolean sameContent = true; // Assume the same content as in the original
 
-            if (originalInsertFileLines.size() != generatedTmpFileLines.size()) {
+            if (originalInsertFileLines == null) {
+                sameContent = false;
+            } else if (originalInsertFileLines.size() != generatedTmpFileLines.size()) {
                 sameContent = false;
             } else {
                 for (int i = 0; i < originalInsertFileLines.size(); i++) {
@@ -248,24 +276,24 @@ public class VarFile extends VarBase {
                 try {
                     Files.copy(Paths.get(this.fileNameTmp), Paths.get(fileName), StandardCopyOption.valueOf("REPLACE_EXISTING"));                
                 } catch (IOException ex) {
-                    b.generateExecuteException("ERROR copying file <"+fileNameTmp+"> to <"+fileName+">\n"+ex);
+                    throw b.generateExecuteException("ERROR copying file <"+fileNameTmp+"> to <"+fileName+">\n"+ex);
                 }
 
                 try {
                     Files.delete(Paths.get(this.fileNameTmp));
                 } catch (IOException ex) {
-                    b.generateExecuteException("ERROR deleting file <"+fileNameTmp+">\n"+ex);
+                    throw b.generateExecuteException("ERROR deleting file <"+fileNameTmp+">\n"+ex);
                 }
             }
 
             isOpen = false;
         } else {
-            b.generateExecuteException("ERROR writing to closed file <"+fileNameTmp+">\n");
+            throw b.generateExecuteException("ERROR writing to closed file <"+fileNameTmp+">\n");
         }
     }
     
 
-    private void createTmpFile(ASTRcdBase b) {
+    private void createTmpFile(ASTRcdBase b)   throws ExecuteException {
         int tmpNum = -1;
         try {
             // Find next unused backup filename
@@ -277,12 +305,12 @@ public class VarFile extends VarBase {
             } while (sFolder.exists());
             bufferedWriterTmp = new BufferedWriter(new FileWriter(fileNameTmp));
         } catch (IOException ex) {
-            b.generateExecuteException("ERROR making tmp file <"+fileNameTmp+">\n"+ex);
+            throw b.generateExecuteException("ERROR making tmp file <"+fileNameTmp+">\n"+ex);
         }
         
     }
     
-    private void createBakFile(ASTRcdBase b) {
+    private void createBakFile(ASTRcdBase b)  throws ExecuteException {
         int bakNum = -1;
         String fileNameBak = "";
         try {
@@ -296,30 +324,54 @@ public class VarFile extends VarBase {
             // Make backup 
             Files.copy(Paths.get(this.fileName), Paths.get(fileNameBak));                
         } catch (IOException ex) {
-            b.generateExecuteException("ERROR making bak file <"+fileNameBak+">\n"+ex);
+            throw b.generateExecuteException("ERROR making bak file <"+fileNameBak+">\n"+ex);
         }
         
     }
 
-    private void readAllLines(ASTRcdBase b) {
+    private void readAllLines(ASTRcdBase b)  throws ExecuteException {
         try {
             originalInsertFileLines = Files.readAllLines(Paths.get(this.fileName), Charset.defaultCharset());
+        } catch (NoSuchFileException ex) {
+            // The file doesnt exist ... ok
         } catch (IOException ex) {
-            b.generateExecuteException("ERROR reading file <"+fileName+">\n"+ex);
+            throw b.generateExecuteException("ERROR reading file <"+fileName+">\n"+ex);
         }
         
     }
     
     public static void registerMethods(ExecuteContext ctx)throws Exception{
-        ctx.declProc(null, VarType.FILE+":open", new CallFileExecMethodsRegHelper("open", 1, false));
-        ctx.declProc(null, VarType.FILE+":insert", new CallFileExecMethodsRegHelper("insert", 2, false));
-        ctx.declProc(null, VarType.FILE+":print", new CallFileExecMethodsRegHelper("print", 1, false));
-        ctx.declProc(null, VarType.FILE+":println", new CallFileExecMethodsRegHelper("println", 0, false));
-        ctx.declProc(null, VarType.FILE+":println", new CallFileExecMethodsRegHelper("println", 1, false));
-        ctx.declProc(null, VarType.FILE+":printf", new CallFileExecMethodsRegHelper("printf", 0, true));
-        ctx.declProc(null, VarType.FILE+":close", new CallFileExecMethodsRegHelper("close", 0, false));
+        ctx.declProc(null, VarType.FILE+":open", new CallMethodRegHelper("open", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "openCb", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, VarType.FILE+":insert", new CallMethodRegHelper("insert", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "insertCb", new Class[] {java.lang.String.class, java.lang.String.class} ));
+        ctx.declProc(null, VarType.FILE+":print", new CallMethodRegHelper("print", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeCb", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, VarType.FILE+":println", new CallMethodRegHelper("println", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeLnCb", new Class[] {java.lang.String.class} ));
+        ctx.declProc(null, VarType.FILE+":println", new CallMethodRegHelper("println", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeLnCb", new Class[] {} ));
+        ctx.declProc(null, VarType.FILE+":printf", new CallMethodForwardRegHelper("CallMethodForwardRegHelper", VarFile.class, "executePrintf" ));
+        ctx.declProc(null, VarType.FILE+":close", new CallMethodRegHelper("close", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "closeCb", new Class[] {} ));
     }
 
+    public void executePrintf(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer[] args) throws ExecuteException {
+        int argNum = args.length;
+
+        if (argNum >= 1) {
+            Object[] baseArg = new Object[2];
+            Object[] varArg = new Object[argNum-1];
+            baseArg[0] = args[0].getValObj();
+            baseArg[1] = varArg;
+            for (int i = 1; i < args.length; i++) {
+                varArg[i-1] = args[i].getValObj();
+            }
+            try {
+                write(callersBase, (String) method.invoke(null, baseArg));
+            } catch (Exception ex) {
+                System.out.println(ex);
+                throw callersBase.generateExecuteException("ERROR function printf() wrong args <"+ex+">");
+            } 
+        } else {
+            throw callersBase.generateExecuteException("ERROR function printf() accepts >=1  arg given "+argNum+" arg(s)");
+        }
+    }
+/*    
     public void executeMethods(ExecuteContext ctx, ASTRcdBase callersBase, String methodId, VarContainer[] args) throws ExecuteException {
         int argNum = args.length;
 
@@ -379,4 +431,5 @@ public class VarFile extends VarBase {
         }
         ctx.pushContainer( new VarContainer());
     }
+*/
 }

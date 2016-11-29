@@ -37,86 +37,49 @@ import org.thingml.rcd_scripter3.variables.VarString;
  *
  * @author steffend
  */
-public class CallMethodRegHelper implements ProcBaseIf {
-    public enum InstClass {VARINST, STRING};
-    private InstClass instClass;
+public class CallMethodForwardRegHelper implements ProcBaseIf {
     private Class<?> c;
-    private Class[] formalArgs;
     private String myName;
     private Method method;
 
-    public CallMethodRegHelper(String myName, Class<?> c, InstClass instClass, String methodName, Class[] formalArgs) throws Exception{
-        this.instClass = instClass;
+    public CallMethodForwardRegHelper(String myName, Class<?> c, String methodName) throws Exception{
         this.myName = myName.toLowerCase();
         this.c = c;
-        this.formalArgs = formalArgs;
-        method = c.getMethod(methodName, formalArgs);
+        method = c.getMethod(methodName, new Class[] {ExecuteContext.class, ASTRcdBase.class, VarContainer[].class});
     }
 
     public int getNumArgs() {
-        return formalArgs.length;
+        return 0;
     }
     
     public boolean acceptNumArgs(int numArgs){
-        return numArgs == formalArgs.length;
+        return true;
     }
     
     public boolean isVariArgs(){
-        return false;
+        return true;
     }
-    
-    public static void printMethods(String fullClassName) {
-        try {
-            Class<?> c = Class.forName(fullClassName);
-            Method[] methods = c.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                System.out.println(methods[i]);
-            }
-        } catch (ClassNotFoundException ex) {
-            System.out.println("ERROR : "+ex);
-        }
-    }
-    
+        
     public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
         Object ret = null;
         VarContainer retCont = new VarContainer();
         Object inst = null;
         
-        switch (instClass) {
-            case VARINST:
-                inst = varInst.getInst();
-                ((VarBase)inst).setCallersBase(callersBase);
-                break;
-            case STRING:
-                inst = varInst.stringVal();
-                break;
-        }  
+        inst = varInst.getInst();
 
-        if (args.length == formalArgs.length) {
-            Object[] actArg = new Object[formalArgs.length];
-            for (int i = 0; i < formalArgs.length; i++) {
-                if (formalArgs[i].isAssignableFrom(args[i].getInst().getClass())) {
-                    actArg[i] = args[i].getInst();
-                } else if (formalArgs[i].isAssignableFrom(args[i].getValObj().getClass())) {
-                    actArg[i] = args[i].getValObj();
-                } else {
-                    throw callersBase.generateExecuteException("ERROR method "+myName+"() param "+i+" got <"+args[i].getInst().getClass().getSimpleName()+"> expected <"+formalArgs[i].getClass().getSimpleName()+">");
-                }
-            }
-            try {
-                ret = method.invoke(inst, actArg);
-            } catch (IllegalAccessException ex) {
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
-            } catch (IllegalArgumentException ex) {
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
-            } catch (InvocationTargetException ex) {
-                Throwable cause = ex.getCause();
-                System.out.format("Invocation of %s failed because of: %s%n",
-                            myName, cause.getMessage());
-                throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
-            }
-        } else {
-            throw callersBase.generateExecuteException("ERROR method "+myName+"() accepts "+formalArgs.length+" given "+args.length+" arg(s)");
+        Object[] actArg = new Object[3];
+        actArg[0] = ctx;
+        actArg[1] = callersBase;
+        actArg[2] = args;
+        
+        try {
+            ret = method.invoke(inst, actArg);
+        } catch (IllegalAccessException ex) {
+            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+        } catch (IllegalArgumentException ex) {
+            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+        } catch (InvocationTargetException ex) {
+            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
         }
         if (ret != null) {
             if (VarBase.class.isAssignableFrom(ret.getClass())) {

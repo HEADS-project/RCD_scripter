@@ -87,7 +87,7 @@ public class ProcPrintf implements ProcBaseIf {
                     method.invoke(System.out, baseArg);
                 } catch (Exception ex) {
                     System.out.println(ex);
-                    throw callersBase.generateExecuteException("ERROR function printf() wring args <"+ex+">");
+                    throw callersBase.generateExecuteException("ERROR function printf() wrong args <"+ex+">");
                 } 
 
             } else {

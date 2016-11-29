@@ -35,6 +35,7 @@ abstract public class VarBase implements Cloneable{
 
     private String image;
     private String operationImage;
+    private ASTRcdBase callersBase = null;
     
     public VarBase(String image) {
         this.image = image;
@@ -58,6 +59,14 @@ abstract public class VarBase implements Cloneable{
 
     public String getImage() {
         return image;
+    }
+    
+    public void setCallersBase(ASTRcdBase cb) {
+        callersBase = cb;
+    }
+    
+    public ASTRcdBase getCallersBase() {
+        return callersBase;
     }
     
     public void setOperationImage(String image) {

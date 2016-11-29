@@ -64,6 +64,15 @@ PROC my_func($in_val1, $in_val2, $in_string) {
 
 my_func(1 , 2, "Param tekst");
 
+
+$GenFile = FILE();
+$GenFile.OPEN("test.txt");
+$GenFile.PRINT("Start på linje");
+$GenFile.PRINTLN();
+$GenFile.PRINTLN("Egen linje");
+$GenFile.PRINTF("Int: %d  String <%s>\n", 42, "En tekst");
+$GenFile.CLOSE();
+
 PROC check_hash_func($in_hash, $key) {
     IF ($in_hash.HAS($key)) {
         PRINTLN("Key "+$key+" has value <"+$in_hash[$key]+"> Having size "+$in_hash[$key].length());
