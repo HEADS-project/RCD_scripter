@@ -35,72 +35,42 @@ import org.thingml.rcd_scripter3.variables.VarInt;
  *
  * @author steffend
  */
-public class ProcPrintf implements ProcBaseIf {
+public class ProcPrintf {
     
-    Method method;
+    private static Method method;
     
-    public ProcPrintf(ExecuteContext ctx) {
-        try {
-            ctx.declProc(null, "printf", this);
-            
+    public ProcPrintf() {
+    }
+
+    public static void registerProcs(ExecuteContext ctx)throws Exception{
+        Class<?> c = Class.forName("java.io.PrintStream");
+        Class[] cArg = new Class[2];
+        cArg[0] = java.lang.String.class;
+        cArg[1] = java.lang.Object[].class;
+        method = c.getMethod("printf", cArg);
+        
+        ctx.declProc(null, "printf", new CallProcForwardRegHelper("printf", ProcPrintf.class, "executePrintf", null));
+    }
+
+    public static void executePrintf(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer[] args) throws ExecuteException {
+        int argNum = args.length;
+
+        if (argNum >= 1) {
+            Object[] baseArg = new Object[2];
+            Object[] varArg = new Object[argNum-1];
+            baseArg[0] = args[0].getValObj();
+            baseArg[1] = varArg;
+            for (int i = 1; i < args.length; i++) {
+                varArg[i-1] = args[i].getValObj();
+            }
             try {
-                Class<?> c = Class.forName("java.io.PrintStream");
-                Class[] cArg = new Class[2];
-                cArg[0] = java.lang.String.class;
-                cArg[1] = java.lang.Object[].class;
-                method = c.getMethod("printf", cArg);
+                method.invoke(System.out, baseArg);
             } catch (Exception ex) {
                 System.out.println(ex);
-            }
-        } catch (ExecuteException ex) {
-            System.out.println(ex);
-        }
-    }
-    
-    public int getNumArgs() {
-        return 1;
-    }
-    
-    public boolean acceptNumArgs(int numArgs){
-        return numArgs >= 1;
-    }
-    
-    public boolean isVariArgs(){
-        return true;
-    }
-    
-    
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
-        int argNum = args.length;
-        
-        // Fetch params and push into symtab
-        if (procId.equalsIgnoreCase("printf")) {
-            if (argNum >= 1) {
-                Object[] baseArg = new Object[2];
-                Object[] varArg = new Object[argNum-1];
-                baseArg[0] = args[0].getValObj();
-                baseArg[1] = varArg;
-                for (int i = 1; i < args.length; i++) {
-                    varArg[i-1] = args[i].getValObj();
-                }
-                try {
-                    method.invoke(System.out, baseArg);
-                } catch (Exception ex) {
-                    System.out.println(ex);
-                    throw callersBase.generateExecuteException("ERROR function printf() wrong args <"+ex+">");
-                } 
-
-            } else {
-                throw callersBase.generateExecuteException("ERROR function printf() accepts >=1  arg given "+argNum+" arg(s)");
-            }
+                throw callersBase.generateExecuteException("ERROR function printf() wrong args <"+ex+">");
+            } 
         } else {
-            callersBase.generateExecuteException("ERROR procedure <"+procId+"> is not defined expected <printf>");
+            throw callersBase.generateExecuteException("ERROR function printf() accepts >=1  arg given "+argNum+" arg(s)");
         }
-        ctx.pushContainer(new VarContainer( new VarInt("0")));
-        return ExecResult.NORMAL;
-    }
-    
-    public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer inst, VarContainer[] args) throws ExecuteException {
-        throw callersBase.generateExecuteException("ERROR procedure <printf> cannot be called as method for <"+inst.getTypeString()+">");
     }
 }

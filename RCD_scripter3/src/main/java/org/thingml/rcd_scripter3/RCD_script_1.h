@@ -196,8 +196,11 @@ addToArrayWithIndexFrom($MsgDef, MSGID, {MSGID: MSGID_PING2 ,              ENUM_
 
 makeElemWithoutPrefix($MsgDef, TRACE_NAME, MSGID, "MSGID_");
 
-printArrayContent("$MsgDef", $MsgDef);
+##printArrayContent("$MsgDef", $MsgDef);
 
+println("Time now: "+ timenow());
+timeformat("HH-mm-ss");
+println("Time now: "+ timenow());
 
 RCD_SCRIPT_END
 

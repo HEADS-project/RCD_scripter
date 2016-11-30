@@ -346,7 +346,7 @@ public class VarFile extends VarBase {
         ctx.declProc(null, VarType.FILE+":print", new CallMethodRegHelper("print", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeCb", new Class[] {java.lang.String.class} ));
         ctx.declProc(null, VarType.FILE+":println", new CallMethodRegHelper("println", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeLnCb", new Class[] {java.lang.String.class} ));
         ctx.declProc(null, VarType.FILE+":println", new CallMethodRegHelper("println", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "writeLnCb", new Class[] {} ));
-        ctx.declProc(null, VarType.FILE+":printf", new CallMethodForwardRegHelper("CallMethodForwardRegHelper", VarFile.class, "executePrintf" ));
+        ctx.declProc(null, VarType.FILE+":printf", new CallMethodForwardRegHelper("printf", VarFile.class, "executePrintf" ));
         ctx.declProc(null, VarType.FILE+":close", new CallMethodRegHelper("close", VarFile.class, CallMethodRegHelper.InstClass.VARINST, "closeCb", new Class[] {} ));
     }
 

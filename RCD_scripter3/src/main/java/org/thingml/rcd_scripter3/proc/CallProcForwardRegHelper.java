@@ -37,14 +37,16 @@ import org.thingml.rcd_scripter3.variables.VarString;
  *
  * @author steffend
  */
-public class CallMethodForwardRegHelper implements ProcBaseIf {
+public class CallProcForwardRegHelper implements ProcBaseIf {
     private Class<?> c;
     private String myName;
     private Method method;
+    private Object inst = null;
 
-    public CallMethodForwardRegHelper(String myName, Class<?> c, String methodName) throws Exception{
+    public CallProcForwardRegHelper(String myName, Class<?> c, String methodName, Object inst) throws Exception{
         this.myName = myName.toLowerCase();
         this.c = c;
+        this.inst = inst;
         method = c.getMethod(methodName, new Class[] {ExecuteContext.class, ASTRcdBase.class, VarContainer[].class});
     }
 
@@ -61,12 +63,13 @@ public class CallMethodForwardRegHelper implements ProcBaseIf {
     }
         
     public ExecResult executeMethod(ExecuteContext ctx, ASTRcdBase callersBase, VarContainer varInst, VarContainer[] args) throws ExecuteException {
+        throw callersBase.generateExecuteException("ERROR proc "+myName+"() cannot be called as method.");
+    }
+
+    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
         Object ret = null;
         VarContainer retCont = new VarContainer();
-        Object inst = null;
         
-        inst = varInst.getInst();
-
         Object[] actArg = new Object[3];
         actArg[0] = ctx;
         actArg[1] = callersBase;
@@ -75,14 +78,14 @@ public class CallMethodForwardRegHelper implements ProcBaseIf {
         try {
             ret = method.invoke(inst, actArg);
         } catch (IllegalAccessException ex) {
-            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+            throw callersBase.generateExecuteException("ERROR proc "+myName+"() call failed\n"+ex);
         } catch (IllegalArgumentException ex) {
-            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+            throw callersBase.generateExecuteException("ERROR proc "+myName+"() call failed\n"+ex);
         } catch (InvocationTargetException ex) {
             Throwable cause = ex.getCause();
             System.out.format("Invocation of %s failed because of: %s%n",
                         myName, cause.getMessage());
-            throw callersBase.generateExecuteException("ERROR method "+myName+"() call failed\n"+ex);
+            throw callersBase.generateExecuteException("ERROR proc "+myName+"() call failed\n"+ex);
         }
         if (ret != null) {
             if (VarBase.class.isAssignableFrom(ret.getClass())) {
@@ -105,9 +108,5 @@ public class CallMethodForwardRegHelper implements ProcBaseIf {
         }
         ctx.pushContainer(retCont);
         return ExecResult.NORMAL;
-    }
-
-    public ExecResult executeProc(ExecuteContext ctx, ASTRcdBase callersBase, String procId, VarContainer[] args) throws ExecuteException {
-        throw callersBase.generateExecuteException("ERROR method "+myName+"() cannot be called as procedure.");
     }
 }

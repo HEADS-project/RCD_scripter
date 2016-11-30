@@ -20,27 +20,28 @@
  */
 package org.thingml.rcd_scripter3.proc;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import org.thingml.rcd_scripter3.ExecuteContext;
 
 /**
  *
  * @author steffend
  */
-public class ProcPrint {
+public class ProcDateTime {
+    private static SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    
     public static void registerProcs(ExecuteContext ctx)throws Exception{
-        ctx.declProc(null, "print", new CallProcRegHelper("print", ProcPrint.class, "print", new Class[] {java.lang.String.class} ));
-        ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {java.lang.String.class} ));
-        ctx.declProc(null, "println", new CallProcRegHelper("println", ProcPrint.class, "println", new Class[] {} ));
-    }
-    public static void print(String txt) {
-        System.out.print(txt);
+        ctx.declProc(null, "timenow", new CallProcRegHelper("timenow", ProcDateTime.class, "getTimeNow", new Class[] {} ));
+        ctx.declProc(null, "timeformat", new CallProcRegHelper("timeformat", ProcDateTime.class, "setTimeFormat", new Class[] {java.lang.String.class} ));
     }
     
-    public static void println(String txt) {
-        System.out.println(txt);
+    public static String getTimeNow() {
+        return timestampFormat.format( Calendar.getInstance().getTime());
     }
     
-    public static void println() {
-        System.out.println();
+    public static void setTimeFormat(String format) {
+        timestampFormat = new SimpleDateFormat(format);
     }
+    
 }

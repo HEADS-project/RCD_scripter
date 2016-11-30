@@ -22,6 +22,7 @@ package org.thingml.rcd_scripter3;
 import org.thingml.rcd_scripter3.parser.*;
 import java.io.FileReader;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
+import org.thingml.rcd_scripter3.proc.ProcDateTime;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
 import org.thingml.rcd_scripter3.proc.ProcPrintf;
 import org.thingml.rcd_scripter3.proc.ProcType;
@@ -57,7 +58,8 @@ public class RCD_scripterTest {
             //jobContext.setTrace(true);
             ProcPrint.registerProcs(jobContext);
             ProcType.registerProcs(jobContext);
-            ProcPrintf proc = new ProcPrintf(jobContext);
+            ProcPrintf.registerProcs(jobContext);
+            ProcDateTime.registerProcs(jobContext);
 
             VarFile.registerMethods(jobContext);
             VarBase.registerMethods(jobContext);
