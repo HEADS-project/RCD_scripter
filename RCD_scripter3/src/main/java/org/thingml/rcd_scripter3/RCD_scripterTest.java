@@ -21,6 +21,10 @@
 package org.thingml.rcd_scripter3;
 import org.thingml.rcd_scripter3.parser.*;
 import java.io.FileReader;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.proc.ProcDateTime;
 import org.thingml.rcd_scripter3.proc.ProcPrint;
@@ -38,7 +42,17 @@ import org.thingml.rcd_scripter3.variables.VarString;
  */
 /*for testing the parser class*/ 
 public class RCD_scripterTest { 
-    public static void main(String[] args) { 
+    public static void main(String[] args) throws org.apache.commons.cli.ParseException { 
+// create Options object
+        Options cliOptions = new Options();
+
+        // add t option
+        cliOptions.addOption("a", "ast", false, "Print AST");
+        cliOptions.addOption("i", "input", false, "Input file");
+        cliOptions.addOption("d", "doc", false, "Print doc");
+        CommandLineParser cliParser = new DefaultParser();
+        CommandLine cmd = cliParser.parse( cliOptions, args);
+
         RcdScript3Parser parser;
         ExecuteContext jobContext = new ExecuteContext();
         ASTRcdStart ast;
@@ -52,6 +66,13 @@ public class RCD_scripterTest {
         if (args.length > 0) {
             inputfile = args[0];
         }
+        
+        // get input option value
+        String inputOption = cmd.getOptionValue("i");
+        if(inputOption != null) {
+            inputfile = inputOption;
+        }
+        
         
         System.out.println("RCD scripter START");
         try{
@@ -75,8 +96,10 @@ public class RCD_scripterTest {
             System.out.println("<");
             ast = parser.makeAst(); 
             System.out.println(">");
-          
-            ast.dump("Main: ");
+        
+            if(cmd.hasOption("a")) {
+                ast.dump("Main: ");
+            }
             
             ast.run(jobContext);
         } 

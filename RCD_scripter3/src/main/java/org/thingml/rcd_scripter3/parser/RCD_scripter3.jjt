@@ -9,6 +9,7 @@ options {
 PARSER_BEGIN (RcdScript3Parser)
    package org.thingml.rcd_scripter3.parser;
    import java.io.FileReader;
+   import org.thingml.rcd_scripter3.parser.ASTRcdLiteral.ValType;
    public class RcdScript3Parser {
         private String fileName;
         public ASTRcdStart makeAst()throws ParseException, TokenMgrError
@@ -708,13 +709,14 @@ void Var() #RcdVar:
     }
 }
 
-void Id() #RcdId :
+void Id() #RcdLiteral :
 {
     Token t;
 }
 {
     t = <ID_LITERAL>
     {
+        jjtThis.setValType(ValType.ID);
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
@@ -724,6 +726,7 @@ void Id() #RcdId :
 
 void Literal() : 
 {
+    Token t;
 }
 {
     StringVal()
@@ -737,19 +740,20 @@ void Literal() :
     ArrayVal()
 }
 
-void StringVal() #RcdStringVal :
+void StringVal() #RcdLiteral :
 {
     Token t;
 }
 {
     t = <STRING_LITERAL>
     {
+        jjtThis.setValType(ValType.STRING);
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-void IntVal() #RcdIntVal :
+void IntVal() #RcdLiteral :
 {
     Token t;
 }
@@ -760,12 +764,13 @@ void IntVal() #RcdIntVal :
         t = <HEX_LITERAL>
 	)
     {
+        jjtThis.setValType(ValType.INT);
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-void BoolVal() #RcdBoolVal :
+void BoolVal() #RcdLiteral :
 {
     Token t;
 }
@@ -776,18 +781,20 @@ void BoolVal() #RcdBoolVal :
         t = <FALSE>
 	)
     {
+        jjtThis.setValType(ValType.BOOL);
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
 }
 
-void RealVal() #RcdRealVal :
+void RealVal() #RcdLiteral :
 {
     Token t;
 }
 {
     t = <FLOAT_LITERAL>
     {
+        jjtThis.setValType(ValType.REAL);
         jjtThis.setName(t.image);
         jjtThis.setToken(t); 
     }
