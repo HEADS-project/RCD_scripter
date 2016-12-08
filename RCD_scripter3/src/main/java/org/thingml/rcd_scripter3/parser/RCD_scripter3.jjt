@@ -71,6 +71,8 @@ TOKEN [IGNORE_CASE]: /* Commands */
 |
   <ELSE:("ELSE")>
 |
+  <WHILE:("WHILE")>
+|
   <TRUE:("TRUE")>
 |
   <FALSE:("FALSE")>
@@ -283,6 +285,8 @@ void Block() :
 {
 	IfBlock()
 	|
+	WhileBlock()
+	|
 	ForBlock()
 }
 
@@ -304,6 +308,20 @@ void IfBlock() #RcdIfBlock :
 		ScriptNode("FalseScript")
         <CCBRA>
 	)?
+}
+
+void WhileBlock() #RcdWhileBlock :
+{
+}
+{
+	<WHILE>
+    { jjtThis.setToken(token); }
+	<OBRA>
+	ExprNode()
+	<CBRA>
+    <OCBRA>
+	ScriptNode("TrueScript")
+    <CCBRA>
 }
 
 void ForBlock() #RcdForBlock :
