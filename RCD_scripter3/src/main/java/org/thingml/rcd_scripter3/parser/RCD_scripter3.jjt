@@ -167,6 +167,10 @@ TOKEN:  /* Separators */
 |
     <MINUS:("-")>
 |
+    <INCR:("++")>
+|
+    <DECR:("--")>
+|
     <MUL:("*")>
 |
     <DIV:("/")>
@@ -331,9 +335,22 @@ void ForBlock() #RcdForBlock :
 	<FOR>
     { jjtThis.setToken(token); }
 	<OBRA>
-	Var()
-	<COLON>
-    ExprNode()
+    (
+        LOOKAHEAD(Var()<COLON>)
+        (
+            Var()
+            <COLON>
+            ExprNode()
+        )
+        |
+        (
+            VarXXX()
+            <SEMI>
+            ExprNode()
+            <SEMI>
+            ExprNode()
+        )
+    )
 	<CBRA>
 	<OCBRA>
 	ScriptNode("ForScript")
@@ -523,7 +540,7 @@ void OrExpr() :
     AndExpr() 
 	( 
 		OrExprFollow() 
-	)?
+	)*
 }
 
 void OrExprFollow() #RcdOpExpr : 
@@ -548,7 +565,7 @@ void AndExpr() :
     CmpExpr() 
 	( 
 		AndExprFollow() 
-	)?
+	)*
 }
 
 void AndExprFollow() #RcdOpExpr : 
@@ -661,7 +678,7 @@ void UnaryExpr() :
 }
 {
     (
-        UnaryExprFollow()
+        PreExpr()
     )
     |
     (
@@ -670,19 +687,23 @@ void UnaryExpr() :
     )
 }
 
-void UnaryExprFollow() #RcdOpExpr: 
+void PreExpr() #RcdOpExpr: 
 {
     Token t;
 }
 {
     (
+        t = <INCR>
+        |
+        t = <DECR>
+        |
         t = <PLUS>
         |
         t = <MINUS>
     )
     UnaryExpr()
     {
-        jjtThis.setName("u"+t.image);
+        jjtThis.setName("pre"+t.image);
         jjtThis.setToken(t); 
     }
 }
@@ -713,6 +734,25 @@ void PrimExprSuffix() :
     (
         CallProc(true)
     )?
+    (
+        PostIncrDecr()
+    )?
+}
+
+void PostIncrDecr() #RcdOpExpr: 
+{
+    Token t;
+}
+{
+    (
+        t = <INCR>
+        |
+        t = <DECR>
+    )
+    {
+        jjtThis.setName("post"+t.image);
+        jjtThis.setToken(t); 
+    }
 }
 
 void Var() #RcdVar:

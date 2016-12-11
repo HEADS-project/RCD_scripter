@@ -63,10 +63,6 @@ public class RCD_scripterTest {
         //String inputfile = "C:/javasrc/RCD_scripter/RCD_scripter3/src/main/java/org/thingml/rcd_scripter3/app_msgdef3-vartest.h";
         //String inputfile = "RCD_script.h";
         
-        if (args.length > 0) {
-            inputfile = args[0];
-        }
-        
         // get input option value
         String inputOption = cmd.getOptionValue("i");
         if(inputOption != null) {

@@ -31,7 +31,7 @@ import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
  */
 abstract public class VarBase implements Cloneable{
     public enum VarType { ARRAY, INT, REAL, STRING, BOOL, FILE};
-    public enum Operation { PLUS, MINUS, UPLUS, UMINUS, OR, AND, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
+    public enum Operation { PLUS, MINUS, UPLUS, UMINUS, PREINCR, POSTINCR, PREDECR, POSTDECR, OR, AND, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
 
     private String image;
     private String operationImage;
@@ -112,7 +112,7 @@ abstract public class VarBase implements Cloneable{
     //    throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     //}
 
-    public static VarBase doOperation(ASTRcdBase b, VarBase varLeft, Operation op, VarBase varRight) throws ExecuteException {
+    public static VarBase doVarOperation(ASTRcdBase b, VarBase varLeft, Operation op, VarBase varRight) throws ExecuteException {
         
         VarBase newValue = null;
         
@@ -122,12 +122,6 @@ abstract public class VarBase implements Cloneable{
                 break;
             case MINUS:
                 newValue = doOperationMINUS(varLeft, varRight);
-                break;
-            case UPLUS:
-                newValue = doOperationUPLUS(varRight);
-                break;
-            case UMINUS:
-                newValue = doOperationUMINUS(varRight);
                 break;
             case EQUAL:
                 newValue = doOperationEQUAL(varLeft, varRight);
@@ -160,10 +154,58 @@ abstract public class VarBase implements Cloneable{
                 newValue = doOperationOR(varLeft, varRight);
                 break;
             default:
-                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported");
+                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported as dydadic operator");
         }
         if (newValue == null) {
             throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+varLeft.getTypeString()+"> and <"+varRight.getTypeString()+">");
+        }
+
+        return newValue;
+    }
+
+    public static VarBase doVarUnaryOperation(ASTRcdBase b, Operation op, VarBase varRight) throws ExecuteException {
+        
+        VarBase newValue = null;
+        
+        switch (op) {
+            case UPLUS:
+                newValue = doOperationUPLUS(varRight);
+                break;
+            case UMINUS:
+                newValue = doOperationUMINUS(varRight);
+                break;
+            default:
+                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported as unary operator");
+        }
+        if (newValue == null) {
+            throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+varRight.getTypeString()+">");
+        }
+
+        return newValue;
+    }
+
+    public static VarBase doContainerUnaryOperation(ASTRcdBase b, Operation op, VarContainer contRight) throws ExecuteException {
+        
+        VarBase newValue = null;
+        
+        switch (op) {
+            case PREINCR:
+                newValue = doOperationPREINCR(contRight);
+                break;
+            case POSTINCR:
+                newValue = doOperationPOSTINCR(contRight);
+                break;
+            case PREDECR:
+                newValue = doOperationPREDECR(contRight);
+                break;
+            case POSTDECR:                
+                newValue = doOperationPOSTDECR(contRight);
+                break;
+            default:
+                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported as unary operator");
+        }
+        if (newValue == null) {
+            throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+contRight.getTypeString()+">");
         }
 
         return newValue;
@@ -542,4 +584,111 @@ abstract public class VarBase implements Cloneable{
         return newValue;
     }
 
+    private static VarBase doOperationPREINCR(VarContainer contRight) {
+        VarBase newValue = null;
+        VarBase varRight = contRight.getInst();
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = varRight.intVal() + 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varRight.realVal() + 1.0;
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = varRight.intVal() + 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("++("+varRight.getOperationImage()+")");
+            contRight.setInst(newValue);
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationPOSTINCR(VarContainer contRight) {
+        VarBase newValue = null;
+        VarBase varRight = contRight.getInst();
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = varRight.intVal() + 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varRight.realVal() + 1.0;
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = varRight.intVal() + 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varRight.getOperationImage()+")++");
+            contRight.setInst(newValue);
+        }
+        return varRight;
+    }
+
+    private static VarBase doOperationPREDECR(VarContainer contRight) {
+        VarBase newValue = null;
+        VarBase varRight = contRight.getInst();
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = varRight.intVal() - 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varRight.realVal() - 1.0;
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = varRight.intVal() - 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("--("+varRight.getOperationImage()+")");
+            contRight.setInst(newValue);
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationPOSTDECR(VarContainer contRight) {
+        VarBase newValue = null;
+        VarBase varRight = contRight.getInst();
+        long resultInt;
+        
+        switch (varRight.getType()) {
+            case INT:
+                resultInt = varRight.intVal() - 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+            case REAL: 
+                double resultReal = varRight.realVal() - 1.0;
+                newValue = new VarReal(""+resultReal);
+                break;
+            default: 
+                resultInt = varRight.intVal() - 1;
+                newValue = new VarInt(""+resultInt);
+                break;
+                
+        }
+        if (newValue != null) {
+            newValue.setOperationImage("("+varRight.getOperationImage()+")--");
+            contRight.setInst(newValue);
+        }
+        return varRight;
+    }
 }

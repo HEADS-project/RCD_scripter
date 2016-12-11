@@ -16,11 +16,27 @@
 /*
 
 RCD_SCRIPT_START
+$inc = 0;
+println("Inc "+($inc));
+println("Inc "+(++$inc));
+println("Inc "+($inc++));
+println("Inc "+($inc));
+$dec = 0;
+println("Dec "+($dec));
+println("Dec "+(--$dec));
+println("Dec "+($dec--));
+println("Dec "+($dec));
+
+for($i = 0; $i < 10; $i++){
+    println(""+$i);
+}
+
+RCD_SCRIPT_END
 $tekst1 = "Heisan";
 println("Tekst "+$tekst1);
 $tall1 = 2;
 println("Tall "+$tall1+" "+$tall1*$tall1);
-$boolt = true;
+$boolt = 2==2 AND 3==3*1 AND 4==2+2;
 $boolf = false;
 println("Boolt "+$boolt+" "+($boolt AND $boolf)+" "+($boolt OR $boolf));
 $real1 = 1.1;

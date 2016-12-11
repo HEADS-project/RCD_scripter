@@ -24,6 +24,7 @@ public class ASTRcdOpExpr extends ASTRcdBase {
 
     private VarBase.Operation operation = null;
     private boolean unaryOp = false;
+    private boolean incDecOp = false;
     
     /**
      * Constructor.
@@ -31,10 +32,6 @@ public class ASTRcdOpExpr extends ASTRcdBase {
      */
     public ASTRcdOpExpr(int id) {
         super(id);
-    }
-    
-    public void setUnaryOp() {
-        unaryOp = true;
     }
     
     private void calcOperation (){
@@ -71,13 +68,33 @@ public class ASTRcdOpExpr extends ASTRcdBase {
             } else if (image.contentEquals("!=")==true) {
                 operation = VarBase.Operation.NOTEQUAL;
 
-            } else if (image.contentEquals("u-")==true) {
+            } else if (image.contentEquals("pre-")==true) {
                 operation = VarBase.Operation.UMINUS;
                 unaryOp = true;
 
-            } else if (image.contentEquals("u+")==true) {
+            } else if (image.contentEquals("pre+")==true) {
                 operation = VarBase.Operation.UPLUS;
                 unaryOp = true;
+
+            } else if (image.contentEquals("pre--")==true) {
+                operation = VarBase.Operation.PREDECR;
+                unaryOp = true;
+                incDecOp = true;
+
+            } else if (image.contentEquals("pre++")==true) {
+                operation = VarBase.Operation.PREINCR;
+                unaryOp = true;
+                incDecOp = true;
+
+            } else if (image.contentEquals("post--")==true) {
+                operation = VarBase.Operation.POSTDECR;
+                unaryOp = true;
+                incDecOp = true;
+
+            } else if (image.contentEquals("post++")==true) {
+                operation = VarBase.Operation.POSTINCR;
+                unaryOp = true;
+                incDecOp = true;
 
             } else if (image.contentEquals("and")==true) {
                 operation = VarBase.Operation.AND;
@@ -93,7 +110,7 @@ public class ASTRcdOpExpr extends ASTRcdBase {
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
         ExecResult ret;
         VarBase result;
-
+    
         calcOperation();
         ret = executeChildren(ctx);
         VarContainer rightCont = ctx.popContainer(this);
@@ -104,9 +121,13 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         }        
         if (!unaryOp) {
             leftCont = ctx.popContainer(this);
-            result = VarBase.doOperation(this, leftCont.getInst(), operation, rightCont.getInst());
+            result = VarBase.doVarOperation(this, leftCont.getInst(), operation, rightCont.getInst());
         } else {
-            result = VarBase.doOperation(this, null, operation, rightCont.getInst());
+            if(!incDecOp) {
+                result = VarBase.doVarUnaryOperation(this, operation, rightCont.getInst());
+            } else {
+                result = VarBase.doContainerUnaryOperation(this, operation, rightCont);
+            }
         }
         ctx.pushContainer(new VarContainer(result));
         return ret;
