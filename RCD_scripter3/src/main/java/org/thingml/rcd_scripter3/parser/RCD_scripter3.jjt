@@ -390,65 +390,46 @@ void VarXXX() :
         |
         Id()
     )
+    VarIAC()
+}
+
+void VarIAC() :
+{
+}
+{
     (
-	    (
-            Index()
-    	)*
-	    (
-            Assign()
-            |
-            CallMethod(false)
-            |
-            CallProc(false)
-    	)
-    ) 
+        IndexOabra()
+        |
+        LOOKAHEAD(<PERIOD> <ID_LITERAL> <OBRA>)
+        CallDotIdParam(false)
+        |
+        IndexPeriod()
+    )*
+    (
+        CallParam(false)
+        |
+        Assign()
+    )?
 }
 
-void Index() #RcdIndex:
+void CallDotIdParam(boolean returnValue) #RcdCallIdParam :
 {
     Token t;
-}
-{
-	t = <OABRA>
-        ExprNode()
-	<CABRA>
-    {
-        jjtThis.setName("INDEX");
-        jjtThis.setToken(t); 
-    }
-}
-
-void Assign() #RcdAssign:
-{
-    Token t;
-}
-{
-	t = <ASSIGN>
-    {
-        jjtThis.setName(t.image);
-        jjtThis.setToken(t); 
-    }
-	ExprNode()
-}
-
-
-
-void CallMethod(boolean returnValue) #RcdCallMethod :
-{
 }
 {
     <PERIOD>
+    t = <ID_LITERAL>
     { 
         jjtThis.setToken(token); 
         jjtThis.setReturnValue(returnValue);
+        jjtThis.setIdString(t.image); 
     }
-    Id()
 	<OBRA>
     ActParamNode()
 	<CBRA>
 }
 
-void CallProc(boolean returnValue) #RcdCallProc :
+void CallParam(boolean returnValue) #RcdCallIdOnStackParam :
 {
 }
 {
@@ -474,6 +455,55 @@ void ActParamNode() #RcdNode :
         )*
     )?
 }
+
+void IndexOabra() #RcdIndex:
+{
+    Token t;
+}
+{
+    (
+        t = <OABRA>
+        ExprNode()
+        <CABRA>
+    )
+}
+
+void IndexPeriod() #RcdIndex:
+{
+    Token t;
+}
+{
+    (
+        t = <PERIOD>
+        (
+            Id()
+            |
+            Var()
+            |
+            Literal()
+            |
+            <OBRA> ExprNode() <CBRA> 
+        )
+    )
+    {
+        jjtThis.setName("INDEX");
+        jjtThis.setToken(t); 
+    }
+}
+
+void Assign() #RcdAssign:
+{
+    Token t;
+}
+{
+	t = <ASSIGN>
+    {
+        jjtThis.setName(t.image);
+        jjtThis.setToken(t); 
+    }
+	ExprNode()
+}
+
 
 void ReturnStmt() #RcdReturnStmt :
 {
@@ -717,7 +747,7 @@ void PrimExprPrefix() :
     Literal()
     |
     Var() 
-    | 
+    |
     Id() 
 }
 
@@ -726,14 +756,18 @@ void PrimExprSuffix() :
 }
 {
     (
-        Index()
+        IndexOabra()
+        |
+        LOOKAHEAD(<PERIOD> <ID_LITERAL> <OBRA>)
+        CallDotIdParam(true)
+        |
+        IndexPeriod()
     )*
+
     (
-        CallMethod(true)
+        CallParam(true)
     )?
-    (
-        CallProc(true)
-    )?
+
     (
         PostIncrDecr()
     )?

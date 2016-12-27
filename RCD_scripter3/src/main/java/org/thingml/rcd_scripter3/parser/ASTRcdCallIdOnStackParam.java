@@ -21,14 +21,14 @@ import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
 
-public class ASTRcdCallProc extends ASTRcdBase {
+public class ASTRcdCallIdOnStackParam extends ASTRcdBase {
 
     private boolean returnValue = false;
     /**
      * Constructor.
      * @param id the id
      */
-    public ASTRcdCallProc(int id) {
+    public ASTRcdCallIdOnStackParam(int id) {
       super(id);
     }
 

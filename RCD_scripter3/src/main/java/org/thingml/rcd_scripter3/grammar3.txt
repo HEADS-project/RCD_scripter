@@ -29,11 +29,12 @@ ForBlock2 -> <FOR> <(> VarAssign <;> Expr <;> Expr <)> <{> Script <}>
 IfBlock -> <IF> <(> Expr <)> <{> Script <}> ( <ELSE> <{> Script <}> )?
 WhileBlock -> <WHILE> <(> Expr <)> <{> Script <}>
 
-Statement ->  (VarAssign | CallVarMethod | CallProc | Return)<;>
+Statement ->  (VarAssign | Call | Return)<;>
 
 VarAssign -> Var (Index)* <=> Expr
 
-CallVarMethod -> Var (Index)* CallMethod
+Call -> CallMethod | CallFuncId | CallFuncVar
+CallMethod -> Var (Index)* <.> Id ActParam // Func name stored in var
 // VarArray <.> SETDEF <(> VarArray <)> 
 // VarArray <.> ADD <(> VarArray <)>
 
@@ -54,8 +55,8 @@ CallVarMethod -> Var (Index)* CallMethod
 
 ???// VarArray <.> SETSIZE_DEFAULT <(> VarInt, VarValue <)> 
 
-CallProc -> Id <(> (Expr (<,> Expr)*)?  <)>
-CallProc -> Var (Index)* <(> (Expr (<,> Expr)*)?  <)> // Func name stored in var
+CallFuncId -> Id ActParam // Func name  in Id
+CallFuncVar -> Var (Index)* ActParam // Func name stored in var
 // PRINT<(> Expr <)> 
 // PRINTLN<(> Expr <)> 
 // PRINTF <(> Expr (<,> Expr)* <)> 
@@ -84,11 +85,11 @@ MulOp -> ["*","/","%"]
 
 UnaryExpr -> ("+" | "-" | "++" | "--")? PrimExprPrefix PrimExprSuffix
 
-PrimExprPrefix -> <(> Expr <)> | Literal | CallProc | Var
+PrimExprPrefix -> <(> Expr <)> | Literal | CallFuncId | CallFuncVar | Var
 
-PrimExprSuffix -> (Index)* (CallMethod)?  ("++" | "--")?
-Index -> <[> Expr <]>
-CallMethod -> <.><(> (Expr (<,> Expr)*)?  <)>
+PrimExprSuffix -> (Index)* (ActParam)?  ("++" | "--")?
+Index -> (<[> Expr <]>) | (<.> Id)
+ActParam -> <(> (Expr (<,> Expr)*)?  <)>
 
 
 Literal -> StringVal | IntVal | BoolVal | ArrayVal
