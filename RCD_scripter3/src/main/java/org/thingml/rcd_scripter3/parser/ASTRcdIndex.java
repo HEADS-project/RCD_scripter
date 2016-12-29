@@ -38,7 +38,7 @@ public class ASTRcdIndex extends ASTRcdBase {
         if (numChildren() == 1) {
             ret = executeChildren(ctx);
             VarContainer idx = ctx.popContainer(this);
-            VarContainer elem = vb.fetchFromIndex(this, idx);
+            VarContainer elem = vb.fetchFromIndex(ctx, this, idx);
             ctx.pushContainer(elem);
         } else {
             throw generateExecuteException("ERROR Index got <"+numChildren()+"> children, expected 1.");

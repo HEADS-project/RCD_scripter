@@ -400,9 +400,6 @@ void VarIAC() :
     (
         IndexOabra()
         |
-        LOOKAHEAD(<PERIOD> <ID_LITERAL> <OBRA>)
-        CallDotIdParam(false)
-        |
         IndexPeriod()
     )*
     (
@@ -410,23 +407,6 @@ void VarIAC() :
         |
         Assign()
     )?
-}
-
-void CallDotIdParam(boolean returnValue) #RcdCallIdParam :
-{
-    Token t;
-}
-{
-    <PERIOD>
-    t = <ID_LITERAL>
-    { 
-        jjtThis.setToken(token); 
-        jjtThis.setReturnValue(returnValue);
-        jjtThis.setIdString(t.image); 
-    }
-	<OBRA>
-    ActParamNode()
-	<CBRA>
 }
 
 void CallParam(boolean returnValue) #RcdCallIdOnStackParam :
@@ -757,9 +737,6 @@ void PrimExprSuffix() :
 {
     (
         IndexOabra()
-        |
-        LOOKAHEAD(<PERIOD> <ID_LITERAL> <OBRA>)
-        CallDotIdParam(true)
         |
         IndexPeriod()
     )*

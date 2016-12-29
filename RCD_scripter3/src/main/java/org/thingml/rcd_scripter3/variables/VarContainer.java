@@ -20,6 +20,7 @@
  */
 package org.thingml.rcd_scripter3.variables;
 
+import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
@@ -72,17 +73,24 @@ public class VarContainer implements Cloneable{
     public boolean isString() {return varInst.isString(); }
     public boolean isArray() {return varInst.isArray(); }
     public boolean isObject() {return varInst.isObject(); }
+    public boolean isMethod() {return varInst.isMethod(); }
     
-    public VarContainer fetchFromIndex(ASTRcdBase b, VarContainer idx) throws ExecuteException  {
+    public VarContainer fetchFromIndex(ExecuteContext ctx, ASTRcdBase b, VarContainer idx) throws ExecuteException  {
         VarContainer ret;
-        if (isArray()) {
-            // Fetch from existing array
-            ret = varInst.fetchFromIndex(b, idx); 
+        String methodId = getType().toString() +":"+ idx.stringVal();
+        boolean hasMethod = ctx.hasProcBase(methodId);
+        if (hasMethod) {
+            ret = new VarContainer (new VarMethod(this, methodId));
         } else {
-            // Transform current into an array
-            VarBase arrInst = new VarArray(varInst);
-            ret = arrInst.fetchFromIndex(b, idx); 
-             varInst = arrInst;
+            if (isArray()) {
+                // Fetch from existing array
+                ret = varInst.fetchFromIndex(b, idx); 
+            } else {
+                // Transform current into an array
+                VarBase arrInst = new VarArray(varInst);
+                ret = arrInst.fetchFromIndex(b, idx); 
+                 varInst = arrInst;
+            }
         }
         return ret;
     }

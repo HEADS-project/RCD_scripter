@@ -31,7 +31,6 @@ for($i = 0; $i < 10; $i++){
     println(""+$i);
 }
 
-RCD_SCRIPT_END
 $tekst1 = "Heisan";
 println("Tekst "+$tekst1);
 $tall1 = 2;
@@ -53,9 +52,9 @@ $tall = +2;
 println("Tall +2 "+$tall);
 $tall = -2;
 println("Tall -2 "+$tall);
-$tall = 2 --2;
-println("Tall 2--2 "+$tall);
-$tall = +2 - 2;
+$tall = 2-2;
+println("Tall 2-2 "+$tall);
+$tall = +2-2;
 println("Tall +2-2 "+$tall);
 
 $func_var = println;

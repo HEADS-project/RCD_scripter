@@ -20,6 +20,7 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.proc.ProcBaseIf;
 import org.thingml.rcd_scripter3.variables.VarBase;
 import org.thingml.rcd_scripter3.variables.VarContainer;
+import org.thingml.rcd_scripter3.variables.VarMethod;
 
 public class ASTRcdCallIdOnStackParam extends ASTRcdBase {
 
@@ -54,16 +55,21 @@ public class ASTRcdCallIdOnStackParam extends ASTRcdBase {
 
         if (ret != ExecResult.NORMAL) return ret;
         
-        String procId = id.stringVal();
+        if (id.isMethod()) {
+            VarMethod varMethod = (VarMethod) id.getInst();
+            ret = varMethod.executeMethod(ctx, this, args);
+            if (!returnValue) {
+                ctx.popContainer(this); // Remove from stack if not used by caller
+            }
+            
+        } else {
+            String procId = id.stringVal();
 
-        ProcBaseIf proc = ctx.getProcBase(this, procId, args.length);
-        if (proc != null) {
+            ProcBaseIf proc = ctx.getProcBase(this, procId, args.length);
             ret = proc.executeProc(ctx, this, procId, args);
             if (!returnValue) {
                 ctx.popContainer(this); // Remove from stack if not used by caller
             }
-        } else {
-            throw generateExecuteException("ERROR proc <"+procId+"> is not defined");
         }
         return ret;
     }

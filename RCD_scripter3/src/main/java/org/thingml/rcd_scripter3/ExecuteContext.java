@@ -107,6 +107,11 @@ public class ExecuteContext {
         return proc;
     }
     
+    public boolean hasProcBase(String name)  throws ExecuteException {
+        boolean ret = symTab.existProcNameCheckAllLevels(name.toLowerCase());
+        return ret;
+    }
+    
     public void declProc(ASTRcdBase b, String name, ProcBaseIf newProc)  throws ExecuteException {
         symTab.declProc(b, name.toLowerCase(), newProc);
     }

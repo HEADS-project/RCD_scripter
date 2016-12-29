@@ -30,7 +30,7 @@ import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
  * @author steffend
  */
 abstract public class VarBase implements Cloneable{
-    public enum VarType { ARRAY, INT, REAL, STRING, BOOL, FILE};
+    public enum VarType { ARRAY, INT, REAL, STRING, BOOL, FILE, METHOD};
     public enum Operation { PLUS, MINUS, UPLUS, UMINUS, PREINCR, POSTINCR, PREDECR, POSTDECR, OR, AND, MUL, DIV, EQUAL, GT, LT, GTE, LTE, NOTEQUAL };
 
     private String image;
@@ -98,7 +98,7 @@ abstract public class VarBase implements Cloneable{
     public boolean isString() { return false; }
     public boolean isArray()  { return false; }
     public boolean isObject()  { return false; }
-    
+    public boolean isMethod()  { return false; }
 
     public String getTypeString() {
         return getType().toString();

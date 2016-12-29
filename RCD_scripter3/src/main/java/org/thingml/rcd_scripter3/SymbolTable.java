@@ -143,6 +143,24 @@ public class SymbolTable {
         return ret;
     }    
 
+    public boolean existProcNameCheckAllLevels(String name) {
+        // Search the hierarchy of symbol tables
+        boolean exist = false;
+        ProcArg pa = procArgList.get(name);
+        if (pa != null) {
+            exist = true;
+        }
+
+        if (!exist) {
+            // Not found in current table
+            if (parentTable != null) {
+                // Search parent
+                exist = parentTable.existProcNameCheckAllLevels(name);
+            }
+        }
+        return exist;
+    }    
+
     private boolean existVarArgProcNameCheckAllLevels(String name) {
         // Search the hierarchy of symbol tables
         boolean exist = false;
