@@ -39,7 +39,7 @@ public class VarContainer implements Cloneable{
     }
 
     public VarContainer() {
-        this.varInst = new VarString("");
+        this.varInst = new VarUndefined();
     }
     
     public VarBase getInst() {
@@ -74,8 +74,9 @@ public class VarContainer implements Cloneable{
     public boolean isArray() {return varInst.isArray(); }
     public boolean isObject() {return varInst.isObject(); }
     public boolean isMethod() {return varInst.isMethod(); }
+    public boolean isUndefined() {return varInst.isUndefined(); }
     
-    public VarContainer fetchFromIndex(ExecuteContext ctx, ASTRcdBase b, VarContainer idx) throws ExecuteException  {
+    public VarContainer fetchFromIndex(ExecuteContext ctx, ASTRcdBase b, VarContainer idx, boolean assign) throws ExecuteException  {
         VarContainer ret;
         String methodId = getType().toString() +":"+ idx.stringVal();
         boolean hasMethod = ctx.hasProcBase(methodId);
@@ -89,7 +90,7 @@ public class VarContainer implements Cloneable{
                 // Transform current into an array
                 VarBase arrInst = new VarArray(varInst);
                 ret = arrInst.fetchFromIndex(b, idx); 
-                 varInst = arrInst;
+                if (assign) varInst = arrInst;
             }
         }
         return ret;

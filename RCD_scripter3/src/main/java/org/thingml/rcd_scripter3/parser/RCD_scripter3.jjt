@@ -398,9 +398,9 @@ void VarIAC() :
 }
 {
     (
-        IndexOabra()
+        IndexOabra(true)
         |
-        IndexPeriod()
+        IndexPeriod(true)
     )*
     (
         CallParam(false)
@@ -436,7 +436,7 @@ void ActParamNode() #RcdNode :
     )?
 }
 
-void IndexOabra() #RcdIndex:
+void IndexOabra(boolean assign) #RcdIndex:
 {
     Token t;
 }
@@ -446,9 +446,14 @@ void IndexOabra() #RcdIndex:
         ExprNode()
         <CABRA>
     )
+    {
+        jjtThis.setName("INDEX");
+        jjtThis.setToken(t); 
+        jjtThis.setAssign(assign); 
+    }
 }
 
-void IndexPeriod() #RcdIndex:
+void IndexPeriod(boolean assign) #RcdIndex:
 {
     Token t;
 }
@@ -468,6 +473,7 @@ void IndexPeriod() #RcdIndex:
     {
         jjtThis.setName("INDEX");
         jjtThis.setToken(t); 
+        jjtThis.setAssign(assign); 
     }
 }
 
@@ -736,9 +742,9 @@ void PrimExprSuffix() :
 }
 {
     (
-        IndexOabra()
+        IndexOabra(false)
         |
-        IndexPeriod()
+        IndexPeriod(false)
     )*
 
     (

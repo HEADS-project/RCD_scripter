@@ -20,7 +20,8 @@ import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.variables.VarContainer;
 
 public class ASTRcdIndex extends ASTRcdBase {
-
+    public boolean assign = false;
+    
     /**
      * Constructor.
      * @param id the id
@@ -28,6 +29,10 @@ public class ASTRcdIndex extends ASTRcdBase {
     public ASTRcdIndex(int id) {
       super(id);
     }
+
+    public void setAssign(boolean assign){
+        this.assign = assign;
+    } 
 
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
@@ -38,11 +43,16 @@ public class ASTRcdIndex extends ASTRcdBase {
         if (numChildren() == 1) {
             ret = executeChildren(ctx);
             VarContainer idx = ctx.popContainer(this);
-            VarContainer elem = vb.fetchFromIndex(ctx, this, idx);
+            VarContainer elem = vb.fetchFromIndex(ctx, this, idx, assign);
             ctx.pushContainer(elem);
         } else {
             throw generateExecuteException("ERROR Index got <"+numChildren()+"> children, expected 1.");
         }
         return ret;
+    }
+    public String toString() {
+        String nodeName = super.toString();
+        String assignTxt = assign ? "assign" : "expr";
+        return nodeName +": " + assignTxt;
     }
 }

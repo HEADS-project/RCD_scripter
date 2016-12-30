@@ -55,6 +55,7 @@ abstract public class VarBase implements Cloneable{
         registerForVarX(ctx, "is_bool", new CallMethodRegHelper("is_bool", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isBool", new Class[] {}));
         registerForVarX(ctx, "is_string", new CallMethodRegHelper("is_string", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isString", new Class[] {}));
         registerForVarX(ctx, "is_array", new CallMethodRegHelper("is_array", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isArray", new Class[] {}));
+        registerForVarX(ctx, "is_undefined", new CallMethodRegHelper("is_undefined", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isUndefined", new Class[] {}));
     }
 
     public String getImage() {
@@ -99,6 +100,7 @@ abstract public class VarBase implements Cloneable{
     public boolean isArray()  { return false; }
     public boolean isObject()  { return false; }
     public boolean isMethod()  { return false; }
+    public boolean isUndefined()  { return false; }
 
     public String getTypeString() {
         return getType().toString();
