@@ -40,13 +40,13 @@ $boolf = false;
 println("Boolt "+$boolt+" "+($boolt AND $boolf)+" "+($boolt OR $boolf));
 $real1 = 1.1;
 println("Real "+$real1+" "+$real1*$tall1+" "+$tall1*$real1);
-$array[11] = 1.1;
-$array[2] = 2;
-println("Real "+$array [11]+" Int "+$array [2]);
+$array.11 = 1.1;
+$array.2 = 2;
+println("Real "+$array.11+" Int "+$array.2);
 println("array "+$array.is_array());
 println("array "+$array.is_int());
-println("array[2] "+$array[2].is_array());
-println("array[2] "+$array[2].is_int());
+println("array[2] "+$array.2.is_array());
+println("array[2] "+$array.2.is_int());
 
 $tall = +2;
 println("Tall +2 "+$tall);
@@ -90,7 +90,7 @@ $GenFile.CLOSE();
 
 PROC check_hash_func($in_hash, $key) {
     IF ($in_hash.HAS($key)) {
-        PRINTLN("Key "+$key+" has value <"+$in_hash[$key]+"> Having size "+$in_hash[$key].length());
+        PRINTLN("Key "+$key+" has value <"+$in_hash.$key+"> Having size "+$in_hash.$key.length());
     } ELSE {
         PRINTLN("Key "+$key+" is not present in HASH");
     }
@@ -114,14 +114,14 @@ check_string_func("Start Tekst Slutt ", "Start", "Slutt ");
 
 
 PROC addToArrayWithIndexFrom($to_array, $index_from, $array_to_add) {
-    $to_array[$array_to_add[$index_from]].add($array_to_add);
+    $to_array[$array_to_add.$index_from].add($array_to_add);
 }
 
 PROC printArrayContent($name, $array) {
     IF ($array.is_array()) {
         println("Content of "+$name+" len "+($array.length()));
         FOR($pair : $array) {  
-            printArrayContent($name+"["+$pair[key]+"]", $pair[val]);
+            printArrayContent($name+"["+$pair.key+"]", $pair.val);
         }
     } ELSE {
         println("  Elem "+$name+" : "+$array);
@@ -130,8 +130,8 @@ PROC printArrayContent($name, $array) {
 
 PROC makeElemWithoutPrefix ($array, $new_key, $base_key, $prefix) {
     FOR ($pair : $array) {
-        $this_elem = $pair[val];
-        $this_elem[$new_key] = $this_elem[$base_key]-$prefix; 
+        $this_elem = $pair.val;
+        $this_elem.$new_key = $this_elem.$base_key-$prefix; 
     }
 }
 
@@ -214,7 +214,7 @@ makeElemWithoutPrefix($MsgDef, TRACE_NAME, MSGID, "MSGID_");
 ##printArrayContent("$MsgDef", $MsgDef);
 
 println("Time now: "+ timenow());
-timeformat("HH-mm-ss");
+timeformat("HH:mm:ss");
 println("Time now: "+ timenow());
 
 
@@ -228,25 +228,25 @@ $AutogenWarning = "
 
 ############## Create a look-up table to find coder based on message tag ##############
 PROC addEnumToArray($array, $msg_entry) {
-    $max = $array[MAX];
-    $enum = $msg_entry[ENUM_VAL];
+    $max = $array.MAX;
+    $enum = $msg_entry.ENUM_VAL;
     if($max < $enum) {
-        $array[MAX] = $enum;
+        $array.MAX = $enum;
     }
-    $array[$enum] = $msg_entry[MSGC];
+    $array.$enum = $msg_entry.MSGC;
 }
 
 
 $MsgArray = Array();
 $MsgArray.SetDef( MSGC_NONE );
-$MsgArray[MAX] = -1;
+$MsgArray.MAX = -1;
 FOR ($pair : $MsgDef) {
-    addEnumToArray($MsgArray, $pair[val]);
+    addEnumToArray($MsgArray, $pair.val);
 }
 
 ##################### Generating file app_msgcarr_gen.c ##########################
 
-$ArraySize = $MsgArray[MAX];
+$ArrayMax = $MsgArray.MAX;
 
 $GenFile = FILE();
 $GenFile.OPEN("app_msgcarr_gen.c");
@@ -256,7 +256,7 @@ $GenFile.PRINTLN("#include \"includes.h\"");
 $GenFile.PRINTLN("#include \"app_msgc_gen.h\"");
 $GenFile.PRINTLN("");
 
-$GenFile.PRINTLN("const uint8_t APP_MSGC_CoderTypeArr["+$ArraySize+"] = {");
+$GenFile.PRINTLN("const uint8_t APP_MSGC_CoderTypeArr["+($ArrayMax+1)+"] = {");
 
 $Counter = 0;
 $LineCounter = 0;
@@ -265,8 +265,8 @@ $First = 0;
 $Last = 0;
 
 $idx = 0;
-while($idx < $ArraySize) {
-	$GenFile.PRINT($MsgArray[$idx]+",\t");
+while($idx <= $ArrayMax) {
+	$GenFile.PRINT($MsgArray.$idx+",\t");
 	$Counter = $Counter + 1;
 	$LineCounter = $LineCounter + 1;
 	IF($LineCounter == $EntriesPerRow) {
