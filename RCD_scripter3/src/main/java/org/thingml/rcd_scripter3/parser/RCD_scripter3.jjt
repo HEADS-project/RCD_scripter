@@ -386,11 +386,16 @@ void VarXXX() :
 }
 {
     (
-        Var()
+        (
+            Var()
+            VarIAC()
+        )
         |
-        Id()
+        (
+            Id()
+            CallParam(false)
+        )
     )
-    VarIAC()
 }
 
 void VarIAC() :
@@ -398,14 +403,17 @@ void VarIAC() :
 }
 {
     (
-        IndexOabra(true)
+        LOOKAHEAD(Index(true)<ASSIGN> )
+        (
+            Index(true)
+            Assign()
+        )
         |
-        IndexPeriod(true)
-    )*
-    (
-        CallParam(false)
-        |
-        Assign()
+        LOOKAHEAD(Index(false)<OBRA> )
+        (
+            Index(false)
+            CallParam(false)
+        )
     )?
 }
 
@@ -434,6 +442,17 @@ void ActParamNode() #RcdNode :
             ExprNode()
         )*
     )?
+}
+
+void Index(boolean assign) :
+{
+}
+{
+    (
+        IndexOabra(assign)
+        |
+        IndexPeriod(assign)
+    )*
 }
 
 void IndexOabra(boolean assign) #RcdIndex:
@@ -741,12 +760,7 @@ void PrimExprSuffix() :
 {
 }
 {
-    (
-        IndexOabra(false)
-        |
-        IndexPeriod(false)
-    )*
-
+    Index(false)
     (
         CallParam(true)
     )?
