@@ -22,6 +22,7 @@ package org.thingml.rcd_scripter3.variables;
 
 import org.thingml.rcd_scripter3.ExecuteContext;
 import org.thingml.rcd_scripter3.parser.ASTRcdBase;
+import org.thingml.rcd_scripter3.parser.ASTRcdOpExpr;
 import org.thingml.rcd_scripter3.parser.ExecuteException;
 import org.thingml.rcd_scripter3.proc.CallMethodRegHelper;
 
@@ -56,6 +57,7 @@ abstract public class VarBase implements Cloneable{
         registerForVarX(ctx, "is_string", new CallMethodRegHelper("is_string", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isString", new Class[] {}));
         registerForVarX(ctx, "is_array", new CallMethodRegHelper("is_array", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isArray", new Class[] {}));
         registerForVarX(ctx, "is_undefined", new CallMethodRegHelper("is_undefined", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "isUndefined", new Class[] {}));
+        registerForVarX(ctx, "get_var_info", new CallMethodRegHelper("get_var_info", VarBase.class, CallMethodRegHelper.InstClass.VARINST, "printString", new Class[] {}));
     }
 
     public String getImage() {
@@ -114,60 +116,115 @@ abstract public class VarBase implements Cloneable{
     //    throw b.generateExecuteException("ERROR indexing not supported for "+getTypeString());
     //}
 
-    public static VarBase doVarOperation(ASTRcdBase b, VarBase varLeft, Operation op, VarBase varRight) throws ExecuteException {
+    public static VarBase doVarOperation(ASTRcdBase b, VarBase varLeft, Operation op, ExecuteContext ctx, ASTRcdOpExpr astRight) throws ExecuteException {
         
         VarBase newValue = null;
         
         switch (op) {
-            case PLUS:
-                newValue = doOperationPLUS(varLeft, varRight);
-                break;
-            case MINUS:
-                newValue = doOperationMINUS(varLeft, varRight);
-                break;
-            case EQUAL:
-                newValue = doOperationEQUAL(varLeft, varRight);
-                break;
-            case NOTEQUAL:
-                newValue = doOperationNOTEQUAL(varLeft, varRight);
-                break;
-            case MUL:
-                newValue = doOperationMUL(varLeft, varRight);
-                break;
-            case DIV:
-                newValue = doOperationDIV(varLeft, varRight);
-                break;
-            case GT:
-                newValue = doOperationGT(varLeft, varRight);
-                break;
-            case LT:
-                newValue = doOperationLT(varLeft, varRight);
-                break;
-            case GTE:
-                newValue = doOperationGTE(varLeft, varRight);
-                break;
-            case LTE:
-                newValue = doOperationLTE(varLeft, varRight);
-                break;
             case AND:
-                newValue = doOperationAND(varLeft, varRight);
+                newValue = doOperationAND(varLeft, ctx, astRight);
                 break;
             case OR:
-                newValue = doOperationOR(varLeft, varRight);
+                newValue = doOperationOR(varLeft, ctx, astRight);
                 break;
             default:
-                throw b.generateExecuteException("ERROR operation<"+op+"> is not supported as dydadic operator");
+                VarBase varRight = astRight.getRightContainer(ctx).getInst();
+                switch (op) {
+                    case PLUS:
+                        newValue = doOperationPLUS(varLeft, varRight);
+                        break;
+                    case MINUS:
+                        newValue = doOperationMINUS(varLeft, varRight);
+                        break;
+                    case EQUAL:
+                        newValue = doOperationEQUAL(varLeft, varRight);
+                        break;
+                    case NOTEQUAL:
+                        newValue = doOperationNOTEQUAL(varLeft, varRight);
+                        break;
+                    case MUL:
+                        newValue = doOperationMUL(varLeft, varRight);
+                        break;
+                    case DIV:
+                        newValue = doOperationDIV(varLeft, varRight);
+                        break;
+                    case GT:
+                        newValue = doOperationGT(varLeft, varRight);
+                        break;
+                    case LT:
+                        newValue = doOperationLT(varLeft, varRight);
+                        break;
+                    case GTE:
+                        newValue = doOperationGTE(varLeft, varRight);
+                        break;
+                    case LTE:
+                        newValue = doOperationLTE(varLeft, varRight);
+                        break;
+                    default:
+                        throw b.generateExecuteException("ERROR operation<"+op+"> is not supported as dydadic operator");
+                }
         }
         if (newValue == null) {
-            throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+varLeft.getTypeString()+"> and <"+varRight.getTypeString()+">");
+            throw b.generateExecuteException("ERROR operation<"+op+"> cannot operate on <"+varLeft.getTypeString()+">");
         }
 
         return newValue;
     }
 
-    public static VarBase doVarUnaryOperation(ASTRcdBase b, Operation op, VarBase varRight) throws ExecuteException {
+    private static VarBase doOperationOR(VarBase varLeft, ExecuteContext ctx, ASTRcdOpExpr astRight) throws ExecuteException {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        if (varLeft.boolVal() == true) {
+            resultBool = varLeft.boolVal();
+            newValue = new VarBool(""+resultBool);
+            newValue.setOperationImage("("+varLeft.getOperationImage()+") OR (SHOTRCUT)");
+        } else {
+            VarBase varRight = astRight.getRightContainer(ctx).getInst();
+            switch (varLeft.getType()) {
+                case INT:
+                case REAL: 
+                case BOOL: 
+                    resultBool = varLeft.boolVal() || varRight.boolVal();
+                    newValue = new VarBool(""+resultBool);
+                    break;
+            }
+            if (newValue != null) {
+                newValue.setOperationImage("("+varLeft.getOperationImage()+") OR ("+varRight.getOperationImage()+")");
+            }
+        }
+        return newValue;
+    }
+
+    private static VarBase doOperationAND(VarBase varLeft, ExecuteContext ctx, ASTRcdOpExpr astRight) throws ExecuteException {
+        VarBase newValue = null;
+        boolean resultBool;
+
+        if (varLeft.boolVal() == false) {
+            resultBool = varLeft.boolVal();
+            newValue = new VarBool(""+resultBool);
+            newValue.setOperationImage("("+varLeft.getOperationImage()+") AND (SHOTRCUT)");
+        } else {
+            VarBase varRight = astRight.getRightContainer(ctx).getInst();
+            switch (varLeft.getType()) {
+                case INT:
+                case REAL: 
+                case BOOL: 
+                    resultBool = varLeft.boolVal() && varRight.boolVal();
+                    newValue = new VarBool(""+resultBool);
+                    break;
+            }
+            if (newValue != null) {
+                newValue.setOperationImage("("+varLeft.getOperationImage()+") AND ("+varRight.getOperationImage()+")");
+            }
+        }
+        return newValue;
+    }
+
+    public static VarBase doVarUnaryOperation(ASTRcdBase b, Operation op, ExecuteContext ctx, ASTRcdOpExpr astRight) throws ExecuteException {
         
         VarBase newValue = null;
+        VarBase varRight = astRight.getRightContainer(ctx).getInst();
         
         switch (op) {
             case UPLUS:
@@ -186,9 +243,10 @@ abstract public class VarBase implements Cloneable{
         return newValue;
     }
 
-    public static VarBase doContainerUnaryOperation(ASTRcdBase b, Operation op, VarContainer contRight) throws ExecuteException {
+    public static VarBase doContainerUnaryOperation(ASTRcdBase b, Operation op, ExecuteContext ctx, ASTRcdOpExpr astRight) throws ExecuteException {
         
         VarBase newValue = null;
+        VarContainer contRight = astRight.getRightContainer(ctx);
         
         switch (op) {
             case PREINCR:
@@ -546,42 +604,6 @@ abstract public class VarBase implements Cloneable{
         }
         if (newValue != null) {
             newValue.setOperationImage("("+varLeft.getOperationImage()+")<=("+varRight.getOperationImage()+")");
-        }
-        return newValue;
-    }
-
-    private static VarBase doOperationOR(VarBase varLeft, VarBase varRight) {
-        VarBase newValue = null;
-        boolean resultBool;
-
-        switch (varLeft.getType()) {
-            case INT:
-            case REAL: 
-            case BOOL: 
-                resultBool = varLeft.boolVal() || varRight.boolVal();
-                newValue = new VarBool(""+resultBool);
-                break;
-        }
-        if (newValue != null) {
-            newValue.setOperationImage("("+varLeft.getOperationImage()+") OR ("+varRight.getOperationImage()+")");
-        }
-        return newValue;
-    }
-
-    private static VarBase doOperationAND(VarBase varLeft, VarBase varRight) {
-        VarBase newValue = null;
-        boolean resultBool;
-
-        switch (varLeft.getType()) {
-            case INT:
-            case REAL: 
-            case BOOL: 
-                resultBool = varLeft.boolVal() && varRight.boolVal();
-                newValue = new VarBool(""+resultBool);
-                break;
-        }
-        if (newValue != null) {
-            newValue.setOperationImage("("+varLeft.getOperationImage()+") AND ("+varRight.getOperationImage()+")");
         }
         return newValue;
     }

@@ -104,7 +104,7 @@ public class ASTRcdBase extends SimpleNode {
    */
   public String toString() {
     String nodeName = super.toString();  
-    return nodeName +": " + name;
+    return nodeName +": " + name + " numChildren: "+ numChildren();
   }
 
 }

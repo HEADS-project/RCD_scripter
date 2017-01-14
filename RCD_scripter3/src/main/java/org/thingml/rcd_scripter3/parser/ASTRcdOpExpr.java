@@ -106,14 +106,19 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         }        
     }
 
+    private ExecResult rightResult;
+
+    public VarContainer getRightContainer(ExecuteContext ctx) throws ExecuteException {
+        rightResult = executeChildren(ctx);
+        return ctx.popContainer(this);
+    }
+    
     @Override
     public ExecResult execute(ExecuteContext ctx) throws ExecuteException {
-        ExecResult ret;
+        rightResult = ExecResult.NORMAL;
         VarBase result;
     
         calcOperation();
-        ret = executeChildren(ctx);
-        VarContainer rightCont = ctx.popContainer(this);
         VarContainer leftCont = null;
  
         if (operation == null) {
@@ -121,19 +126,15 @@ public class ASTRcdOpExpr extends ASTRcdBase {
         }        
         if (!unaryOp) {
             leftCont = ctx.popContainer(this);
-            result = VarBase.doVarOperation(this, leftCont.getInst(), operation, rightCont.getInst());
+            result = VarBase.doVarOperation(this, leftCont.getInst(), operation, ctx, this);
         } else {
             if(!incDecOp) {
-                result = VarBase.doVarUnaryOperation(this, operation, rightCont.getInst());
+                result = VarBase.doVarUnaryOperation(this, operation, ctx, this);
             } else {
-                result = VarBase.doContainerUnaryOperation(this, operation, rightCont);
+                result = VarBase.doContainerUnaryOperation(this, operation, ctx, this);
             }
         }
         ctx.pushContainer(new VarContainer(result));
-        return ret;
+        return rightResult;
     }
-    
-    
-
-
 }
